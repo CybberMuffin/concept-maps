@@ -22,7 +22,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List<Node> three = List<Node>();
-  List<Widget> buttons2 = List<Widget>();
+  List<Widget> button2 = List<Widget>();
   Widget buttons;
 
   List<Widget> titles2 = List<Widget>();
