@@ -1,117 +1,225 @@
 import 'package:flutter/material.dart';
+import 'models/graph_entities/Node.dart';
+import 'models/graph_entities/Concept.dart';
+import 'models/graph_entities/PaintGraph.dart';
+import 'models/graph_entities/Relations.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:zoom_widget/zoom_widget.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(new MaterialApp(
+      home: new HomePage()
+  )
+  );
 }
 
-class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
+class HomePage extends StatefulWidget {
+
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
-        // This makes the visual density adapt to the platform that you run
-        // the app on. For desktop platforms, the controls will be smaller and
-        // closer together (more dense) than on mobile platforms.
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
-    );
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  List<Node> three = List<Node>();
+  List<Widget> buttons2 = List<Widget>();
+  Widget buttons;
+
+  List<Widget> titles2 = List<Widget>();
+  Widget titles;
+
+  var res;
+  var cons;
+
+  Future relFuture;
+
+  parse() async {
+    String url = "http://semantic-portal.net/api/branch/dart/concepts/relations";
+    String concepts_url = "http://semantic-portal.net/api/branch/dart/concepts";
+
+    final response = await http.get(url);
+    final concepts_response = await http.get(concepts_url);
+
+    print(response.body);
+    print(concepts_response.body);
+    if (response.statusCode == 200 && concepts_response.statusCode == 200){
+      var decode_res = jsonDecode(response.body);
+      var raw_list = decode_res as List;
+      var relations_list = raw_list.map<Relation>((json) => Relation.fromJson(json)).toList();
+
+      var decode_cons = jsonDecode(concepts_response.body);
+      var cons_raw_list = decode_cons as List;
+      var concepts_list = cons_raw_list.map<Concept>((json) => Concept.fromJson(json)).toList();
+
+      res = relations_list;
+      cons = concepts_list;
+      //print(response.body);
+    }
+    else{
+      print("error");
+    }
+
   }
-}
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+  void relationToNodes(List<Relation> relations, List<Concept> concepts){
+    three.clear();
+    var root = relations[0].to_concept_id;
+    var raw_childs = relations.where((a) => a.to_concept_id == relations[0].to_concept_id);
+    var childs = raw_childs.map((a)=>a.concept_id).toList();
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
+    print(relations[0].to_concept_id);
+    three.add(Node(relations[0].to_concept_id, Colors.deepPurple, Colors.deepPurple, childs, -1, concepts[concepts.indexWhere((element) => element.id == relations[0].to_concept_id)].concept, childs.length, 0));
+    relations.forEach((element) {
+      raw_childs = relations.where((a) => a.to_concept_id == element.concept_id);
+      childs = raw_childs.map((a)=>a.concept_id).toList();
+      //print(element.concept_id);
+      //print(childs);
+      var parent = element.to_concept_id;
+      three.add(Node(element.concept_id, Colors.deepPurple, Colors.deepPurple, childs, parent, concepts[concepts.indexWhere((a) => a.id == element.concept_id)].concept, childs.length, 0));
     });
+
+    concepts.forEach((element) {
+
+      if(element.isAspect == "1"){
+        if(three.indexWhere((a) => a.id == element.aspectOf) == -1){
+          findRelInNode(element);
+        }
+
+        three.add(Node(element.id, Colors.deepPurple, Colors.deepPurple, [], element.aspectOf, element.concept, childs.length, 0));
+        three[three.indexWhere((a) => a.id == element.aspectOf)].child.add(element.id);
+        three[three.indexWhere((a) => a.id == element.aspectOf)].child_sum++;
+      }
+    });
+
+  }
+
+  findRelInNode(Concept element){
+    Concept cons_parent = cons[cons.indexWhere((a) => a.id == element.aspectOf)];
+    if(three.indexWhere((a) => a.id == cons_parent.aspectOf) == -1){
+      findRelInNode(cons_parent);
+    }
+
+
+    three.add(Node(cons_parent.id, Colors.deepPurple, Colors.deepPurple, [], cons_parent.aspectOf, cons_parent.concept, 0, 0));
+    three[three.indexWhere((a) => a.id == cons_parent.aspectOf)].child.add(cons_parent.id);
+    three[three.indexWhere((a) => a.id == cons_parent.aspectOf)].child_sum++;
+  }
+
+  addButtons(List<Node> new_three){
+    var x;
+    var y;
+    new_three.forEach((element) {
+      if(element.x == null){
+        element.x = 100.0;
+      }
+      if(element.y == null){
+        element.y = 100.0;
+      }
+
+      x = element.x - 30;
+      y = element.y - 30;
+      buttons2.add(new Positioned(
+        top: y,
+        left: x,
+          child: GestureDetector(
+            onTap: (){print(123);},
+            child: Container(
+              width: 60,
+              height: 60,
+              decoration: BoxDecoration(
+                  //color: Colors.red,
+                  borderRadius: BorderRadius.circular(30)
+              ),
+            ),
+          )
+      ));
+
+      TextPainter textPainter = TextPainter(
+          text: TextSpan(text: element.title), maxLines: 1, textDirection: TextDirection.ltr)
+        ..layout(minWidth: 0, maxWidth: double.infinity);
+      var textWidth = textPainter.width/2;
+
+      x = element.x - textWidth;
+      y = element.y + 35;
+      titles2.add(new Positioned(
+          top: y,
+          left: x,
+          child: Text(element.title),
+      ));
+    });
+    buttons = new Stack(children: buttons2);
+    titles = new Stack(children: titles2);
   }
 
   @override
-  Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+  void initState() {
+    /*
+    three = <Node>[ Node(0 ,Colors.deepPurple, Colors.deepPurpleAccent, [1, 2, 7], -1, "Test0", 3, 0),
+          Node(1 ,Colors.deepPurple, Colors.deepPurpleAccent, [3, 4, 8], 0, "Test1", 3, 1),
+          Node(2 ,Colors.deepPurple, Colors.deepPurpleAccent, [5, 6], 0, "Test2", 2, 1),
+          Node(3 ,Colors.deepPurple, Colors.deepPurpleAccent, [], 1, "Test3", 0, 2),
+          Node(4 ,Colors.deepPurple, Colors.deepPurpleAccent, [11, 12], 1, "Test4", 0, 2),
+          Node(5 ,Colors.deepPurple, Colors.deepPurpleAccent, [], 2, "Test5", 0, 2),
+          Node(6 ,Colors.deepPurple, Colors.deepPurpleAccent, [9], 2, "Test6", 0, 2),
+          Node(7 ,Colors.deepPurple, Colors.deepPurpleAccent, [10], 0, "Test7", 0, 1),
+          Node(8 ,Colors.deepPurple, Colors.deepPurpleAccent, [], 1, "Test8", 1, 2),
+          Node(9 ,Colors.deepPurple, Colors.deepPurpleAccent, [], 6, "Test8", 1, 2),
+          Node(10 ,Colors.deepPurple, Colors.deepPurpleAccent, [], 7, "Test10", 0, 2),
+          Node(11 ,Colors.deepPurple, Colors.deepPurpleAccent, [], 4, "Test8", 1, 2),
+          Node(12 ,Colors.deepPurple, Colors.deepPurpleAccent, [], 4, "Test8", 1, 2),
+        ];
+     */
+    //parse().then((value) => relationToNodes(value));
+    relFuture = parse();
+    super.initState();
+  }
+
+
+  @override
+  Widget build(BuildContext context){
+    return new Scaffold(
+      body: Container(
+        child: Zoom(
+            width: 3000,
+            height: 3000,
+            centerOnScale: true,
+            onPositionUpdate: (Offset position){
+
+            },
+            onScaleUpdate: (double scale,double zoom){
+
+            },
+          child: FutureBuilder(
+            future: relFuture,
+            builder: (context, snapshot){
+              if(snapshot.connectionState == ConnectionState.done){
+                print(snapshot.data);
+                relationToNodes(res, cons);
+                return Stack(
+                  children: [
+                    Positioned(
+                        child: CustomPaint(
+                          painter: PaintGraph(three, addButtons),
+                        )
+                    ),
+
+                    Positioned(
+                        child: buttons
+                    ),
+                    Positioned(
+                        child: titles
+                    )
+
+                  ],
+                );
+              }
+              else{
+                return Text("load");
+              }
+            },
+          )
+        )
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
