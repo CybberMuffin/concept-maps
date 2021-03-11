@@ -11,6 +11,7 @@ environment:
   sdk: ">=2.7.0 <3.0.0"
 
 dependencies:
+  google_fonts: ^0.2.0
   flutter:
     sdk: flutter
   http: 0.12.2
