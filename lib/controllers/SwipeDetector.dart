@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 class SwipeConfiguration {
   //Vertical swipe configuration options
+  var n;
+
   double verticalSwipeMaxWidthThreshold = 50.0;
   double verticalSwipeMinDisplacement = 100.0;
   double verticalSwipeMinVelocity = 300.0;
