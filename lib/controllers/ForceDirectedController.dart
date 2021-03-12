@@ -10,9 +10,9 @@ class ForceDirectedController {
   var relations;
   var concepts;
 
-  List<Vertice> vertices = List<Vertice>();
-  List<Edge> edges = List<Edge>();
-  List<Widget> widgets = List<Widget>();
+  List<Vertice> vertices = [];
+  List<Edge> edges = [];
+  List<Widget> widgets = [];
 
   crToVE() {
     concepts.forEach((a) {
