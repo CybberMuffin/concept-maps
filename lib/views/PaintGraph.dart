@@ -1,9 +1,8 @@
 import 'package:flutter/cupertino.dart';
-import 'file:///C:/Users/vladf/AndroidStudioProjects/simulation_test/lib/Model/Edge.dart';
-import 'file:///C:/Users/vladf/AndroidStudioProjects/simulation_test/lib/Model/Vertice.dart';
+import 'package:concept_maps/models/graph_entities/Edge.dart';
+import 'package:concept_maps/models/graph_entities/Vertice.dart';
 
-class PaintGraph extends CustomPainter{
-
+class PaintGraph extends CustomPainter {
   List<Edge> edges;
   List<Vertice> vertices;
 
@@ -14,7 +13,7 @@ class PaintGraph extends CustomPainter{
   PaintGraph(this.edges, this.vertices, this.flag);
 
   @override
-  void paint(Canvas canvas, Size size){
+  void paint(Canvas canvas, Size size) {
     var paint = Paint()
       ..color = Color(0xff54c5f8)
       ..strokeWidth = 3
@@ -35,7 +34,7 @@ class PaintGraph extends CustomPainter{
     });
 
      */
-    if(flag){
+    if (flag) {
       /*
       vertices.forEach((element) {
         canvas.drawCircle(Offset(element.position.x, element.position.y), 10, paint);
@@ -44,13 +43,12 @@ class PaintGraph extends CustomPainter{
        */
 
       edges.forEach((element) {
-        canvas.drawLine(Offset(element.v.position.x, element.v.position.y), Offset(element.u.position.x, element.u.position.y), paint);
+        canvas.drawLine(Offset(element.v.position.x, element.v.position.y),
+            Offset(element.u.position.x, element.u.position.y), paint);
       });
     }
-
   }
 
   @override
   bool shouldRepaint(CustomPainter oldDelegate) => false;
-
 }
