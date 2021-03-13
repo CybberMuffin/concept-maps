@@ -1,3 +1,4 @@
+import 'package:concept_maps/views/BottomMenu.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'views/CourseMain.dart';
@@ -14,6 +15,12 @@ class MyApp extends StatelessWidget {
       title: "My Demo Media Query",
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
+        primaryTextTheme: GoogleFonts.montserratTextTheme(
+          Theme.of(context).textTheme,
+        ),
+        accentTextTheme: GoogleFonts.montserratTextTheme(
+          Theme.of(context).textTheme,
+        ),
         textTheme: GoogleFonts.montserratTextTheme(
           Theme.of(context).textTheme,
         ),
