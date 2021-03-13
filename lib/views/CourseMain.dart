@@ -15,15 +15,27 @@ class _CourseMainState extends State<CourseMain> {
   BalloonTreeController balloonTree;
 
   @override
+  void initState() {
+    fetch = new FetchJSON("dart");
+    future = fetch.parse();
+    future.then((value) {
+      setState(() {
+        balloonTree = BalloonTreeController();
+      });
+    });
+
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
     return FutureBuilder(
-      future: FetchJSON("dart").parse(),
+      future: future,
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         Widget child;
         if (snapshot.hasData) {
-          setState(() => balloonTree = BalloonTreeController());
           child = ForceDirected(fetch.relations, fetch.concepts);
           //child = ConceptList(
           // balloonTree.relationToNodes(fetch.relations, fetch.concepts));
