@@ -15,18 +15,19 @@ abstract class ApiService {
         http.get(conceptsUrl),
       ],
     );
+
     final relationsResponse = response.first;
     final conceptsResponse = response[1];
 
     if (relationsResponse.statusCode == 200 &&
         conceptsResponse.statusCode == 200) {
-      final relationsResult = jsonDecode(relationsResponse.body);
-      final conceptsResult = jsonDecode(conceptsResponse.body);
+      final List relationsResult = jsonDecode(relationsResponse.body);
+      final List conceptsResult = jsonDecode(conceptsResponse.body);
 
-      return MapModel(
-        field: field,
-        relations: relationsResult,
-        concepts: conceptsResult,
+      return MapModel.fromMap(
+        field,
+        relationsResult,
+        conceptsResult,
       );
     } else {
       throw Exception("Error ocured during fetch of map model");

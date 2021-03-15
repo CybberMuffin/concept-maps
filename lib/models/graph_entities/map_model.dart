@@ -27,16 +27,14 @@ class MapModel {
 
   factory MapModel.fromMap(
     String field,
-    dynamic relations,
-    dynamic concepts,
+    List relations,
+    List concepts,
   ) {
     return MapModel(
-      relations: (relations as List)
-          .map<Relation>((json) => Relation.fromJson(json))
-          .toList(),
-      concepts: (concepts as List)
-          .map<Concept>((json) => Concept.fromJson(json))
-          .toList(),
+      relations:
+          relations.map<Relation>((json) => Relation.fromJson(json)).toList(),
+      concepts:
+          concepts.map<Concept>((json) => Concept.fromJson(json)).toList(),
       field: field,
     );
   }

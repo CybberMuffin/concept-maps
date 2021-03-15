@@ -1,5 +1,7 @@
 import 'package:concept_maps/controllers/BalloonTreeController.dart';
 import 'package:concept_maps/models/FetchJSON.dart';
+import 'package:concept_maps/models/graph_entities/map_model.dart';
+import 'package:concept_maps/services/api_service.dart';
 import 'package:flutter/material.dart';
 import 'ForceDirected.dart';
 
@@ -9,14 +11,12 @@ class CourseMain extends StatefulWidget {
 }
 
 class _CourseMainState extends State<CourseMain> {
-  FetchJSON fetch;
   Future future;
   BalloonTreeController balloonTree;
 
   @override
   void initState() {
-    fetch = new FetchJSON("dart");
-    future = fetch.parse();
+    future = ApiService.fetchConceptRelations("dart");
     future.then((value) {
       setState(() {
         balloonTree = new BalloonTreeController();
@@ -35,7 +35,8 @@ class _CourseMainState extends State<CourseMain> {
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         Widget child;
         if (snapshot.hasData) {
-          child = ForceDirected(fetch.relations, fetch.concepts);
+          MapModel data = snapshot.data as MapModel;
+          child = ForceDirected(data.relations, data.concepts);
           //child = ConceptList(balloonTree.relationToNodes(fetch.relations, fetch.concepts));
         } else {
           print(snapshot.data);
