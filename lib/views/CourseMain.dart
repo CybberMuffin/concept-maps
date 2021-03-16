@@ -36,9 +36,9 @@ class _CourseMainState extends State<CourseMain> {
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         Widget child;
         if (snapshot.hasData) {
-          child = ForceDirected(fetch.relations, fetch.concepts);
-          //child = ConceptList(
-          // balloonTree.relationToNodes(fetch.relations, fetch.concepts));
+          //child = ForceDirected(fetch.relations, fetch.concepts);
+          child = ConceptList(
+          balloonTree.relationToNodes(fetch.relations, fetch.concepts));
         } else {
           print(snapshot.data);
           child = Container();
