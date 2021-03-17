@@ -1,8 +1,8 @@
-import 'package:concept_maps/controllers/BalloonTreeController.dart';
-import 'package:concept_maps/models/FetchJSON.dart';
-import 'package:concept_maps/views/ConceptList.dart';
+import 'package:concept_maps/controllers/balloon_tree_controller.dart';
+import 'package:concept_maps/models/fetch_json.dart';
+import 'package:concept_maps/views/concept_list.dart';
 import 'package:flutter/material.dart';
-import 'ForceDirected.dart';
+import 'force_directed.dart';
 
 class CourseMain extends StatefulWidget {
   @override

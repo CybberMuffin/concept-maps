@@ -1,5 +1,5 @@
-import 'package:concept_maps/models/graph_entities/Relations.dart';
-import 'package:concept_maps/models/graph_entities/Concept.dart';
+import 'package:concept_maps/models/graph_entities/relations.dart';
+import 'package:concept_maps/models/graph_entities/concept.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 

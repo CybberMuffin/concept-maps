@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:concept_maps/views/ListPosition.dart';
-import 'package:concept_maps/models/graph_entities/Node.dart';
+import 'package:concept_maps/views/list_position.dart';
+import 'package:concept_maps/models/graph_entities/node.dart';
 
 class ConceptList extends StatefulWidget {
   ConceptList(this.tree);

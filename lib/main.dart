@@ -1,7 +1,7 @@
-import 'package:concept_maps/views/BottomMenu.dart';
+import 'package:concept_maps/views/bottom_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'views/CourseMain.dart';
+import 'views/course_main.dart';
 
 void main() {
   runApp(MyApp());

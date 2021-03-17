@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:concept_maps/controllers/ForceDirectedController.dart';
-import 'package:concept_maps/views/PaintGraph.dart';
+import 'package:concept_maps/controllers/force_directed_controller.dart';
+import 'package:concept_maps/views/paint_graph.dart';
 import 'package:zoom_widget/zoom_widget.dart';
 
 class ForceDirected extends StatefulWidget {
@@ -89,6 +89,7 @@ class _ForceDirectedState extends State<ForceDirected> {
     return Scaffold(
         body: Container(
       child: Zoom(
+        initZoom: 0.0,
         width: 3000,
         height: 3000,
         centerOnScale: true,
