@@ -102,7 +102,7 @@ class ForceDirectedController{
 
       vertices.forEach((v) {
         if(v.isOn == false){
-          print(v.displacement.length);
+          //print(v.displacement.length);
           //print(temperature(v.displacement.length, i.toDouble(), iter, side.toDouble()));
           v.position.x = v.position.x + v.displacement.x*
               (iter - i)/

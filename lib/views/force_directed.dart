@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:concept_maps/controllers/force_directed_controller.dart';
 import 'package:concept_maps/views/paint_graph.dart';
 import 'package:zoom_widget/zoom_widget.dart';
+import 'package:vector_math/vector_math_64.dart';
+import 'package:flutter/physics.dart';
 
 class ForceDirected extends StatefulWidget {
   var relations;
@@ -14,15 +16,45 @@ class ForceDirected extends StatefulWidget {
       _ForceDirectedState(this.relations, this.concepts);
 }
 
-class _ForceDirectedState extends State<ForceDirected> {
+class _ForceDirectedState extends State<ForceDirected>
+    with SingleTickerProviderStateMixin{
+
+  AnimationController animationController;
+  Animation<Matrix4> animation;
+
   _ForceDirectedState(this.relations, this.concepts);
 
   ForceDirectedController controller;
-
-  var size;
+  MediaQueryData size;
   var relations;
   var concepts;
   var flag;
+  TransformationController transformationController = TransformationController();
+
+  void runAnimation(Offset position){
+    Matrix4 matrix = Matrix4.copy(transformationController.value);
+    matrix.row0 = Vector4(1, 0, 0, -position.dx + size.size.width/2);
+    matrix.row1 = Vector4(0, 1, 0, -position.dy + size.size.height/2);
+    //matrix.row3 = Vector4(position.dx, position.dy, 0, 1);
+
+    animation = animationController.drive(
+      Matrix4Tween(
+        begin: transformationController.value,
+        end: matrix
+      )
+    );
+
+    const spring = SpringDescription(
+      mass: 30,
+      stiffness: 1,
+      damping: 1,
+    );
+
+    final simulation = SpringSimulation(spring, 0, 1, -5);
+
+    animationController.animateWith(simulation);
+
+  }
 
   void fillWidg() {
     var node_size = 80.0;
@@ -56,6 +88,9 @@ class _ForceDirectedState extends State<ForceDirected> {
               fillWidg();
             });
           },
+          onTap: (){
+            runAnimation(Offset(element.position.x, element.position.y));
+          },
           child: Container(
             height: node_size,
             width: node_size,
@@ -71,35 +106,64 @@ class _ForceDirectedState extends State<ForceDirected> {
 
   @override
   void initState() {
+    animationController = AnimationController(
+        duration: Duration(microseconds: 200),
+        vsync: this
+    );
+    animationController.addListener(() {
+      setState(() {
+        transformationController.value = animation.value;
+        print(transformationController.value);
+        print("///////////////////////////////");
+
+      });
+    });
     flag = false;
     controller = new ForceDirectedController(relations, concepts);
     controller.crToVE();
-    size = Offset(3000, 3000);
-    controller.setVerticesPos(size);
-    controller.forceCalc(size, 500);
+    Offset frame = Offset(3000, 3000);
+    controller.setVerticesPos(frame);
+    controller.forceCalc(frame, 600);
     fillWidg();
     flag = true;
+    transformationController.value = Matrix4(
+        1, 0, 0, 0,
+        0, 1, 0, 0,
+        0, 0, 1, 0,
+        0, 0, 0, 1);
     super.initState();
   }
 
   @override
+  void dispose() {
+    animationController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
+    size = MediaQuery.of(context);
 
     return Scaffold(
         body: Container(
-      child: Zoom(
-        initZoom: 0.0,
-        width: 3000,
-        height: 3000,
-        centerOnScale: true,
-        child: CustomPaint(
-          painter: PaintGraph(controller.edges, controller.vertices, flag),
-          child: Stack(
-            children: controller.widgets,
-          ),
-        ),
-      ),
-    ));
+          child: InteractiveViewer(
+            constrained: false,
+            boundaryMargin: const EdgeInsets.all(double.infinity),
+            minScale: 0.1,
+            maxScale: 5.6,
+            transformationController: transformationController,
+            child: Container(
+              width: 3000,
+              height: 3000,
+              child: CustomPaint(
+                painter: PaintGraph(controller.edges, controller.vertices, flag),
+                child: Stack(
+                  children: controller.widgets,
+                ),
+              ),
+            ),
+          )
+        )
+    );
   }
 }
