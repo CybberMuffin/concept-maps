@@ -35,6 +35,7 @@ class _CourseMainState extends State<CourseMain> {
       future: future,
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         Widget child;
+
         if (snapshot.hasData) {
           child = ForceDirected(fetch.relations, fetch.concepts, size);
           //child = ConceptList(
