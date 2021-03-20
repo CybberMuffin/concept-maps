@@ -1,7 +1,7 @@
 import 'package:concept_maps/models/graph_entities/edge.dart';
 import 'package:concept_maps/models/graph_entities/vertice.dart';
 import 'package:flutter/material.dart';
-import 'package:vector_math/vector_math.dart';
+import 'package:vector_math/vector_math_64.dart';
 import 'dart:math';
 
 class ForceDirectedController{
@@ -14,10 +14,18 @@ class ForceDirectedController{
   List<Vertice> vertices = List<Vertice>();
   List<Edge> edges = List<Edge>();
   List<Widget> widgets = List<Widget>();
+  List<Widget> titles = List<Widget>();
+  int rootId;
 
   crToVE(){
+    int n = 10000000000;
     concepts.forEach((a) {
-      vertices.add(Vertice(a.id));
+      if(int.parse(a.id) < n){
+        n = int.parse(a.id);
+        rootId = n;
+      }
+
+      vertices.add(Vertice(a.id, a.concept));
     });
     relations.forEach((a) {
       edges.add(Edge(vertices[vertices.indexWhere((b) => b.id == a.concept_id)], vertices[vertices.indexWhere((b) => b.id == a.to_concept_id)]));
@@ -46,7 +54,7 @@ class ForceDirectedController{
   }
 
   double fRep(var l, var x){
-    return l*l/x;
+    return 3*l*l/x;
   }
 
   double euDistance(Vector2 p){
@@ -56,12 +64,13 @@ class ForceDirectedController{
 
   void forceCalc(var size,var iter){
     //var area = size.width*size.height;
-    var side = 1100;
+    var side = 1200;
     var area = side*side;
-    var force_radius = 600;
+    var forceRadius = 700;
     var dis;
     var l = sqrt(area/vertices.length);
     var i = 0;
+    double t = 1000;
     Vector2 delta = new Vector2(0, 0);
     while(i < iter){
       vertices.forEach((v) {
@@ -71,7 +80,7 @@ class ForceDirectedController{
             if(v.id != u.id){
               dis = sqrt((v.position.x - u.position.x)*(v.position.x - u.position.x) + (v.position.y - u.position.y)*(v.position.y - u.position.y));
 
-              if(dis <= force_radius){
+              if(dis <= forceRadius){
                 delta.x = v.position.x - u.position.x;
                 delta.y = v.position.y - u.position.y;
 
@@ -105,21 +114,35 @@ class ForceDirectedController{
           //print(v.displacement.length);
           //print(temperature(v.displacement.length, i.toDouble(), iter, side.toDouble()));
           v.position.x = v.position.x + v.displacement.x*
-              (iter - i)/
+              test(size, iter, i)/
               v.displacement.length;
           v.position.y = v.position.y + v.displacement.y*
-              (iter - i)/
+              test(size, iter, i)/
               v.displacement.length;
 
           v.position.x = min(size.dx, max(0, v.position.x));
           v.position.y = min(size.dy, max(0, v.position.y));
         }
-
+      t *= 0.8;
       });
 
       i++;
     }
 
+  }
+
+  double test2(Offset size, double displacement, double displacementPrev, int iMax, int i, double t){
+
+    if(displacement > displacementPrev){
+      double e = exp(displacement/t);
+      Random rand = Random();
+      int r = rand.nextInt(1);
+
+    }
+  }
+
+  double test(Offset size, int iMax, int i){
+    return size.dx/2 - (size.dx*(i + 1))/(2*iMax) + 1;
   }
 
   double temperature(double displacement, double i, int iMax, double frameWidth) {

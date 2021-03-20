@@ -15,7 +15,6 @@ class _BottomMenuState extends State<BottomMenu>
   AnimationController controller;
   Animation curve;
   Animation<double> panelAnimation;
-
   callPanel() {
     if (isPannelAdded == false) {
       setState(() {

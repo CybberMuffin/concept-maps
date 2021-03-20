@@ -1,19 +1,22 @@
+import 'package:concept_maps/views/bottom_menu.dart';
+import 'package:concept_maps/views/bottom_sheet_pannel.dart';
 import 'package:flutter/material.dart';
 import 'package:concept_maps/controllers/force_directed_controller.dart';
 import 'package:concept_maps/views/paint_graph.dart';
 import 'package:zoom_widget/zoom_widget.dart';
 import 'package:vector_math/vector_math_64.dart';
 import 'package:flutter/physics.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class ForceDirected extends StatefulWidget {
   var relations;
   var concepts;
-
-  ForceDirected(this.relations, this.concepts);
+  var size;
+  ForceDirected(this.relations, this.concepts, this.size);
 
   @override
   _ForceDirectedState createState() =>
-      _ForceDirectedState(this.relations, this.concepts);
+      _ForceDirectedState(this.relations, this.concepts, this.size);
 }
 
 class _ForceDirectedState extends State<ForceDirected>
@@ -22,13 +25,14 @@ class _ForceDirectedState extends State<ForceDirected>
   AnimationController animationController;
   Animation<Matrix4> animation;
 
-  _ForceDirectedState(this.relations, this.concepts);
+  _ForceDirectedState(this.relations, this.concepts, this.size);
 
   ForceDirectedController controller;
   MediaQueryData size;
   var relations;
   var concepts;
   var flag;
+  Offset frame;
   TransformationController transformationController = TransformationController();
 
   void runAnimation(Offset position){
@@ -57,12 +61,33 @@ class _ForceDirectedState extends State<ForceDirected>
   }
 
   void fillWidg() {
-    var node_size = 80.0;
+    var nodeSize = 100.0;
     controller.widgets.clear();
+    controller.titles.clear();
+    controller.vertices.forEach((element) {
+
+      TextPainter textPainter = TextPainter(
+          text: TextSpan(text: element.title), maxLines: 1, textDirection: TextDirection.ltr)
+        ..layout(minWidth: 0, maxWidth: double.infinity);
+      double textWidth = textPainter.width;
+
+      controller.titles.add(Positioned(
+        top: element.position.y + nodeSize/2,
+        left: element.position.x - textWidth,
+        child: Text(
+          element.title,
+          style: GoogleFonts.montserrat(
+          fontSize: 22,
+          fontWeight: FontWeight.w700,
+        ),
+      )
+      )
+      );
+    });
     controller.vertices.forEach((element) {
       controller.widgets.add(Positioned(
-        top: element.position.y - node_size / 2,
-        left: element.position.x - node_size / 2,
+        top: element.position.y - nodeSize / 2,
+        left: element.position.x - nodeSize / 2,
         child: GestureDetector(
           onPanDown: (details) {
             element.isOn = true;
@@ -73,7 +98,7 @@ class _ForceDirectedState extends State<ForceDirected>
               //print("..........................");
               //print(element.position.x);
 
-              controller.forceCalc(size, 1);
+              controller.forceCalc(frame, 1);
               element.position.x += details.delta.dx;
               element.position.y += details.delta.dy;
               fillWidg();
@@ -84,7 +109,7 @@ class _ForceDirectedState extends State<ForceDirected>
           onPanEnd: (details) {
             element.isOn = false;
             setState(() {
-              controller.forceCalc(size, 50);
+              //controller.forceCalc(frame, 50);
               fillWidg();
             });
           },
@@ -92,12 +117,12 @@ class _ForceDirectedState extends State<ForceDirected>
             runAnimation(Offset(element.position.x, element.position.y));
           },
           child: Container(
-            height: node_size,
-            width: node_size,
+            height: nodeSize,
+            width: nodeSize,
             decoration: BoxDecoration(
                 color: Color(0xffd0efff),
                 border: Border.all(color: Color(0xff2a9df4), width: 3),
-                borderRadius: BorderRadius.circular(node_size)),
+                borderRadius: BorderRadius.circular(nodeSize)),
           ),
         ),
       ));
@@ -113,24 +138,24 @@ class _ForceDirectedState extends State<ForceDirected>
     animationController.addListener(() {
       setState(() {
         transformationController.value = animation.value;
-        print(transformationController.value);
-        print("///////////////////////////////");
-
       });
     });
     flag = false;
     controller = new ForceDirectedController(relations, concepts);
     controller.crToVE();
-    Offset frame = Offset(3000, 3000);
+    frame = Offset(4000, 4000);
     controller.setVerticesPos(frame);
-    controller.forceCalc(frame, 600);
+    controller.forceCalc(frame, 100);
     fillWidg();
     flag = true;
+    //    print(controller.vertices.indexWhere((element) => element.id == controller.rootId.toString()));
+    //print(controller.concepts[controller.concepts.indexWhere((element) => element.id == controller.rootId)]);
+    Vector2 v = Vector2.copy(controller.vertices[controller.vertices.indexWhere((element) => element.id == controller.rootId.toString())].position);
     transformationController.value = Matrix4(
-        1, 0, 0, 0,
-        0, 1, 0, 0,
-        0, 0, 1, 0,
-        0, 0, 0, 1);
+        0.5, 0, 0, 0,
+        0, 0.5, 0, 0,
+        0, 0, 0.5, 0,
+        -v.x*0.5 + size.size.width/2, -v.y*0.5 + size.size.height/2, 0, 1);
     super.initState();
   }
 
@@ -142,28 +167,35 @@ class _ForceDirectedState extends State<ForceDirected>
 
   @override
   Widget build(BuildContext context) {
-    size = MediaQuery.of(context);
 
     return Scaffold(
+      //bottomSheet: BottomSheetPannel(),
         body: Container(
           child: InteractiveViewer(
             constrained: false,
             boundaryMargin: const EdgeInsets.all(double.infinity),
             minScale: 0.1,
             maxScale: 5.6,
-            transformationController: transformationController,
-            child: Container(
-              width: 3000,
-              height: 3000,
+            onInteractionUpdate: (a){
+              //print(transformationController.value);
+              // print("__________________");
+              },
+              transformationController: transformationController,
+              child: Container(
+              width: frame.dx,
+              height: frame.dy,
               child: CustomPaint(
                 painter: PaintGraph(controller.edges, controller.vertices, flag),
                 child: Stack(
-                  children: controller.widgets,
+                  children: [
+                    ...controller.widgets,
+                    ...controller.titles,
+                  ],
                 ),
               ),
             ),
+          ),
           )
-        )
     );
   }
 }

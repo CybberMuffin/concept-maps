@@ -29,14 +29,14 @@ class _CourseMainState extends State<CourseMain> {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
+    final size = MediaQuery.of(context);
 
     return FutureBuilder(
       future: future,
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         Widget child;
         if (snapshot.hasData) {
-          child = ForceDirected(fetch.relations, fetch.concepts);
+          child = ForceDirected(fetch.relations, fetch.concepts, size);
           //child = ConceptList(
           // balloonTree.relationToNodes(fetch.relations, fetch.concepts));
         } else {
