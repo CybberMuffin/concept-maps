@@ -19,7 +19,7 @@ class _ConceptListState extends State<ConceptList> {
 
   parseSons(Node node) {
     List<Widget> sons = [];
-    if (node.child != null) {
+    if (node.child.length > 0) {
       node.child.forEach((a) {
         sons.add(parseSons(tree[tree.indexWhere((i) => i.id == a)]));
       });
