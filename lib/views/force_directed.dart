@@ -1,5 +1,6 @@
 import 'package:concept_maps/models/graph_entities/map_model.dart';
 import 'package:concept_maps/providers/app_provider.dart';
+import 'package:concept_maps/views/widgets/drawer_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:concept_maps/controllers/force_directed_controller.dart';
 import 'package:concept_maps/views/paint_graph.dart';
@@ -116,7 +117,6 @@ class _ForceDirectedState extends State<ForceDirected>
 
   @override
   void initState() {
-    final size = MediaQuery.of(context).size;
     animationController =
         AnimationController(duration: Duration(microseconds: 200), vsync: this);
     animationController.addListener(() {
@@ -135,6 +135,14 @@ class _ForceDirectedState extends State<ForceDirected>
     flag = true;
     //    print(controller.vertices.indexWhere((element) => element.id == controller.rootId.toString()));
     //print(controller.concepts[controller.concepts.indexWhere((element) => element.id == controller.rootId)]);
+
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    final size = MediaQuery.of(context).size;
+
     Vector2 v = Vector2.copy(controller
         .vertices[controller.vertices.indexWhere(
             (element) => element.id == controller.rootId.toString())]
@@ -156,7 +164,7 @@ class _ForceDirectedState extends State<ForceDirected>
         -v.y * 0.5 + size.height / 2,
         0,
         1);
-    super.initState();
+    super.didChangeDependencies();
   }
 
   @override
@@ -169,31 +177,34 @@ class _ForceDirectedState extends State<ForceDirected>
   Widget build(BuildContext context) {
     return Scaffold(
         //bottomSheet: BottomSheetPannel(),
+        drawer: DrawerMenu(),
+        appBar: AppBar(title: Text("Concept Map")),
         body: Container(
-      child: InteractiveViewer(
-        constrained: false,
-        boundaryMargin: const EdgeInsets.all(double.infinity),
-        minScale: 0.1,
-        maxScale: 5.6,
-        onInteractionUpdate: (a) {
-          //print(transformationController.value);
-          // print("__________________");
-        },
-        transformationController: transformationController,
-        child: Container(
-          width: frame.dx,
-          height: frame.dy,
-          child: CustomPaint(
-            painter: PaintGraph(controller.edges, controller.vertices, flag),
-            child: Stack(
-              children: [
-                ...controller.widgets,
-                ...controller.titles,
-              ],
+          child: InteractiveViewer(
+            constrained: false,
+            boundaryMargin: const EdgeInsets.all(double.infinity),
+            minScale: 0.1,
+            maxScale: 5.6,
+            onInteractionUpdate: (a) {
+              //print(transformationController.value);
+              // print("__________________");
+            },
+            transformationController: transformationController,
+            child: Container(
+              width: frame.dx,
+              height: frame.dy,
+              child: CustomPaint(
+                painter:
+                    PaintGraph(controller.edges, controller.vertices, flag),
+                child: Stack(
+                  children: [
+                    ...controller.widgets,
+                    ...controller.titles,
+                  ],
+                ),
+              ),
             ),
           ),
-        ),
-      ),
-    ));
+        ));
   }
 }
