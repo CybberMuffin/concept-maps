@@ -65,7 +65,7 @@ class ForceDirectedController {
       vertices.forEach((v) {
         if (v.isOn == false) {
           v.displacement = new Vector2(0, 0);
-          print(v.displacement.x);
+
           vertices.forEach((u) {
             if (v.id != u.id) {
               dis = sqrt((v.position.x - u.position.x) *
@@ -108,7 +108,6 @@ class ForceDirectedController {
               v.displacement.x * (iter - i) / v.displacement.length;
           v.position.y = v.position.y +
               v.displacement.y * (iter - i) / v.displacement.length;
-          print(v.displacement.length);
 
           v.position.x = min(size.dx, max(0, v.position.x));
           v.position.y = min(size.dy, max(0, v.position.y));

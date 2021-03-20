@@ -86,6 +86,7 @@ class _ForceDirectedState extends State<ForceDirected> {
         child: Zoom(
           width: 3000,
           height: 3000,
+          initZoom: 0,
           centerOnScale: true,
           child: CustomPaint(
             painter: PaintGraph(controller.edges, controller.vertices, flag),
