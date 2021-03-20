@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
-import 'package:concept_maps/models/graph_entities/Edge.dart';
-import 'package:concept_maps/models/graph_entities/Vertice.dart';
+import 'package:concept_maps/models/graph_entities/edge.dart';
+import 'package:concept_maps/models/graph_entities/vertice.dart';
 
 class PaintGraph extends CustomPainter {
   List<Edge> edges;

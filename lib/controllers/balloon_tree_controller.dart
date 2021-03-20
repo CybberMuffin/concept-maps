@@ -1,6 +1,6 @@
-import 'package:concept_maps/models/graph_entities/Node.dart';
-import 'package:concept_maps/models/graph_entities/Relations.dart';
-import 'package:concept_maps/models/graph_entities/Concept.dart';
+import 'package:concept_maps/models/graph_entities/node.dart';
+import 'package:concept_maps/models/graph_entities/relations.dart';
+import 'package:concept_maps/models/graph_entities/concept.dart';
 
 class BalloonTreeController {
   BalloonTreeController();

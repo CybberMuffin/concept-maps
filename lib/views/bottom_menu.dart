@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:concept_maps/views/BottomPannel.dart';
+import 'package:concept_maps/views/bottom_pannel.dart';
 import 'package:swipedetector/swipedetector.dart';
 
 class BottomMenu extends StatefulWidget {
@@ -15,7 +15,6 @@ class _BottomMenuState extends State<BottomMenu>
   AnimationController controller;
   Animation curve;
   Animation<double> panelAnimation;
-
   callPanel() {
     if (isPannelAdded == false) {
       setState(() {
