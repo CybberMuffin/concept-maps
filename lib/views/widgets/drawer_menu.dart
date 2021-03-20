@@ -1,5 +1,5 @@
-import 'package:concept_maps/views/ConceptList.dart';
-import 'package:concept_maps/views/ForceDirected.dart';
+import 'package:concept_maps/views/concept_list.dart';
+import 'package:concept_maps/views/force_directed.dart';
 import 'package:flutter/material.dart';
 
 class DrawerMenu extends StatelessWidget {

@@ -1,6 +1,6 @@
+import 'package:concept_maps/models/graph_entities/concept.dart';
+import 'package:concept_maps/models/graph_entities/relations.dart';
 import 'package:flutter/foundation.dart';
-import 'package:concept_maps/models/graph_entities/Concept.dart';
-import 'package:concept_maps/models/graph_entities/Relations.dart';
 
 class MapModel {
   List<Relation> relations;

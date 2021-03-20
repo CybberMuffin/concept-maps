@@ -1,52 +1,39 @@
-import 'package:concept_maps/views/bottom_menu.dart';
-import 'package:concept_maps/views/bottom_sheet_pannel.dart';
+import 'package:concept_maps/models/graph_entities/map_model.dart';
+import 'package:concept_maps/providers/app_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:concept_maps/controllers/force_directed_controller.dart';
 import 'package:concept_maps/views/paint_graph.dart';
-import 'package:zoom_widget/zoom_widget.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:vector_math/vector_math_64.dart';
 import 'package:flutter/physics.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 class ForceDirected extends StatefulWidget {
-  var relations;
-  var concepts;
-  var size;
-  ForceDirected(this.relations, this.concepts, this.size);
-
   @override
-  _ForceDirectedState createState() =>
-      _ForceDirectedState(this.relations, this.concepts, this.size);
+  _ForceDirectedState createState() => _ForceDirectedState();
 }
 
 class _ForceDirectedState extends State<ForceDirected>
-    with SingleTickerProviderStateMixin{
-
+    with SingleTickerProviderStateMixin {
   AnimationController animationController;
   Animation<Matrix4> animation;
 
-  _ForceDirectedState(this.relations, this.concepts, this.size);
-
+  MapModel map;
   ForceDirectedController controller;
-  MediaQueryData size;
-  var relations;
-  var concepts;
   var flag;
   Offset frame;
-  TransformationController transformationController = TransformationController();
+  TransformationController transformationController =
+      TransformationController();
 
-  void runAnimation(Offset position){
+  void runAnimation(Offset position) {
+    final size = MediaQuery.of(context).size;
     Matrix4 matrix = Matrix4.copy(transformationController.value);
-    matrix.row0 = Vector4(1, 0, 0, -position.dx + size.size.width/2);
-    matrix.row1 = Vector4(0, 1, 0, -position.dy + size.size.height/2);
+    matrix.row0 = Vector4(1, 0, 0, -position.dx + size.width / 2);
+    matrix.row1 = Vector4(0, 1, 0, -position.dy + size.height / 2);
     //matrix.row3 = Vector4(position.dx, position.dy, 0, 1);
 
     animation = animationController.drive(
-      Matrix4Tween(
-        begin: transformationController.value,
-        end: matrix
-      )
-    );
+        Matrix4Tween(begin: transformationController.value, end: matrix));
 
     const spring = SpringDescription(
       mass: 30,
@@ -57,7 +44,6 @@ class _ForceDirectedState extends State<ForceDirected>
     final simulation = SpringSimulation(spring, 0, 1, -5);
 
     animationController.animateWith(simulation);
-
   }
 
   void fillWidg() {
@@ -65,24 +51,23 @@ class _ForceDirectedState extends State<ForceDirected>
     controller.widgets.clear();
     controller.titles.clear();
     controller.vertices.forEach((element) {
-
       TextPainter textPainter = TextPainter(
-          text: TextSpan(text: element.title), maxLines: 1, textDirection: TextDirection.ltr)
+          text: TextSpan(text: element.title),
+          maxLines: 1,
+          textDirection: TextDirection.ltr)
         ..layout(minWidth: 0, maxWidth: double.infinity);
       double textWidth = textPainter.width;
 
       controller.titles.add(Positioned(
-        top: element.position.y + nodeSize/2,
-        left: element.position.x - textWidth,
-        child: Text(
-          element.title,
-          style: GoogleFonts.montserrat(
-          fontSize: 22,
-          fontWeight: FontWeight.w700,
-        ),
-      )
-      )
-      );
+          top: element.position.y + nodeSize / 2,
+          left: element.position.x - textWidth,
+          child: Text(
+            element.title,
+            style: GoogleFonts.montserrat(
+              fontSize: 22,
+              fontWeight: FontWeight.w700,
+            ),
+          )));
     });
     controller.vertices.forEach((element) {
       controller.widgets.add(Positioned(
@@ -113,7 +98,7 @@ class _ForceDirectedState extends State<ForceDirected>
               fillWidg();
             });
           },
-          onTap: (){
+          onTap: () {
             runAnimation(Offset(element.position.x, element.position.y));
           },
           child: Container(
@@ -131,17 +116,17 @@ class _ForceDirectedState extends State<ForceDirected>
 
   @override
   void initState() {
-    animationController = AnimationController(
-        duration: Duration(microseconds: 200),
-        vsync: this
-    );
+    final size = MediaQuery.of(context).size;
+    animationController =
+        AnimationController(duration: Duration(microseconds: 200), vsync: this);
     animationController.addListener(() {
       setState(() {
         transformationController.value = animation.value;
       });
     });
     flag = false;
-    controller = new ForceDirectedController(relations, concepts);
+    map = context.read<AppProvider>().currentMap;
+    controller = ForceDirectedController(map.relations, map.concepts);
     controller.crToVE();
     frame = Offset(4000, 4000);
     controller.setVerticesPos(frame);
@@ -150,12 +135,27 @@ class _ForceDirectedState extends State<ForceDirected>
     flag = true;
     //    print(controller.vertices.indexWhere((element) => element.id == controller.rootId.toString()));
     //print(controller.concepts[controller.concepts.indexWhere((element) => element.id == controller.rootId)]);
-    Vector2 v = Vector2.copy(controller.vertices[controller.vertices.indexWhere((element) => element.id == controller.rootId.toString())].position);
+    Vector2 v = Vector2.copy(controller
+        .vertices[controller.vertices.indexWhere(
+            (element) => element.id == controller.rootId.toString())]
+        .position);
     transformationController.value = Matrix4(
-        0.5, 0, 0, 0,
-        0, 0.5, 0, 0,
-        0, 0, 0.5, 0,
-        -v.x*0.5 + size.size.width/2, -v.y*0.5 + size.size.height/2, 0, 1);
+        0.5,
+        0,
+        0,
+        0,
+        0,
+        0.5,
+        0,
+        0,
+        0,
+        0,
+        0.5,
+        0,
+        -v.x * 0.5 + size.width / 2,
+        -v.y * 0.5 + size.height / 2,
+        0,
+        1);
     super.initState();
   }
 
@@ -167,35 +167,33 @@ class _ForceDirectedState extends State<ForceDirected>
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-      //bottomSheet: BottomSheetPannel(),
+        //bottomSheet: BottomSheetPannel(),
         body: Container(
-          child: InteractiveViewer(
-            constrained: false,
-            boundaryMargin: const EdgeInsets.all(double.infinity),
-            minScale: 0.1,
-            maxScale: 5.6,
-            onInteractionUpdate: (a){
-              //print(transformationController.value);
-              // print("__________________");
-              },
-              transformationController: transformationController,
-              child: Container(
-              width: frame.dx,
-              height: frame.dy,
-              child: CustomPaint(
-                painter: PaintGraph(controller.edges, controller.vertices, flag),
-                child: Stack(
-                  children: [
-                    ...controller.widgets,
-                    ...controller.titles,
-                  ],
-                ),
-              ),
+      child: InteractiveViewer(
+        constrained: false,
+        boundaryMargin: const EdgeInsets.all(double.infinity),
+        minScale: 0.1,
+        maxScale: 5.6,
+        onInteractionUpdate: (a) {
+          //print(transformationController.value);
+          // print("__________________");
+        },
+        transformationController: transformationController,
+        child: Container(
+          width: frame.dx,
+          height: frame.dy,
+          child: CustomPaint(
+            painter: PaintGraph(controller.edges, controller.vertices, flag),
+            child: Stack(
+              children: [
+                ...controller.widgets,
+                ...controller.titles,
+              ],
             ),
           ),
-          )
-    );
+        ),
+      ),
+    ));
   }
 }
