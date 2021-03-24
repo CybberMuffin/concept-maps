@@ -15,7 +15,7 @@ class _BottomPannelState extends State<BottomPannel> {
           Align(
             alignment: Alignment.centerLeft,
             child: Container(
-              margin: EdgeInsets.only(top: 28),
+              margin: EdgeInsets.only(top: 2),
               child: Text(
                 "CONCEPT_01",
                 style: GoogleFonts.montserrat(

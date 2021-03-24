@@ -1,7 +1,9 @@
+import 'package:concept_maps/views/bottom_pannel_graph.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:concept_maps/views/bottom_pannel.dart';
 import "package:swipedetector/swipedetector.dart";
+import 'bottom_pannel_graph.dart';
 
 class BottomSheetPannel extends StatefulWidget {
   // This widget is the root of your application.
@@ -13,6 +15,7 @@ class _BottomSheetPannelState extends State<BottomSheetPannel> with SingleTicker
   List<BottomPannel> panel;
   bool isPannelAdded;
   bool isPannelAddedUpper;
+  bool showGraph;
   AnimationController controller;
   Animation curve;
   Animation<double> panelAnimation;
@@ -55,6 +58,7 @@ class _BottomSheetPannelState extends State<BottomSheetPannel> with SingleTicker
   }
 
 
+
   @override
   void initState(){
     super.initState();
@@ -86,6 +90,7 @@ class _BottomSheetPannelState extends State<BottomSheetPannel> with SingleTicker
     isPannelAdded = false;
     isPannelAddedUpper = false;
     height = 40;
+    showGraph = false;
   }
 
   Widget build(BuildContext context) {
@@ -93,7 +98,7 @@ class _BottomSheetPannelState extends State<BottomSheetPannel> with SingleTicker
         height: height,
         decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: const BorderRadius.all(Radius.circular(25.0)),
+            borderRadius: const BorderRadius.only(topLeft: Radius.circular(25), topRight: Radius.circular(25)),
             boxShadow: [
               BoxShadow(
                 color: Colors.grey.withOpacity(0.5),
@@ -108,47 +113,62 @@ class _BottomSheetPannelState extends State<BottomSheetPannel> with SingleTicker
         child: Container(
           child: SingleChildScrollView(
             scrollDirection: Axis.vertical,
-            child: Container(
-              child: Column(
-                children: [
-                  SwipeDetector(
-                    onSwipeUp: (){
-                      dragPanelUp();
-                    },
-                    onSwipeDown: (){
-                      dragPanelDown();
-                    },
-                    child: Container(
+            child: SwipeDetector(
+                onSwipeLeft: (){
+                  setState(() {
+                    showGraph = true;
+                  });
+                  print(showGraph);
+                },
+              onSwipeRight: (){
+                  setState(() {
+                    showGraph = false;
+                  });
+                  print(showGraph);
+              },
+              child: Container(
+                //color: Colors.red,
+                child: Column(
+                  children: [
+                    SwipeDetector(
+                      onSwipeUp: (){
+                        dragPanelUp();
+                      },
+                      onSwipeDown: (){
+                        dragPanelDown();
+                      },
                       child: Container(
-                        margin: EdgeInsets.only(top: 15),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              child: Icon(Icons.brightness_1_rounded, size: 6, color: Colors.blueGrey[700],),
-                              margin: const EdgeInsets.only(left: 2.0),
-                            ),
-                            Container(
-                              child: Icon(Icons.brightness_1_rounded, size: 6, color: Colors.blueGrey[700]),
-                              margin: const EdgeInsets.only(left: 2.0),
-                            ),
-                            Container(
-                              child: Icon(Icons.brightness_1_rounded, size: 6, color: Colors.blueGrey[700]),
-                              margin: const EdgeInsets.only(left: 2.0),
-                            ),
-                          ],
+                        child: Container(
+                          margin: EdgeInsets.only(top: 15, bottom: 20),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                child: Icon(Icons.brightness_1_rounded, size: 6, color: (showGraph == false) ? Colors.black : Colors.blueGrey[600],),
+                                margin: const EdgeInsets.only(left: 2.0),
+                              ),
+                              Container(
+                                child: Icon(Icons.brightness_1_rounded, size: 6, color: (showGraph == true) ? Colors.black : Colors.blueGrey[600],),
+                                margin: const EdgeInsets.only(left: 2.0),
+                              ),
+                              Container(
+                                child: Icon(Icons.brightness_1_rounded, size: 6, color: Colors.blueGrey[700]),
+                                margin: const EdgeInsets.only(left: 2.0),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  Column(
-                    children:
-                    panel.map((BottomPannel panel) {
-                      return panel;
-                    }).toList(),
+                    (showGraph == false) ? Column(
+                      children:
+                      panel.map((BottomPannel panel) {
+                        return panel;
+                      }).toList(),
 
-                  )
-                ],
+                    ) : BottomPannelGraph()
+                  ],
+                ),
               ),
             ),
           ),

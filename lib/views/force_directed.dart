@@ -8,6 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:vector_math/vector_math_64.dart';
 import 'package:flutter/physics.dart';
 import 'package:provider/provider.dart';
+import 'bottom_sheet_pannel.dart';
 
 class ForceDirected extends StatefulWidget {
   @override
@@ -176,7 +177,7 @@ class _ForceDirectedState extends State<ForceDirected>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        //bottomSheet: BottomSheetPannel(),
+        bottomSheet: BottomSheetPannel(),
         drawer: DrawerMenu(),
         appBar: AppBar(title: Text("Concept Map")),
         body: Container(
