@@ -11,7 +11,6 @@ class PaintBottomGraph extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    print(n);
     var paint = Paint()
       ..color = Color(0xff54c5f8)
       ..strokeWidth = 3
@@ -24,6 +23,14 @@ class PaintBottomGraph extends CustomPainter {
 
     Node main = nodes[nodes.indexWhere((a) => a.parent == "-1")];
     canvas.drawCircle(Offset(main.x, main.y), main.r, paint);
+    print(nodes.indexWhere((a) => a.parent == "-2"));
+
+    if(nodes.indexWhere((a) => a.parent == "-2") == 1) {
+      Node parent = nodes[nodes.indexWhere((a) => a.parent == "-2")];
+      canvas.drawLine(Offset(parent.x - main.r, parent.y - main.r), Offset(parent.x, parent.y), paint);
+      canvas.drawLine(Offset(parent.x + main.r, parent.y - main.r), Offset(parent.x, parent.y), paint);
+    }
+
     main.child.forEach((element) {
       Offset position = Offset(nodes[nodes.indexWhere((a) => a.id == element)].x,
           nodes[nodes.indexWhere((a) => a.id == element)].y);

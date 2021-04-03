@@ -101,11 +101,11 @@ class ForceDirectedController{
     balloon = BalloonTreeController()
     ..relationToNodes(relations, concepts);
 
-    balloon.three[balloon.three.indexWhere((element) => element.parent == -1)].x = size.dx/2;
-    balloon.three[balloon.three.indexWhere((element) => element.parent == -1)].y = size.dy/2;
+    balloon.three[balloon.three.indexWhere((element) => element.parent == "-1")].x = size.dx/2;
+    balloon.three[balloon.three.indexWhere((element) => element.parent == "-1")].y = size.dy/2;
 
     var branch = balloon.three.where((element) => element.parent ==
-        balloon.three[balloon.three.indexWhere((element) => element.parent == -1)].id);
+        balloon.three[balloon.three.indexWhere((element) => element.parent == "-1")].id);
     double startDeg = 45.0;
     double r = 150.0;
     branch.forEach((element) {

@@ -6,6 +6,11 @@ import 'package:concept_maps/models/graph_entities/node.dart';
 class AppProvider with ChangeNotifier {
   MapModel currentMap;
   Node focusNode;
+  bool bottomSheetFlag = false;
+
+  String animationId;
+  bool animationStart = false;
+
 
   Future<MapModel> getMapModel(String field) async {
     if (field != currentMap?.field) currentMap = null;
@@ -15,6 +20,17 @@ class AppProvider with ChangeNotifier {
 
   void setFocusNode(Node node){
     focusNode = node;
+    notifyListeners();
+  }
+
+  void setBottomSheetFlag(bool flag){
+    bottomSheetFlag = flag;
+    notifyListeners();
+  }
+
+  void setAnimationParam(String id){
+    animationId = id;
+    animationStart = true;
     notifyListeners();
   }
 }

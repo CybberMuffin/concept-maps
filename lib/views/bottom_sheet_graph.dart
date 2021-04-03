@@ -33,8 +33,6 @@ class _BottomSheetGraphState extends State<BottomSheetGraph>
         textDirection: TextDirection.ltr)
       ..layout(minWidth: 0, maxWidth: double.infinity);
     double textWidth = textPainter.width;
-    print(textWidth);
-    print(node.x);
 
     widgets.add(Positioned(
         top: node.y + node.r,
@@ -52,11 +50,7 @@ class _BottomSheetGraphState extends State<BottomSheetGraph>
       left: node.x - node.r,
       child: GestureDetector(
         onTap: () {
-          setState(() {
-            //runAnimation(Offset(element.position.x, element.position.y));
-            //context.read<AppProvider>().setFocusNode(controller.balloon
-            //    .three[controller.balloon.three.indexWhere((a) => a.id == element.id)]);
-          });
+            Provider.of<AppProvider>(context, listen: false).setAnimationParam(node.id);
         },
         child: Container(
           height: 2*node.r,
@@ -65,6 +59,25 @@ class _BottomSheetGraphState extends State<BottomSheetGraph>
               color: Color(0xffd0efff),
               border: Border.all(color: Color(0xff2a9df4), width: 3),
               borderRadius: BorderRadius.circular(2*node.r)),
+        ),
+      ),
+    ));
+  }
+
+  void addBackWidget(Node node){
+
+    widgets.add(Positioned(
+      top: node.y - node.r,
+      left: node.x - node.r,
+      child: GestureDetector(
+        onTap: () {
+          Provider.of<AppProvider>(context, listen: false).setAnimationParam(node.id);
+        },
+        child: Container(
+          height: 2*node.r,
+          width: 2*node.r,
+          decoration: BoxDecoration(
+          ),
         ),
       ),
     ));
@@ -84,6 +97,15 @@ class _BottomSheetGraphState extends State<BottomSheetGraph>
     newNodes[0].y = size.height*0.4 - 40 - circleR*4;
     newNodes[0].r = circleR;
     addWidget(newNodes[0]);
+    print(node.parent.runtimeType);
+    if(node.parent != "-1") {
+      print("why&");
+      newNodes.add(Node(node.parent, [node.id], "-2", ""));
+      newNodes[1].x = size.width/2 - 15;
+      newNodes[1].y = size.height*0.4 - 40 - circleR*0.5;
+      newNodes[1].r = circleR;
+      addBackWidget(newNodes[1]);
+    }
     node.child.forEach((element) {
       newNodes.add(Node(
           element,
@@ -123,7 +145,6 @@ class _BottomSheetGraphState extends State<BottomSheetGraph>
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Consumer<AppProvider>(builder: (context, value, _) => Container(
-      color: Color(0xfffa9df4),
       width: size.width - 30,
       height: size.height*0.4,
       child: CustomPaint(

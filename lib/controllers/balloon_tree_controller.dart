@@ -18,7 +18,7 @@ class BalloonTreeController {
     three.add(Node(
         relations[0].to_concept_id,
         childs,
-        -1,
+        "-1",
         concepts[concepts.indexWhere(
                 (element) => element.id == relations[0].to_concept_id)]
             .concept));

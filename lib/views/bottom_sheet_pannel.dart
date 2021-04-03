@@ -3,6 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:concept_maps/views/bottom_pannel.dart';
 import "package:swipedetector/swipedetector.dart";
+import 'package:provider/provider.dart';
+import 'package:concept_maps/providers/app_provider.dart';
 import 'package:concept_maps/models/graph_entities/node.dart';
 
 class BottomSheetPannel extends StatefulWidget {
@@ -91,9 +93,22 @@ class _BottomSheetPannelState extends State<BottomSheetPannel> with SingleTicker
     controller.forward();
     isPannelAdded = false;
     isPannelAddedUpper = false;
-    height = 40;
     panel = Container();
     showGraph = false;
+  }
+
+  @override
+  void didChangeDependencies() {
+    final size = MediaQuery.of(context).size;
+
+    if(Provider.of<AppProvider>(context).bottomSheetFlag == true){
+      height = size.height*0.4;
+      Provider.of<AppProvider>(context).bottomSheetFlag = false;
+    }
+    else{
+      height = 40;
+    }
+    super.didChangeDependencies();
   }
 
   Widget build(BuildContext context) {
@@ -156,13 +171,11 @@ class _BottomSheetPannelState extends State<BottomSheetPannel> with SingleTicker
                     setState(() {
                       showGraph = true;
                     });
-                    print(showGraph);
                   },
                   onSwipeRight: (){
                     setState(() {
                       showGraph = false;
                     });
-                    print(showGraph);
                   },
                   child: Container(
                     //color: Colors.red,

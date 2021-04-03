@@ -102,6 +102,8 @@ class _ForceDirectedState extends State<ForceDirected>
               runAnimation(Offset(element.position.x, element.position.y), 0.7);
               context.read<AppProvider>().setFocusNode(controller.balloon
                   .three[controller.balloon.three.indexWhere((a) => a.id == element.id)]);
+              context.read<AppProvider>().animationStart = false;
+              context.read<AppProvider>().setBottomSheetFlag(true);
             });
           },
           onDoubleTap: () {
@@ -153,30 +155,45 @@ class _ForceDirectedState extends State<ForceDirected>
   void didChangeDependencies() {
     final size = MediaQuery.of(context).size;
 
-    Vector2 v = Vector2.copy(controller
-        .vertices[controller.vertices.indexWhere(
-            (element) => element.id == controller.rootId.toString())]
-        .position);
-    context.read<AppProvider>().focusNode = Node("", [], "", controller.
-    vertices[controller.vertices.indexWhere((element) =>
-    element.id == controller.rootId.toString())].title);
-    transformationController.value = Matrix4(
-        0.2,
-        0,
-        0,
-        0,
-        0,
-        0.2,
-        0,
-        0,
-        0,
-        0,
-        0.2,
-        0,
-        -v.x * 0.2 + size.width / 2,
-        -v.y * 0.2 + size.height / 2,
-        0,
-        1);
+    if(Provider.of<AppProvider>(context).animationStart == true){
+      Vector2 v = controller.vertices[controller.vertices.indexWhere((a) =>
+        a.id == Provider.of<AppProvider>(context).animationId)].position;
+      runAnimation(Offset(v.x, v.y),
+          0.7);
+      Provider.of<AppProvider>(context).bottomSheetFlag = true;
+      context.read<AppProvider>().focusNode = controller.balloon
+          .three[controller.balloon.three.indexWhere((a) => a.id ==
+          Provider.of<AppProvider>(context).animationId)];
+    }
+    else if(Provider.of<AppProvider>(context).bottomSheetFlag == false){
+      context.read<AppProvider>().focusNode = Node("", [], "", controller.
+      vertices[controller.vertices.indexWhere((element) =>
+      element.id == controller.rootId.toString())].title);
+
+      Vector2 v = Vector2.copy(controller
+          .vertices[controller.vertices.indexWhere(
+              (element) => element.id == controller.rootId.toString())]
+          .position);
+
+      transformationController.value = Matrix4(
+          0.2,
+          0,
+          0,
+          0,
+          0,
+          0.2,
+          0,
+          0,
+          0,
+          0,
+          0.2,
+          0,
+          -v.x * 0.2 + size.width / 2,
+          -v.y * 0.2 + size.height / 2,
+          0,
+          1);
+    }
+
     super.didChangeDependencies();
   }
 
