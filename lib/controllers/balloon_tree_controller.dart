@@ -14,7 +14,6 @@ class BalloonTreeController {
         relations.where((a) => a.to_concept_id == relations[0].to_concept_id);
     var childs = raw_childs.map((a) => a.concept_id).toList();
 
-    print(relations[0].to_concept_id);
     three.add(Node(
         relations[0].to_concept_id,
         childs,

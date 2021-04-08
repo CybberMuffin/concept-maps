@@ -11,5 +11,7 @@ class Node{
 
   double x, y;
   double r;
+  double bigR;
+  double deg;
 
 }

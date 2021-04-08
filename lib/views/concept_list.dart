@@ -26,7 +26,6 @@ class _ConceptListState extends State<ConceptList> {
     } else {
       sons.add(Container());
     }
-    print(sons);
     return ListPosition(title: node.title, sons: sons);
   }
 

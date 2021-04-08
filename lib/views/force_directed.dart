@@ -145,8 +145,6 @@ class _ForceDirectedState extends State<ForceDirected>
     controller.forceCalc(frame, 50);
     fillWidg();
     flag = true;
-    //print(controller.vertices.indexWhere((element) => element.id == controller.rootId.toString()));
-    //print(controller.concepts[controller.concepts.indexWhere((element) => element.id == controller.rootId)]);
 
     super.initState();
   }
@@ -216,8 +214,7 @@ class _ForceDirectedState extends State<ForceDirected>
             minScale: 0.1,
             maxScale: 5.6,
             onInteractionUpdate: (a) {
-              //print(transformationController.value);
-              // print("__________________");
+
             },
             transformationController: transformationController,
             child: Container(

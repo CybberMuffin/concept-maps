@@ -26,7 +26,6 @@ class _ListPositionState extends State<ListPosition> {
   var arrow;
 
   checkSons(){
-    print(sons[0]);
     if (sons[0].toString() == "Container") {
       noSons = true;
     } else {
@@ -51,7 +50,6 @@ class _ListPositionState extends State<ListPosition> {
     super.initState();
     rollUp = false;
     noSons = checkSons();
-    print(noSons);
     //arrow = arrowIcon();
   }
 

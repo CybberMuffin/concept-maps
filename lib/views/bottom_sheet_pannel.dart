@@ -164,24 +164,9 @@ class _BottomSheetPannelState extends State<BottomSheetPannel> with SingleTicker
             ),
             Container(
               height: height - 40,
-              child: SingleChildScrollView(
-                scrollDirection: Axis.vertical,
-                child: SwipeDetector(
-                  onSwipeLeft: (){
-                    setState(() {
-                      showGraph = true;
-                    });
-                  },
-                  onSwipeRight: (){
-                    setState(() {
-                      showGraph = false;
-                    });
-                  },
-                  child: Container(
-                    //color: Colors.red,
-                      child: (showGraph == false) ? BottomPannel() : BottomSheetGraph()
-                  ),
-                ),
+              child: Container(
+                //color: Colors.red,
+                  child: (showGraph != false) ? BottomPannel() : BottomSheetGraph()
               ),
             )
           ],
