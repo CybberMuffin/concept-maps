@@ -6,7 +6,7 @@ import 'package:concept_maps/models/graph_entities/node.dart';
 class AppProvider with ChangeNotifier {
   MapModel currentMap;
   Node focusNode;
-  bool bottomSheetFlag = false;
+  bool bottomSheetFlag;
 
   String animationId;
   bool animationStart = false;

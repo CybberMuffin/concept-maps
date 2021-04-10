@@ -41,7 +41,7 @@ class _ForceDirectedState extends State<ForceDirected>
         Matrix4Tween(begin: transformationController.value, end: matrix));
 
     const spring = SpringDescription(
-      mass: 30,
+      mass: 15,
       stiffness: 1,
       damping: 1,
     );
@@ -111,6 +111,7 @@ class _ForceDirectedState extends State<ForceDirected>
               runAnimation(Offset(element.position.x, element.position.y), 0.3);
               context.read<AppProvider>().setFocusNode(controller.balloon
                   .three[controller.balloon.three.indexWhere((a) => a.id == element.id)]);
+              context.read<AppProvider>().animationStart = false;
             });
           },
           child: Container(
@@ -163,7 +164,7 @@ class _ForceDirectedState extends State<ForceDirected>
           .three[controller.balloon.three.indexWhere((a) => a.id ==
           Provider.of<AppProvider>(context).animationId)];
     }
-    else if(Provider.of<AppProvider>(context).bottomSheetFlag == false){
+    else if(Provider.of<AppProvider>(context).bottomSheetFlag == null){
       context.read<AppProvider>().focusNode = Node("", [], "", controller.
       vertices[controller.vertices.indexWhere((element) =>
       element.id == controller.rootId.toString())].title);
