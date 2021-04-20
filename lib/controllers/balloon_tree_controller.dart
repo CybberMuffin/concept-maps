@@ -11,14 +11,13 @@ class BalloonTreeController {
     three.clear();
     var root = relations[0].to_concept_id;
     var raw_childs =
-        relations.where((a) => a.to_concept_id == relations[0].to_concept_id);
+    relations.where((a) => a.to_concept_id == relations[0].to_concept_id);
     var childs = raw_childs.map((a) => a.concept_id).toList();
 
-    print(relations[0].to_concept_id);
     three.add(Node(
         relations[0].to_concept_id,
         childs,
-        -1,
+        "-1",
         concepts[concepts.indexWhere(
                 (element) => element.id == relations[0].to_concept_id)]
             .concept));
@@ -54,7 +53,7 @@ class BalloonTreeController {
 
   findRelInNode(Concept element, List<Concept> concepts) {
     Concept cons_parent =
-        concepts[concepts.indexWhere((a) => a.id == element.aspectOf)];
+    concepts[concepts.indexWhere((a) => a.id == element.aspectOf)];
     if (three.indexWhere((a) => a.id == cons_parent.aspectOf) == -1) {
       findRelInNode(cons_parent, concepts);
     }
@@ -65,4 +64,6 @@ class BalloonTreeController {
         .child
         .add(cons_parent.id);
   }
+
+
 }

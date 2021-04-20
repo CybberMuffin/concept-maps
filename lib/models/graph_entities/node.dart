@@ -5,8 +5,13 @@ class Node{
   Node(this.id, this.child, this.parent, this.title);
 
   var id;
-  var child;
+  List<String> child;
   var parent;
-  var title;
+  String title;
+
+  double x, y;
+  double r;
+  double bigR;
+  double deg;
 
 }

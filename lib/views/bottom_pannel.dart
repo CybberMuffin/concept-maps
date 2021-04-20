@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:concept_maps/models/graph_entities/node.dart';
+import 'package:concept_maps/providers/app_provider.dart';
+import 'package:provider/provider.dart';
 
 class BottomPannel extends StatefulWidget {
-  // This widget is the root of your application.
+
   @override
   _BottomPannelState createState() => _BottomPannelState();
 }
 
 class _BottomPannelState extends State<BottomPannel> {
+
+
   Widget build(BuildContext context) {
     return Container(
       child: Column(
@@ -15,9 +20,9 @@ class _BottomPannelState extends State<BottomPannel> {
           Align(
             alignment: Alignment.centerLeft,
             child: Container(
-              margin: EdgeInsets.only(top: 2),
+              margin: EdgeInsets.only(top: 28),
               child: Text(
-                "CONCEPT_01",
+                context.read<AppProvider>().focusNode.title,
                 style: GoogleFonts.montserrat(
                   fontSize: 24,
                   fontWeight: FontWeight.w900,
