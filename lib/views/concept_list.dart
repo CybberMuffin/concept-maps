@@ -43,7 +43,7 @@ class _ConceptListState extends State<ConceptList> {
     tree = BalloonTreeController().relationToNodes(map.relations, map.concepts);
     parseTitle();
     listPositions =
-        parseSons(tree[tree.indexWhere((element) => element.parent == -1)]);
+        parseSons(tree[tree.indexWhere((element) => element.parent == "-1")]);
   }
 
   Widget build(BuildContext context) {

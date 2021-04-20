@@ -70,6 +70,7 @@ class _ForceDirectedState extends State<ForceDirected>
           left: element.position.x - textWidth,
           child: Text(
             element.title,
+            //+"\n"+element.displacement.x.toString()+"\n"+element.displacement.y.toString()
             style: GoogleFonts.montserrat(
               fontSize: 22,
               fontWeight: FontWeight.w700,

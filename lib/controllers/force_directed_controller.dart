@@ -139,6 +139,10 @@ class ForceDirectedController{
   }
 
   double fRep(var l, var x){
+    return l*l/x;
+  }
+
+  double fEdgeRep(var l, var x){
     return 4*l*l/x;
   }
 
@@ -149,11 +153,11 @@ class ForceDirectedController{
 
   void forceCalc(var size,var iter){
     //var area = size.width*size.height;
-    var side = 1000;
+    var side = 1500;
     var area = side*side;
-    var forceRadius = 500;
-    var dis;
     var l = sqrt(area/vertices.length);
+    var forceRadius = l*3;
+    var dis;
     var i = 0;
     double t = side/2;
     Vector2 delta = new Vector2(0, 0);
@@ -161,6 +165,8 @@ class ForceDirectedController{
       vertices.forEach((v) {
         if(v.isOn == false){
           v.displacement = new Vector2(0, 0);
+
+          //vertices repulsion force
           vertices.forEach((u) {
             if(v.id != u.id){
               if(v.position.x == u.position.x){
@@ -180,27 +186,52 @@ class ForceDirectedController{
               }
             }
           });
+
+
+          //edges repulsion force
           edges.forEach((element) {
             if(element.u.id != v.id && element.v.id != v.id){
-              double halfX = (element.u.position.x + element.v.position.x)/2;
-              double halfY = (element.u.position.y + element.v.position.y)/2;
-              dis = sqrt((v.position.x - halfX)*(v.position.x - halfX) +
-                      (v.position.y - halfY)*(v.position.y - halfY));
+
+              //double halfX = (element.u.position.x + element.v.position.x)/2;
+              //double halfY = (element.u.position.y + element.v.position.y)/2;
+              //dis = sqrt((v.position.x - halfX)*(v.position.x - halfX) +
+              //        (v.position.y - halfY)*(v.position.y - halfY));
+              double a = (element.v.position.y - element.u.position.y);
+              double b = - (element.v.position.x - element.u.position.x);
+              double c = element.u.position.y*(element.v.position.x - element.u.position.x) - element.u.position.x*(element.v.position.y - element.u.position.y);
+              dis = (a*v.position.x +  b*v.position.x + c).abs()/sqrt(pow(a, 2) + pow(b, 2));
               if(dis <= forceRadius){
-                delta.x = v.position.x - halfX;
-                delta.y = v.position.y - halfY;
 
-                delta.x = delta.x*fRep(l, delta.length)/delta.length;
-                delta.y = delta.y*fRep(l, delta.length)/delta.length;
+                double x = (b*(b*v.position.x - a*v.position.y) - a*c)/(a*a + b*b);
+                double y = (a*(-b*v.position.x + a*v.position.y) - b*c)/(a*a + b*b);
+                if(inRange(element.v.position.x, element.u.position.x, x) && inRange(element.v.position.y, element.u.position.y, y)){
 
-                v.displacement.x = v.displacement.x + delta.x;
-                v.displacement.y = v.displacement.y + delta.y;
+                  delta.x = v.position.x - x;
+                  delta.y = v.position.y - y;
+                  //delta.x = v.position.x - halfX;
+                  //delta.y = v.position.y - halfY;
+
+                  if(delta.length == 0){
+                    delta.x++;
+                  }
+
+                  delta.x = delta.x*fRep(l, delta.length)/delta.length;
+                  delta.y = delta.y*fRep(l, delta.length)/delta.length;
+
+                  v.displacement.x = v.displacement.x + delta.x;
+                  v.displacement.y = v.displacement.y + delta.y;
+                }
               }
             }
           });
+
+
         }
       });
 
+
+
+      //vertices attraction force
       edges.forEach((e) {
         delta.x = e.v.position.x - e.u.position.x;
         delta.y = e.v.position.y - e.u.position.y;
@@ -218,11 +249,12 @@ class ForceDirectedController{
       vertices.forEach((v) {
         if(v.isOn == false){
 
+          int d = test3(iter, i);
           v.position.x = v.position.x + v.displacement.x*
-              test3(iter, i)/
+              d/
               v.displacement.length;
           v.position.y = v.position.y + v.displacement.y*
-              test3(iter, i)/
+              d/
               v.displacement.length;
 
           v.displacementPrev = v.displacement.length;
@@ -238,11 +270,35 @@ class ForceDirectedController{
 
   }
 
+  bool inRange(double x1, double x2, double x3) {
+    //print(x1);
+    //print(x2);
+    //print(x3);
+    //print("-----------");
+    if(x1 > x2){
+      if(x3 >= x2 && x3 <= x1){
+        return true;
+      }
+      else{
+        return false;
+      }
+    }
+    else if(x1 <= x2){
+      if(x3 >= x1 && x3 <= x2){
+        return true;
+      }
+      else{
+        return false;
+      }
+    }
+
+  }
+
   int test3(int iter, int i){
     Random rand = Random();
-    int r = rand.nextInt(10);
+    int r = rand.nextInt(i+1);
     if(r == 1){
-      return iter;
+      return iter*2;
     }else{
       return iter - i;
     }
