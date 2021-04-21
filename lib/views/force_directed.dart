@@ -1,6 +1,4 @@
-//JAVA_HOME
-//C:\Program Files\Java\jdk-15.0.1
-
+import 'package:concept_maps/controllers/balloon_tree_controller.dart';
 import 'package:concept_maps/controllers/force_directed_controller.dart';
 import 'package:concept_maps/models/graph_entities/map_model.dart';
 import 'package:concept_maps/models/graph_entities/node.dart';
@@ -8,7 +6,7 @@ import 'package:concept_maps/providers/app_provider.dart';
 import 'package:concept_maps/views/bottom_sheet_pannel.dart';
 import 'package:concept_maps/views/paint_graph.dart';
 import 'package:concept_maps/views/widgets/drawer_menu.dart';
-import 'package:concept_maps/views/widgets/search_app_bar.dart';
+import 'package:concept_maps/views/widgets/search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -22,6 +20,10 @@ class ForceDirected extends StatefulWidget {
 
 class _ForceDirectedState extends State<ForceDirected>
     with SingleTickerProviderStateMixin {
+  List<Node> tree;
+  String title;
+  List<String> nodeTitles = [];
+  //
   AnimationController animationController;
   Animation<Matrix4> animation;
 
@@ -72,11 +74,8 @@ class _ForceDirectedState extends State<ForceDirected>
           top: element.position.y + nodeSize / 2,
           left: element.position.x - textWidth,
           child: Text(
-            element.title +
-                "\n" +
-                element.displacement.x.toString() +
-                "\n" +
-                element.displacement.y.toString(),
+            element.title,
+            //+"\n"+element.displacement.x.toString()+"\n"+element.displacement.y.toString()
             style: GoogleFonts.montserrat(
               fontSize: 22,
               fontWeight: FontWeight.w700,
@@ -136,8 +135,22 @@ class _ForceDirectedState extends State<ForceDirected>
     });
   }
 
+  //
+  parseTitle() {
+    for (int i = 0; i < tree.length; i++) {
+      title = tree[i].title;
+      nodeTitles.add(title);
+    }
+  }
+  //
+
   @override
   void initState() {
+    final map = context.read<AppProvider>().currentMap;
+    //
+    tree = BalloonTreeController().relationToNodes(map.relations, map.concepts);
+    parseTitle();
+    //
     animationController =
         AnimationController(duration: Duration(microseconds: 200), vsync: this);
     animationController.addListener(() {
@@ -147,12 +160,12 @@ class _ForceDirectedState extends State<ForceDirected>
     });
 
     flag = false;
-    map = context.read<AppProvider>().currentMap;
     controller = ForceDirectedController(map.relations, map.concepts);
     controller.crToVE();
     frame = Offset(4000, 4000);
     controller.setVerticesPos(frame);
     controller.forceCalc(frame, 50);
+    context.read<AppProvider>().setTree(controller.balloon.three);
     fillWidg();
     flag = true;
 
@@ -219,10 +232,20 @@ class _ForceDirectedState extends State<ForceDirected>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        resizeToAvoidBottomInset: false,
         bottomSheet: BottomSheetPannel(),
         drawer: DrawerMenu(),
-        appBar: FloatingSearchAppBarExample(),
+        appBar: AppBar(
+          actions: <Widget>[
+            IconButton(
+              onPressed: () {
+                showSearch(
+                    context: context, delegate: Search(nodeTitles, tree));
+              },
+              icon: Icon(Icons.search),
+            )
+          ],
+          title: Text('Concept maps'),
+        ),
         body: Container(
           child: InteractiveViewer(
             constrained: false,
