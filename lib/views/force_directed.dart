@@ -145,6 +145,7 @@ class _ForceDirectedState extends State<ForceDirected>
     frame = Offset(4000, 4000);
     controller.setVerticesPos(frame);
     controller.forceCalc(frame, 50);
+    context.read<AppProvider>().setTree(controller.balloon.three);
     fillWidg();
     flag = true;
 
@@ -176,22 +177,10 @@ class _ForceDirectedState extends State<ForceDirected>
           .position);
 
       transformationController.value = Matrix4(
-          0.2,
-          0,
-          0,
-          0,
-          0,
-          0.2,
-          0,
-          0,
-          0,
-          0,
-          0.2,
-          0,
-          -v.x * 0.2 + size.width / 2,
-          -v.y * 0.2 + size.height / 2,
-          0,
-          1);
+          0.2, 0, 0, 0,
+          0, 0.2, 0, 0,
+          0, 0, 0.2, 0,
+          -v.x * 0.2 + size.width / 2, -v.y * 0.2 + size.height / 2, 0, 1);
     }
 
     super.didChangeDependencies();

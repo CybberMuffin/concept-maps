@@ -11,6 +11,8 @@ class AppProvider with ChangeNotifier {
   String animationId;
   bool animationStart = false;
 
+  List<Node> tree;
+
 
   Future<MapModel> getMapModel(String field) async {
     if (field != currentMap?.field) currentMap = null;
@@ -32,5 +34,9 @@ class AppProvider with ChangeNotifier {
     animationId = id;
     animationStart = true;
     notifyListeners();
+  }
+
+  void setTree(List<Node> t){
+    tree = t;
   }
 }

@@ -166,7 +166,7 @@ class _BottomSheetPannelState extends State<BottomSheetPannel> with SingleTicker
               height: height - 40,
               child: Container(
                 //color: Colors.red,
-                  child: (showGraph != false) ? BottomPannel() : BottomSheetGraph()
+                  child: (showGraph == false) ? BottomPannel() : BottomSheetGraph()
               ),
             )
           ],

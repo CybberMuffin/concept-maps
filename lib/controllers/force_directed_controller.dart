@@ -298,7 +298,7 @@ class ForceDirectedController{
     Random rand = Random();
     int r = rand.nextInt(i+1);
     if(r == 1){
-      return iter*2;
+      return iter*3;
     }else{
       return iter - i;
     }
