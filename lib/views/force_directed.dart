@@ -1,4 +1,3 @@
-import 'package:concept_maps/controllers/balloon_tree_controller.dart';
 import 'package:concept_maps/controllers/force_directed_controller.dart';
 import 'package:concept_maps/models/graph_entities/map_model.dart';
 import 'package:concept_maps/models/graph_entities/node.dart';
@@ -6,7 +5,7 @@ import 'package:concept_maps/providers/app_provider.dart';
 import 'package:concept_maps/views/bottom_sheet_pannel.dart';
 import 'package:concept_maps/views/paint_graph.dart';
 import 'package:concept_maps/views/widgets/drawer_menu.dart';
-import 'package:concept_maps/views/widgets/search.dart';
+import 'package:concept_maps/views/widgets/search_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -20,10 +19,6 @@ class ForceDirected extends StatefulWidget {
 
 class _ForceDirectedState extends State<ForceDirected>
     with SingleTickerProviderStateMixin {
-  List<Node> tree;
-  String title;
-  List<String> nodeTitles = [];
-  //
   AnimationController animationController;
   Animation<Matrix4> animation;
 
@@ -135,22 +130,9 @@ class _ForceDirectedState extends State<ForceDirected>
     });
   }
 
-  //
-  parseTitle() {
-    for (int i = 0; i < tree.length; i++) {
-      title = tree[i].title;
-      nodeTitles.add(title);
-    }
-  }
-  //
-
   @override
   void initState() {
     final map = context.read<AppProvider>().currentMap;
-    //
-    tree = BalloonTreeController().relationToNodes(map.relations, map.concepts);
-    parseTitle();
-    //
     animationController =
         AnimationController(duration: Duration(microseconds: 200), vsync: this);
     animationController.addListener(() {
@@ -234,18 +216,7 @@ class _ForceDirectedState extends State<ForceDirected>
     return Scaffold(
         bottomSheet: BottomSheetPannel(),
         drawer: DrawerMenu(),
-        appBar: AppBar(
-          actions: <Widget>[
-            IconButton(
-              onPressed: () {
-                showSearch(
-                    context: context, delegate: Search(nodeTitles, tree));
-              },
-              icon: Icon(Icons.search),
-            )
-          ],
-          title: Text('Concept maps'),
-        ),
+        appBar: SearchAppBar(),
         body: Container(
           child: InteractiveViewer(
             constrained: false,

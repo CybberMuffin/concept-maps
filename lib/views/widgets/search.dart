@@ -25,14 +25,10 @@ class Search extends SearchDelegate {
 
   @override
   Widget buildResults(BuildContext context) {
-    // return Container(
-    //   child: Center(
-    //     child: Text(selectedResult),
-    //   ),
-    // );
     Navigator.pop(context);
     Provider.of<AppProvider>(context, listen: false).setAnimationParam(
         tree.firstWhere((element) => element.title == selectedResult).id);
+    return Container();
   }
 
   List<String> listExample;

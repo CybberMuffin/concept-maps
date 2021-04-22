@@ -66,7 +66,6 @@ class _BottomSheetPannelState extends State<BottomSheetPannel>
   @override
   void initState() {
     super.initState();
-    pages = [BottomPannel(), BottomSheetGraph()];
     pageIndex = 0;
     purpleSticker = false;
     greenSticker = false;
@@ -106,14 +105,25 @@ class _BottomSheetPannelState extends State<BottomSheetPannel>
 
   @override
   void didChangeDependencies() {
+    pages = [BottomPannel(), BottomSheetGraph()];
     final size = MediaQuery.of(context).size;
 
     if (Provider.of<AppProvider>(context).bottomSheetFlag == true) {
       height = size.height * 0.4;
+      if (purpleSticker == false && pageIndex == 0) {
+        greenSticker = true;
+      }
+      if (greenSticker == false && pageIndex == 1) {
+        purpleSticker = true;
+      }
       Provider.of<AppProvider>(context).bottomSheetFlag = false;
     } else {
+      greenSticker = false;
+      purpleSticker = false;
+      pageIndex = 0;
       height = 40;
     }
+
     super.didChangeDependencies();
   }
 
@@ -122,7 +132,7 @@ class _BottomSheetPannelState extends State<BottomSheetPannel>
       height: (height == 40) ? 70 : 305,
       child: Stack(children: [
         Positioned(
-          left: 40,
+          left: 80,
           top: (purpleSticker == false) ? 15 : 0,
           child: InkWell(
             onTap: () {
@@ -132,6 +142,13 @@ class _BottomSheetPannelState extends State<BottomSheetPannel>
                   greenSticker = false;
                 }
                 pageIndex = 1;
+
+                if (greenSticker == false && purpleSticker == false) {
+                  setState(() {
+                    height = 40;
+                    pageIndex = 0;
+                  });
+                }
               });
             },
             child: Container(
@@ -149,7 +166,7 @@ class _BottomSheetPannelState extends State<BottomSheetPannel>
           ),
         ),
         Positioned(
-          left: 80,
+          left: 40,
           top: (greenSticker == false) ? 15 : 0,
           child: InkWell(
             onTap: () {
@@ -159,6 +176,13 @@ class _BottomSheetPannelState extends State<BottomSheetPannel>
                   purpleSticker = false;
                 }
                 pageIndex = 0;
+
+                if (greenSticker == false && purpleSticker == false) {
+                  setState(() {
+                    height = 40;
+                    pageIndex = 0;
+                  });
+                }
               });
             },
             child: Container(
