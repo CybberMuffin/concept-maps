@@ -3,11 +3,18 @@ import 'package:concept_maps/services/api_service.dart';
 import 'package:flutter/material.dart';
 
 class AppProvider with ChangeNotifier {
-  MapModel currentMap;
+  List<MapModel> maps;
+  MapModel _currentMap;
 
-  Future<MapModel> getMapModel(String field) async {
-    if (field != currentMap?.field) currentMap = null;
-    currentMap ??= await ApiService.fetchConceptRelations(field);
-    return currentMap;
+  MapModel get currentMap => _currentMap;
+
+  set currentMap(MapModel currentMap) {
+    _currentMap = currentMap;
+    notifyListeners();
+  }
+
+  Future<void> fetchAllMaps() async {
+    maps ??= await ApiService.fetchBranches();
+    return maps;
   }
 }

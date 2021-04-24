@@ -1,13 +1,14 @@
 import 'dart:convert';
 import 'package:concept_maps/models/graph_entities/map_model.dart';
+import 'package:concept_maps/utils/course_key_list.dart';
 import 'package:http/http.dart' as http;
 
 abstract class ApiService {
-  static Future<MapModel> fetchConceptRelations(String field) async {
-    String relationsUrl =
-        "https://semantic-portal.net/api/branch/$field/concepts/relations";
-    String conceptsUrl =
-        "https://semantic-portal.net/api/branch/$field/concepts";
+  static const String _apiUrl = "https://semantic-portal.net";
+
+  static Future<MapModel> _fetchConceptRelations(String field) async {
+    String relationsUrl = "$_apiUrl/api/branch/$field/concepts/relations";
+    String conceptsUrl = "$_apiUrl/api/branch/$field/concepts";
 
     final response = await Future.wait<http.Response>(
       [
@@ -30,7 +31,18 @@ abstract class ApiService {
         conceptsResult,
       );
     } else {
-      throw Exception("Error ocured during fetch of map model");
+      throw Exception("Error occured during fetch of map model");
     }
+  }
+
+  static Future<List<MapModel>> fetchBranches() async {
+    final List<MapModel> maps = await Future.wait<MapModel>(
+      CourseListInfo.courseKeyList
+          .sublist(0, 9)
+          .map<Future<MapModel>>((key) => _fetchConceptRelations(key))
+          .toList(),
+    );
+
+    return maps;
   }
 }

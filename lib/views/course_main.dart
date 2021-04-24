@@ -1,7 +1,7 @@
 import 'package:concept_maps/providers/app_provider.dart';
+import 'package:concept_maps/views/courses_menu/courses_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'force_directed.dart';
 
 class CourseMain extends StatefulWidget {
   @override
@@ -12,11 +12,11 @@ class _CourseMainState extends State<CourseMain> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: context.read<AppProvider>().getMapModel('dart').then(
+      future: context.read<AppProvider>().fetchAllMaps().then(
             (_) => Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(
-                builder: (BuildContext context) => ForceDirected(),
+                builder: (BuildContext context) => CoursesMenu(),
               ),
               (_) => false,
             ),
