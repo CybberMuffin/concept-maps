@@ -2,7 +2,6 @@ import 'package:concept_maps/controllers/force_directed_controller.dart';
 import 'package:concept_maps/models/graph_entities/map_model.dart';
 import 'package:concept_maps/models/graph_entities/node.dart';
 import 'package:concept_maps/providers/app_provider.dart';
-import 'package:concept_maps/views/bottom_sheet_pannel.dart';
 import 'package:concept_maps/views/paint_graph.dart';
 import 'package:concept_maps/views/widgets/drawer_menu.dart';
 import 'package:concept_maps/views/widgets/search_app_bar.dart';
@@ -11,6 +10,8 @@ import 'package:flutter/physics.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:vector_math/vector_math_64.dart';
+
+import 'bottom_sheet_pannel.dart';
 
 class ForceDirected extends StatefulWidget {
   @override
