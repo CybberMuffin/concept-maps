@@ -1,6 +1,7 @@
 import 'package:concept_maps/controllers/balloon_tree_controller.dart';
 import 'package:concept_maps/models/graph_entities/edge.dart';
 import 'package:concept_maps/models/graph_entities/vertice.dart';
+import 'package:concept_maps/utils/node_value_list.dart';
 import 'package:flutter/material.dart';
 import 'package:vector_math/vector_math_64.dart';
 import 'dart:math';
@@ -34,7 +35,7 @@ class ForceDirectedController{
       vertices.add(Vertice(a.id, a.concept));
     });
     relations.forEach((a) {
-      edges.add(Edge(vertices[vertices.indexWhere((b) => b.id == a.concept_id)], vertices[vertices.indexWhere((b) => b.id == a.to_concept_id)]));
+      edges.add(Edge(vertices[vertices.indexWhere((b) => b.id == a.conceptId)], vertices[vertices.indexWhere((b) => b.id == a.toConceptId)]));
     });
     concepts.forEach((a) {
       if(a.isAspect == "1"){
@@ -82,9 +83,9 @@ class ForceDirectedController{
         r = 150.0;
         double x = r*cos(deg * (pi / 180.0)) + node.x;
         double y = r*sin(deg * (pi / 180.0)) + node.y;
-
         three[three.indexWhere((a) => a.id == element)].x = x;
         three[three.indexWhere((a) => a.id == element)].y = y;
+        print([x, y]);
         nodeRecursion(three[three.indexWhere((a) => a.id == element)], deg, three);
         deg = deg + deltaDeg;
       });
@@ -93,34 +94,54 @@ class ForceDirectedController{
     }
   }
 
+  void setVerticesEdgesColors(List<Node> tree){
+    
+    vertices.forEach((a) {
+      int treeIndex = tree.indexWhere((element) => element.id == a.id);
+      a.mainColor = tree[treeIndex].mainColor;
+      a.sideColor = tree[treeIndex].sideColor;
+      a.size = tree[treeIndex].d;
+    });  
+    
+    edges.forEach((a) {
+      if(a.v.mainColor == NodeValueList.color[0][0] || a.u.mainColor == NodeValueList.color[0][0]){
+        a.edgeColor = NodeValueList.color[0][1];
+      }else{
+        a.edgeColor = tree.firstWhere((element) => element.id == a.u.id).sideColor;
+      }
+    });
+  }
+  
   void setVerticesPos(Offset size){
     int x;
     int y;
     Random rand = new Random();
-
     balloon = BalloonTreeController()
     ..relationToNodes(relations, concepts);
-
     balloon.three[balloon.three.indexWhere((element) => element.parent == "-1")].x = size.dx/2;
     balloon.three[balloon.three.indexWhere((element) => element.parent == "-1")].y = size.dy/2;
-
     var branch = balloon.three.where((element) => element.parent ==
         balloon.three[balloon.three.indexWhere((element) => element.parent == "-1")].id);
     double startDeg = 45.0;
     double r = 150.0;
     branch.forEach((element) {
+      print(element.id);
       double x = r*cos(startDeg * (pi / 180.0)) + size.dx/2;
       double y = r*sin(startDeg * (pi / 180.0)) + size.dy/2;
-
       balloon.three[balloon.three.indexWhere((a) => a.id == element.id)].x = x;
       balloon.three[balloon.three.indexWhere((a) => a.id == element.id)].y = y;
 
       nodeRecursion(balloon.three[balloon.three.indexWhere((a) => a.id == element.id)], startDeg, balloon.three);
-
       startDeg = startDeg + 360.0/branch.length.toDouble();
     });
-
     balloon.three.forEach((element) {
+      print(element.id);
+      print(vertices[vertices.indexWhere((a) => a.id == element.id)].id);
+      print(element.x);
+      print(element.x.runtimeType);
+      print(element.y);
+      print(element.y.runtimeType);
+      print("_________________________");
         vertices[vertices.indexWhere((a) => a.id == element.id)].position = Vector2(element.x, element.y);
     });
 
@@ -143,7 +164,7 @@ class ForceDirectedController{
   }
 
   double fEdgeRep(var l, var x){
-    return 4*l*l/x;
+    return 12*l*l/x;
   }
 
   double euDistance(Vector2 p){
@@ -153,10 +174,11 @@ class ForceDirectedController{
 
   void forceCalc(var size,var iter){
     //var area = size.width*size.height;
-    var side = 1500;
+    var side = 30*vertices.length;
+    print(vertices.length);
     var area = side*side;
     var l = sqrt(area/vertices.length);
-    var forceRadius = l*3;
+    double forceRadius = 500.0;
     var dis;
     var i = 0;
     double t = side/2;
@@ -192,24 +214,24 @@ class ForceDirectedController{
           edges.forEach((element) {
             if(element.u.id != v.id && element.v.id != v.id){
 
-              //double halfX = (element.u.position.x + element.v.position.x)/2;
-              //double halfY = (element.u.position.y + element.v.position.y)/2;
-              //dis = sqrt((v.position.x - halfX)*(v.position.x - halfX) +
-              //        (v.position.y - halfY)*(v.position.y - halfY));
-              double a = (element.v.position.y - element.u.position.y);
-              double b = - (element.v.position.x - element.u.position.x);
-              double c = element.u.position.y*(element.v.position.x - element.u.position.x) - element.u.position.x*(element.v.position.y - element.u.position.y);
-              dis = (a*v.position.x +  b*v.position.x + c).abs()/sqrt(pow(a, 2) + pow(b, 2));
+              double halfX = (element.u.position.x + element.v.position.x)/2;
+              double halfY = (element.u.position.y + element.v.position.y)/2;
+              dis = sqrt((v.position.x - halfX)*(v.position.x - halfX) +
+                      (v.position.y - halfY)*(v.position.y - halfY));
+              //double a = (element.v.position.y - element.u.position.y);
+              //double b = - (element.v.position.x - element.u.position.x);
+              //double c = element.u.position.y*(element.v.position.x - element.u.position.x) - element.u.position.x*(element.v.position.y - element.u.position.y);
+              //dis = (a*v.position.x +  b*v.position.x + c).abs()/sqrt(pow(a, 2) + pow(b, 2));
               if(dis <= forceRadius){
 
-                double x = (b*(b*v.position.x - a*v.position.y) - a*c)/(a*a + b*b);
-                double y = (a*(-b*v.position.x + a*v.position.y) - b*c)/(a*a + b*b);
-                if(inRange(element.v.position.x, element.u.position.x, x) && inRange(element.v.position.y, element.u.position.y, y)){
+                //double x = (b*(b*v.position.x - a*v.position.y) - a*c)/(a*a + b*b);
+                //double y = (a*(-b*v.position.x + a*v.position.y) - b*c)/(a*a + b*b);
+                //if(inRange(element.v.position.x, element.u.position.x, x) && inRange(element.v.position.y, element.u.position.y, y)){
 
-                  delta.x = v.position.x - x;
-                  delta.y = v.position.y - y;
-                  //delta.x = v.position.x - halfX;
-                  //delta.y = v.position.y - halfY;
+                  //delta.x = v.position.x - x;
+                  //delta.y = v.position.y - y;
+                  delta.x = v.position.x - halfX;
+                  delta.y = v.position.y - halfY;
 
                   if(delta.length == 0){
                     delta.x++;
@@ -220,7 +242,7 @@ class ForceDirectedController{
 
                   v.displacement.x = v.displacement.x + delta.x;
                   v.displacement.y = v.displacement.y + delta.y;
-                }
+                //}
               }
             }
           });
@@ -249,7 +271,7 @@ class ForceDirectedController{
       vertices.forEach((v) {
         if(v.isOn == false){
 
-          int d = test3(iter, i);
+          double d = test3(iter, i, forceRadius);
           v.position.x = v.position.x + v.displacement.x*
               d/
               v.displacement.length;
@@ -294,13 +316,13 @@ class ForceDirectedController{
 
   }
 
-  int test3(int iter, int i){
+  double test3(int iter, int i, double rad){
     Random rand = Random();
     int r = rand.nextInt(i+1);
-    if(r == 1){
-      return iter*3;
+    if(r == 1 && iter != 1){
+      return iter*3.0;
     }else{
-      return iter - i;
+      return rad - (rad/iter)*i;
     }
   }
 

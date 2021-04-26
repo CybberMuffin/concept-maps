@@ -12,7 +12,7 @@ class _CourseMainState extends State<CourseMain> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: context.read<AppProvider>().getMapModel('dart').then(
+      future: context.read<AppProvider>().getMapModel('python').then(
             (_) => Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(

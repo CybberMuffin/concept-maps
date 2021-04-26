@@ -19,6 +19,8 @@ class MyApp extends StatelessWidget {
         title: "My Demo Media Query",
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
+          bottomSheetTheme: BottomSheetThemeData(
+              backgroundColor: Colors.black54.withOpacity(0)),
           textTheme: GoogleFonts.montserratTextTheme(
             Theme.of(context).textTheme,
           ),

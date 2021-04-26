@@ -1,6 +1,7 @@
 import 'package:concept_maps/models/graph_entities/map_model.dart';
 import 'package:concept_maps/providers/app_provider.dart';
 import 'package:concept_maps/views/widgets/drawer_menu.dart';
+import 'package:concept_maps/views/widgets/search_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:concept_maps/controllers/force_directed_controller.dart';
 import 'package:concept_maps/views/paint_graph.dart';
@@ -66,11 +67,11 @@ class _ForceDirectedState extends State<ForceDirected>
 
 
       controller.titles.add(Positioned(
-          top: element.position.y + nodeSize / 2,
+          top: element.position.y + element.size / 2,
           left: element.position.x - textWidth,
           child: Text(
             element.title,
-            //+"\n"+element.displacement.x.toString()+"\n"+element.displacement.y.toString()
+            //+"\n"+element.displacement.x.toString()+"\n"+element.displacement.y.toString(),
             style: GoogleFonts.montserrat(
               fontSize: 22,
               fontWeight: FontWeight.w700,
@@ -78,8 +79,8 @@ class _ForceDirectedState extends State<ForceDirected>
           )));
 
       controller.widgets.add(Positioned(
-        top: element.position.y - nodeSize / 2,
-        left: element.position.x - nodeSize / 2,
+        top: element.position.y - element.size / 2,
+        left: element.position.x - element.size / 2,
         child: GestureDetector(
           onPanDown: (details) {
             element.isOn = true;
@@ -116,12 +117,12 @@ class _ForceDirectedState extends State<ForceDirected>
             });
           },
           child: Container(
-            height: nodeSize,
-            width: nodeSize,
+            height: element.size,
+            width: element.size,
             decoration: BoxDecoration(
-                color: Color(0xffd0efff),
-                border: Border.all(color: Color(0xff2a9df4), width: 3),
-                borderRadius: BorderRadius.circular(nodeSize)),
+                color: element.sideColor,
+                border: Border.all(color: element.mainColor, width: 6),
+                borderRadius: BorderRadius.circular(element.size)),
           ),
         ),
       ));
@@ -142,10 +143,12 @@ class _ForceDirectedState extends State<ForceDirected>
     map = context.read<AppProvider>().currentMap;
     controller = ForceDirectedController(map.relations, map.concepts);
     controller.crToVE();
-    frame = Offset(4000, 4000);
+    frame = Offset(controller.vertices.length.toDouble()*800
+        , controller.vertices.length.toDouble()*800);
     controller.setVerticesPos(frame);
     controller.forceCalc(frame, 50);
     context.read<AppProvider>().setTree(controller.balloon.three);
+    controller.setVerticesEdgesColors(controller.balloon.three);
     fillWidg();
     flag = true;
 
@@ -196,8 +199,8 @@ class _ForceDirectedState extends State<ForceDirected>
   Widget build(BuildContext context) {
     return Scaffold(
         bottomSheet: BottomSheetPannel(),
+        appBar: SearchAppBar(),
         drawer: DrawerMenu(),
-        appBar: AppBar(title: Text("Concept Map")),
         body: Container(
           child: InteractiveViewer(
             constrained: false,
