@@ -2,6 +2,7 @@ import 'package:concept_maps/models/dedactic_relations_entities/concept_in_these
 import 'package:concept_maps/models/general_entities/concept.dart';
 import 'package:concept_maps/models/general_entities/thesis.dart';
 import 'package:concept_maps/models/graph_entities/map_model.dart';
+import 'package:concept_maps/models/graph_entities/node.dart';
 import 'package:concept_maps/services/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:concept_maps/models/graph_entities/node.dart';

@@ -50,6 +50,18 @@ class BalloonTreeController {
   List<Node> relationToNodes(List<Relation> relations, List<Concept> concepts) {
     three.clear();
     String firstId;
+    var root = relations[0].toConceptId;
+    var raw_childs =
+        relations.where((a) => a.toConceptId == relations[0].toConceptId);
+    var childs = raw_childs.map((a) => a.conceptId).toList();
+
+    three.add(Node(
+        relations[0].toConceptId,
+        childs,
+        "-1",
+        concepts[concepts.indexWhere(
+                (element) => element.id == relations[0].toConceptId)]
+            .concept));
     relations.forEach((element) {
       if (element.relationClass != "c2c-part-of") print(element.relationClass);
     });
@@ -148,4 +160,17 @@ class BalloonTreeController {
   //       .add(cons_parent.id);
   // }
 
+  findRelInNode(Concept element, List<Concept> concepts) {
+    Concept cons_parent =
+        concepts[concepts.indexWhere((a) => a.id == element.aspectOf)];
+    if (three.indexWhere((a) => a.id == cons_parent.aspectOf) == -1) {
+      findRelInNode(cons_parent, concepts);
+    }
+
+    three.add(
+        Node(cons_parent.id, [], cons_parent.aspectOf, cons_parent.concept));
+    three[three.indexWhere((a) => a.id == cons_parent.aspectOf)]
+        .child
+        .add(cons_parent.id);
+  }
 }

@@ -48,6 +48,7 @@ class _ConceptListState extends State<ConceptList> {
 
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       drawer: DrawerMenu(),
       appBar: AppBar(title: Text("Concept List")),
       body: Container(

@@ -26,15 +26,15 @@ class MapModel {
   }
 
   factory MapModel.fromMap(
-    String field,
-    List relations,
-    List concepts,
-  ) {
+      String field,
+      List relations,
+      List concepts,
+      ) {
     return MapModel(
       relations:
-          relations.map<Relation>((json) => Relation.fromJson(json)).toList(),
+      relations.map<Relation>((json) => Relation.fromJson(json)).toList(),
       concepts:
-          concepts.map<Concept>((json) => Concept.fromJson(json)).toList(),
+      concepts.map<Concept>((json) => Concept.fromJson(json)).toList(),
       field: field,
     );
   }

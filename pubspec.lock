@@ -102,6 +102,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.12.10"
+  material_floating_search_bar:
+    dependency: "direct main"
+    description:
+      name: material_floating_search_bar
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.3.4"
   meta:
     dependency: transitive
     description:
@@ -185,7 +192,11 @@ packages:
       name: process
       url: "https://pub.dartlang.org"
     source: hosted
+<<<<<<< HEAD
     version: "4.1.1"
+=======
+    version: "4.2.1"
+>>>>>>> valya
   provider:
     dependency: "direct main"
     description:
@@ -267,7 +278,7 @@ packages:
       name: win32
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.4"
+    version: "2.0.5"
   xdg_directories:
     dependency: transitive
     description:
