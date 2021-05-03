@@ -9,6 +9,7 @@ class BalloonTreeController {
   BalloonTreeController();
 
   List<Node> three = [];
+  double test;
 
 
   void setNode(Concept concept, Node parent, List<Relation> relations, List<Concept> concepts, int depth){
