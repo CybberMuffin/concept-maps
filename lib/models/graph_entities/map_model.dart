@@ -1,4 +1,4 @@
-import 'package:concept_maps/models/graph_entities/concept.dart';
+import 'package:concept_maps/models/general_entities/concept.dart';
 import 'package:concept_maps/models/graph_entities/relations.dart';
 import 'package:flutter/foundation.dart';
 
