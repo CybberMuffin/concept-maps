@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class Node{
 
-  Node(this.id, this.child, this.parent, this.title, [this.mainColor, this.sideColor, this.d]);
+  Node(this.id, this.child, this.parent, this.title, [this.mainColor, this.sideColor, this.d, this.isAspect]);
 
   var id;
   List<String> child;
@@ -19,5 +19,7 @@ class Node{
   double d;
   double bigR;
   double deg;
+
+  String isAspect;
 
 }

@@ -1,9 +1,11 @@
 import 'package:concept_maps/models/graph_entities/map_model.dart';
 import 'package:concept_maps/providers/app_provider.dart';
+import 'package:concept_maps/views/widgets/dots_indicator.dart';
 import 'dart:math';
 import 'package:flutter/animation.dart';
 import 'package:flutter/material.dart';
 import 'package:concept_maps/models/graph_entities/node.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:concept_maps/views/paint_bottom_graph.dart';
@@ -18,6 +20,7 @@ class _BottomSheetGraphState extends State<BottomSheetGraph>
     with SingleTickerProviderStateMixin {
 
   Node node;
+  List<Node> tree;
   List<Node> newNodes = [];
   MapModel map;
   List<Widget> widgets = [];
@@ -33,9 +36,7 @@ class _BottomSheetGraphState extends State<BottomSheetGraph>
     animation = animationController
         .drive(CurveTween(curve: Curves.easeInOut))
         .drive(Tween<double>(begin: velocity, end: 0));
-    //animationController.animateTo(100);
     animationController.forward(from: 0.0);
-    //animation = Tween<double>(begin: velocity, end: 0).animate(animationController);
   }
 
   void addWidget(Node node){
@@ -68,8 +69,8 @@ class _BottomSheetGraphState extends State<BottomSheetGraph>
           height: 2*node.r,
           width: 2*node.r,
           decoration: BoxDecoration(
-              color: Color(0xffd0efff),
-              border: Border.all(color: Color(0xff2a9df4), width: 3),
+              color: node.sideColor,
+              border: Border.all(color: node.mainColor, width: 3),
               borderRadius: BorderRadius.circular(2*node.r)),
         ),
       ),
@@ -91,6 +92,20 @@ class _BottomSheetGraphState extends State<BottomSheetGraph>
           ),
         ),
       ),
+    ));
+
+    List<bool> dots = [];
+    tree.firstWhere((a) => a.id == node.id).child.forEach((element) {
+      if(node.child.contains(element)){
+        dots.add(true);
+      }
+      else{
+        dots.add(false);
+      }
+    });
+    widgets.add(Positioned(
+      top: 0,
+      child: DotsIndicator(dots),
     ));
   }
 
@@ -151,6 +166,7 @@ class _BottomSheetGraphState extends State<BottomSheetGraph>
     newNodes[index].r = removeNode.r;
     newNodes[index].bigR = removeNode.bigR;
   }
+
   void removeAndAddNode(Node removeNode, String nextId, int index, double startDeg){
     newNodes.remove(removeNode);
     newNodes[0].child.remove(removeNode.id);
@@ -185,7 +201,225 @@ class _BottomSheetGraphState extends State<BottomSheetGraph>
     newNodes[index].bigR = removeNode.bigR;
     //newNodes.length - 1
   }
+
+  void removeNode(Node node){
+    newNodes.remove(node);
+    newNodes[0].child.remove(node.id);
+  }
+
+  void addNewNode(Node node){
+    newNodes.add(node);
+    newNodes[0].child.add(node.id);
+  }
+
+  void insertNewNode(Node node, int index){
+    newNodes.insert(index, node);
+    newNodes[0].child.add(node.id);
+  }
+
+  void impact(double deg){
+    if(deg == -180.0){
+      HapticFeedback.lightImpact();
+    }
+  }
+
+  void resetLeftMoreThenFour(double displ){
+    double currentDeg;
+    double a;
+    Node nodeToAdd;
+    bool removeFirst = false;
+    bool addLast = false;
+    newNodes.asMap().forEach((key, element) {
+      impact(element.deg);
+      if(key > 1){
+        if(key == 2){
+          displ = (displ*180.0)/(pi*element.bigR);
+          currentDeg = element.deg + displ;
+
+          a = asin(element.r/element.bigR)*(180.0/pi);
+          if(element.deg <= - 181.0 - a){
+            removeFirst = true;
+          }
+        }
+        else if(key > 2){
+          currentDeg += 45.0;
+        }
+        element.x = element.bigR*cos((currentDeg) * (pi / 180.0)) + newNodes[0].x;
+        element.y = element.bigR*sin((currentDeg) * (pi / 180.0)) + newNodes[0].y;
+        element.deg = currentDeg;
+        addWidget(element);
+      }
+
+      if(key == newNodes.length - 1){
+        a = asin(element.r/element.bigR)*(180.0/pi);
+        if(element.deg <= - 45.0 + a){
+          addLast = true;
+          int index = node.child.indexWhere((a) => a == element.id) + 1;
+          if(index > node.child.length - 1){
+            index = 0;
+          }
+          String id = node.child[index];
+          nodeToAdd = tree.firstWhere((a) => a.id == id);
+          nodeToAdd.bigR = element.bigR;
+          nodeToAdd.r = element.r;
+          nodeToAdd.x = newNodes[0].x;
+          nodeToAdd.y = newNodes[0].y;
+        }
+      }
+    });
+    if(removeFirst){
+      removeNode(newNodes[2]);
+    }
+    if(addLast){
+      addNewNode(nodeToAdd);
+    }
+  }
+
+  void resetLeftLessThenFour(double displ){
+    double currentDeg;
+    double a;
+    bool c = true;
+    newNodes.asMap().forEach((key, element) {
+      impact(element.deg);
+      if(key > 1){
+        a = asin(element.r/element.bigR)*(180.0/pi);
+        if(element.deg >= - 180.0 + 2*a && c){
+          if(key == 2){
+            displ = (displ*180.0)/(pi*element.bigR);
+            currentDeg = element.deg + displ;
+          }
+          else if(key > 2){
+            currentDeg += 45.0;
+          }
+          element.x = element.bigR*cos((currentDeg) * (pi / 180.0)) + newNodes[0].x;
+          element.y = element.bigR*sin((currentDeg) * (pi / 180.0)) + newNodes[0].y;
+          element.deg = currentDeg;
+          addWidget(element);
+        }
+        else{
+          c = false;
+          addWidget(element);
+        }
+      }
+    });
+  }
+
+  void resetLeft(double displ){
+    widgets.clear();
+
+    if(tree.firstWhere((a) => a.id == newNodes[0].id).child.length <= 4){
+      resetLeftLessThenFour(displ);
+    }else{
+      resetLeftMoreThenFour(displ);
+    }
+
+  }
+
+  void resetRightLessThenFour(displ){
+    double currentDeg;
+    double a;
+    bool c = true;
+    int childMax = newNodes.length - 1;
+    for(int i = childMax; i > 1; i--){
+      impact(newNodes[i].deg);
+      a = asin(newNodes[i].r/newNodes[i].bigR)*(180.0/pi);
+      if(newNodes[i].deg <= 0 - 2*a && c){
+        if(i == childMax){
+          displ = (displ*180.0)/(pi*newNodes[i].bigR);
+          currentDeg = newNodes[i].deg + displ;
+        }
+        else if(i < childMax){
+          currentDeg -= 45.0;
+        }
+        newNodes[i].x = newNodes[i].bigR*cos((currentDeg) * (pi / 180.0)) + newNodes[0].x;
+        newNodes[i].y = newNodes[i].bigR*sin((currentDeg) * (pi / 180.0)) + newNodes[0].y;
+        newNodes[i].deg = currentDeg;
+        addWidget(newNodes[i]);
+      }
+      else{
+        c = false;
+        addWidget(newNodes[i]);
+      }
+    }
+  }
+
+  void resetRightMoreThenFour(displ){
+    double currentDeg;
+    double a;
+    Node nodeToAdd;
+    bool removeLast = false;
+    bool addFirst = false;
+    int childMax = newNodes.length - 1;
+    for(int i = childMax; i > 1; i--){
+      impact(newNodes[i].deg);
+        if(i == childMax){
+          displ = (displ*180.0)/(pi*newNodes[i].bigR);
+          currentDeg = newNodes[i].deg + displ;
+
+          a = asin(newNodes[i].r/newNodes[i].bigR)*(180.0/pi);
+          if(newNodes[i].deg >= 0.0 + a){
+            removeLast = true;
+          }
+        }
+        else if(i < childMax){
+          currentDeg -= 45.0;
+        }
+        newNodes[i].x = newNodes[i].bigR*cos((currentDeg) * (pi / 180.0)) + newNodes[0].x;
+        newNodes[i].y = newNodes[i].bigR*sin((currentDeg) * (pi / 180.0)) + newNodes[0].y;
+        newNodes[i].deg = currentDeg;
+        addWidget(newNodes[i]);
+
+      if(i == 2){
+        a = asin(newNodes[i].r/newNodes[i].bigR)*(180.0/pi);
+        if(newNodes[i].deg >= - 140 - a){
+          addFirst = true;
+          int index = node.child.indexWhere((a) => a == newNodes[i].id) - 1;
+          if(index < 0){
+            index = node.child.length - 1;
+          }
+          String id = node.child[index];
+          nodeToAdd = tree.firstWhere((a) => a.id == id);
+          nodeToAdd.bigR = newNodes[i].bigR;
+          nodeToAdd.r = newNodes[i].r;
+          nodeToAdd.x = newNodes[0].x;
+          nodeToAdd.y = newNodes[0].y;
+        }
+      }
+    }
+    if(removeLast){
+      removeNode(newNodes[newNodes.length - 1]);
+    }
+    if(addFirst){
+      insertNewNode(nodeToAdd, 2);
+    }
+  }
+
+  void resetRight(double displ){
+    widgets.clear();
+
+    if(tree.firstWhere((a) => a.id == newNodes[0].id).child.length <= 4){
+      resetRightLessThenFour(displ);
+    }else{
+      resetRightMoreThenFour(displ);
+    }
+
+  }
+
   void resetPosition(Offset offset){
+
+    double displ = offset.dx.sign*sqrt(pow(offset.dx, 2) + pow(offset.dy, 2));
+    if(offset.dx.sign == -1.0){
+      resetLeft(displ);
+    }
+    else if(offset.dx.sign == 1.0){
+      resetRight(displ);
+    }
+    addBorderWidget(newNodes[0]);
+    addWidget(newNodes[0]);
+    addBackWidget(newNodes[1]);
+  }
+
+  void resetPosition2(Offset offset){
     widgets.clear();
     Node n1, n2;
     String nextId;
@@ -266,25 +500,35 @@ class _BottomSheetGraphState extends State<BottomSheetGraph>
     double deg = deltaDegNum*deltaDeg - 90;
     double circleR = (size.height*0.4 - 45)/10;
     double r = circleR*5.5;
-    newNodes.add(Node(node.id, [], "-1", node.title));
+    newNodes.add(Node(node.id, [], "-1", node.title, node.mainColor, node.sideColor));
     newNodes[0].x = size.width/2 - 15;
     newNodes[0].y = size.height*0.4 - 40 - circleR*3.5;
-    newNodes[0].r = circleR;
+    newNodes[0].r = circleR*1.3;
+
+    newNodes.add(Node(node.parent, [node.id], "-2", ""));
+    newNodes[1].mainColor = node.mainColor;
+    newNodes[1].x = size.width/2 - 15;
+    newNodes[1].y = size.height*0.4 - 40 - circleR*0.5;
+    newNodes[1].r = circleR;
     if(node.parent != "-1") {
-      newNodes.add(Node(node.parent, [node.id], "-2", ""));
-      newNodes[1].x = size.width/2 - 15;
-      newNodes[1].y = size.height*0.4 - 40 - circleR*0.5;
       newNodes[1].r = circleR;
-      addBackWidget(newNodes[1]);
     }
+    else{
+      newNodes[1].r = 0;
+    }
+
     int i = 0;
     while(i < node.child.length){
+      Node temp = tree.firstWhere((a) => a.id == node.child[i]);
       newNodes.add(Node(
           node.child[i],
           [],
           node.id,
-          map.concepts[map.concepts.indexWhere((a) => a.id == node.child[i])].
-          concept)
+          temp.title,
+          temp.mainColor,
+          temp.sideColor,
+          temp.d,
+      )
       );
       newNodes[0].child.add(node.child[i]);
       double x = r*cos(deg * (pi / 180.0)) + newNodes[0].x;
@@ -294,6 +538,7 @@ class _BottomSheetGraphState extends State<BottomSheetGraph>
       newNodes[newNodes.length - 1].deg = deg;
       newNodes[newNodes.length - 1].r = circleR;
       newNodes[newNodes.length - 1].bigR = r;
+      newNodes[newNodes.length - 1].isAspect = temp.isAspect;
       addWidget(newNodes[newNodes.length - 1]);
       deg -= deltaDeg;
 
@@ -329,6 +574,7 @@ class _BottomSheetGraphState extends State<BottomSheetGraph>
   @override
   void didChangeDependencies() {
     node = Provider.of<AppProvider>(context, listen: true).focusNode;
+    tree = Provider.of<AppProvider>(context, listen: true).tree;
     setPosition();
     super.didChangeDependencies();
   }

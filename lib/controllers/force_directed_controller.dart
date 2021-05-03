@@ -175,7 +175,6 @@ class ForceDirectedController{
   void forceCalc(var size,var iter){
     //var area = size.width*size.height;
     var side = 30*vertices.length;
-    print(vertices.length);
     var area = side*side;
     var l = sqrt(area/vertices.length);
     double forceRadius = 500.0;
@@ -319,9 +318,13 @@ class ForceDirectedController{
   double test3(int iter, int i, double rad){
     Random rand = Random();
     int r = rand.nextInt(i+1);
-    if(r == 1 && iter != 1){
+    if(r == 1){
       return iter*3.0;
-    }else{
+    }
+    else if(iter == 1){
+      return iter*5.0;
+    }
+    else{
       return rad - (rad/iter)*i;
     }
   }

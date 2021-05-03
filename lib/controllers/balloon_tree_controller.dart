@@ -14,9 +14,9 @@ class BalloonTreeController {
   void setNode(Concept concept, Node parent, List<Relation> relations, List<Concept> concepts, int depth){
     if(three.where((a) => a.id == concept.id).length == 0){
       if(concept.isAspect == "1"){
-        three.add(Node(concept.id, [], parent.id, concept.concept, NodeValueList.color[0][0], NodeValueList.color[0][1], NodeValueList.size.last));
+        three.add(Node(concept.id, [], parent.id, concept.concept, NodeValueList.color[0][0], NodeValueList.color[0][1], NodeValueList.size.last, "1"));
       }else{
-        three.add(Node(concept.id, [], parent.id, concept.concept, NodeValueList.color[depth+1][0], NodeValueList.color[depth+1][1], NodeValueList.size[depth]));
+        three.add(Node(concept.id, [], parent.id, concept.concept, NodeValueList.color[depth+1][0], NodeValueList.color[depth+1][1], NodeValueList.size[depth], "0"));
       }
 
       List<String> childs = relations.where((a) => a.toConceptId == concept.id).map((e) => e.conceptId).toList();

@@ -12,13 +12,7 @@ class PaintBottomGraph extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     var paint = Paint()
-      ..color = Color(0xff54c5f8)
-      ..strokeWidth = 3
-      ..isAntiAlias = true;
-
-    var paint_start = Paint()
-      ..color = Color(0xff32f16f)
-      ..strokeWidth = 3
+      ..strokeWidth = 4
       ..isAntiAlias = true;
 
     Node main = nodes[nodes.indexWhere((a) => a.parent == "-1")];
@@ -46,7 +40,13 @@ class PaintBottomGraph extends CustomPainter {
 
      */
 
+
     main.child.forEach((element) {
+      if(nodes.firstWhere((a) => a.id == element).isAspect == "1"){
+        paint.color = nodes.firstWhere((a) => a.id == element).sideColor;
+      }else{
+        paint.color = main.sideColor;
+      }
       Offset position = Offset(nodes[nodes.indexWhere((a) => a.id == element)].x,
           nodes[nodes.indexWhere((a) => a.id == element)].y);
       canvas.drawLine(Offset(main.x, main.y), position, paint);
