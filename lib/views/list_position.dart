@@ -1,22 +1,19 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:concept_maps/models/graph_entities/node.dart';
-
 
 class ListPosition extends StatefulWidget {
-
   ListPosition({this.sons, this.title});
 
   List<Widget> sons;
   String title;
 
   @override
-  _ListPositionState createState() => _ListPositionState(sons: this.sons, title: this.title);
+  _ListPositionState createState() =>
+      _ListPositionState(sons: this.sons, title: this.title);
 }
 
 class _ListPositionState extends State<ListPosition> {
-
   _ListPositionState({this.sons, this.title});
 
   bool rollUp;
@@ -25,7 +22,7 @@ class _ListPositionState extends State<ListPosition> {
   bool noSons;
   var arrow;
 
-  checkSons(){
+  checkSons() {
     print(sons[0]);
     if (sons[0].toString() == "Container") {
       noSons = true;
@@ -35,17 +32,17 @@ class _ListPositionState extends State<ListPosition> {
     return noSons;
   }
 
-  arrowIcon(){
+  arrowIcon() {
     if (rollUp == true && noSons == true) {
       arrow = Icons.arrow_right;
-    } else if (rollUp == false){
+    } else if (rollUp == false) {
       arrow = Icons.arrow_drop_down;
     }
     return arrow;
   }
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     rollUp = false;
     noSons = checkSons();
@@ -53,50 +50,54 @@ class _ListPositionState extends State<ListPosition> {
     //arrow = arrowIcon();
   }
 
-
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(5.0),
       //margin: EdgeInsets.only(bottom: 2),
       decoration: BoxDecoration(
         color: Colors.grey[50],
-        border: Border(left: BorderSide(color:Colors.grey[400])),
+        border: Border(left: BorderSide(color: Colors.grey[400])),
       ),
       child: InkWell(
-        onTap: (){
+        onTap: () {
           setState(() {
             rollUp = !rollUp;
           });
         },
         child: Column(
           children: [
-
-            Row(
-                children:[
-                  (noSons == true) ? Container(margin: EdgeInsets.only(left: 35, bottom: 40),) : Icon((rollUp == true) ? Icons.arrow_right : Icons.arrow_drop_down, size: 35,),
-
-                  Flexible(
-                    child: Text(title, style: GoogleFonts.montserrat(
+            Row(children: [
+              (noSons == true)
+                  ? Container(
+                      margin: EdgeInsets.only(left: 35, bottom: 40),
+                    )
+                  : Icon(
+                      (rollUp == true)
+                          ? Icons.arrow_right
+                          : Icons.arrow_drop_down,
+                      size: 35,
+                    ),
+              Flexible(
+                child: Text(title,
+                    style: GoogleFonts.montserrat(
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
                     )),
-                  ),
-                ]),
+              ),
+            ]),
             Container(
               margin: EdgeInsets.only(left: 25),
-              child: (rollUp == false) ? Column(
-                children: sons.map((Widget son)
-                {
-                  return son;
-                }
-                ).toList(),
-              ) : Container(),
+              child: (rollUp == false)
+                  ? Column(
+                      children: sons.map((Widget son) {
+                        return son;
+                      }).toList(),
+                    )
+                  : Container(),
             ),
-
           ],
         ),
       ),
     );
   }
-
 }

@@ -36,7 +36,7 @@ class DrawerMenu extends StatelessWidget {
               MaterialPageRoute(
                 builder: (BuildContext context) => ForceDirected(),
               ),
-              (_) => false,
+                  (_) => false,
             ),
           ),
           ListTile(
@@ -50,7 +50,7 @@ class DrawerMenu extends StatelessWidget {
               MaterialPageRoute(
                 builder: (BuildContext context) => ConceptList(),
               ),
-              (_) => false,
+                  (_) => false,
             ),
           ),
           ListTile(
