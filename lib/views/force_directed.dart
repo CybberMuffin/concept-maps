@@ -1,6 +1,7 @@
 import 'package:concept_maps/models/graph_entities/map_model.dart';
 import 'package:concept_maps/providers/app_provider.dart';
 import 'package:concept_maps/views/widgets/drawer_menu.dart';
+import 'package:concept_maps/views/widgets/search_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:concept_maps/controllers/force_directed_controller.dart';
 import 'package:concept_maps/views/paint_graph.dart';
@@ -8,6 +9,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:vector_math/vector_math_64.dart';
 import 'package:flutter/physics.dart';
 import 'package:provider/provider.dart';
+import 'package:concept_maps/views/bottom_sheet_pannel.dart';
+import 'package:concept_maps/models/graph_entities/node.dart';
 
 class ForceDirected extends StatefulWidget {
   @override
@@ -19,6 +22,7 @@ class _ForceDirectedState extends State<ForceDirected>
   AnimationController animationController;
   Animation<Matrix4> animation;
 
+  Node focusNode;
   MapModel map;
   ForceDirectedController controller;
   var flag;
@@ -26,18 +30,19 @@ class _ForceDirectedState extends State<ForceDirected>
   TransformationController transformationController =
       TransformationController();
 
-  void runAnimation(Offset position) {
+  void runAnimation(Offset position, double scale) {
     final size = MediaQuery.of(context).size;
     Matrix4 matrix = Matrix4.copy(transformationController.value);
-    matrix.row0 = Vector4(1, 0, 0, -position.dx + size.width / 2);
-    matrix.row1 = Vector4(0, 1, 0, -position.dy + size.height / 2);
+    matrix.row0 = Vector4(scale, 0, 0, -position.dx*scale + size.width / 2);
+    matrix.row1 = Vector4(0, scale, 0, -position.dy*scale + size.height*0.25);
+    matrix.row2 = Vector4(0, 0, scale, 0);
     //matrix.row3 = Vector4(position.dx, position.dy, 0, 1);
 
     animation = animationController.drive(
         Matrix4Tween(begin: transformationController.value, end: matrix));
 
     const spring = SpringDescription(
-      mass: 30,
+      mass: 15,
       stiffness: 1,
       damping: 1,
     );
@@ -52,6 +57,7 @@ class _ForceDirectedState extends State<ForceDirected>
     controller.widgets.clear();
     controller.titles.clear();
     controller.vertices.forEach((element) {
+
       TextPainter textPainter = TextPainter(
           text: TextSpan(text: element.title),
           maxLines: 1,
@@ -59,56 +65,64 @@ class _ForceDirectedState extends State<ForceDirected>
         ..layout(minWidth: 0, maxWidth: double.infinity);
       double textWidth = textPainter.width;
 
+
       controller.titles.add(Positioned(
-          top: element.position.y + nodeSize / 2,
+          top: element.position.y + element.size / 2,
           left: element.position.x - textWidth,
           child: Text(
             element.title,
+            //+"\n"+element.displacement.x.toString()+"\n"+element.displacement.y.toString(),
             style: GoogleFonts.montserrat(
               fontSize: 22,
               fontWeight: FontWeight.w700,
             ),
           )));
-    });
-    controller.vertices.forEach((element) {
+
       controller.widgets.add(Positioned(
-        top: element.position.y - nodeSize / 2,
-        left: element.position.x - nodeSize / 2,
+        top: element.position.y - element.size / 2,
+        left: element.position.x - element.size / 2,
         child: GestureDetector(
           onPanDown: (details) {
             element.isOn = true;
           },
           onPanUpdate: (details) {
             setState(() {
-              //print(details.delta.dx);
-              //print("..........................");
-              //print(element.position.x);
-
               controller.forceCalc(frame, 1);
               element.position.x += details.delta.dx;
               element.position.y += details.delta.dy;
               fillWidg();
-              //print(element.position.x);
-              //print("___________________________");
             });
           },
           onPanEnd: (details) {
             element.isOn = false;
             setState(() {
-              //controller.forceCalc(frame, 50);
               fillWidg();
             });
           },
           onTap: () {
-            runAnimation(Offset(element.position.x, element.position.y));
+            setState(() {
+              runAnimation(Offset(element.position.x, element.position.y), 0.7);
+              context.read<AppProvider>().setFocusNode(controller.balloon
+                  .three[controller.balloon.three.indexWhere((a) => a.id == element.id)]);
+              context.read<AppProvider>().animationStart = false;
+              context.read<AppProvider>().setBottomSheetFlag(true);
+            });
+          },
+          onDoubleTap: () {
+            setState(() {
+              runAnimation(Offset(element.position.x, element.position.y), 0.3);
+              context.read<AppProvider>().setFocusNode(controller.balloon
+                  .three[controller.balloon.three.indexWhere((a) => a.id == element.id)]);
+              context.read<AppProvider>().animationStart = false;
+            });
           },
           child: Container(
-            height: nodeSize,
-            width: nodeSize,
+            height: element.size,
+            width: element.size,
             decoration: BoxDecoration(
-                color: Color(0xffd0efff),
-                border: Border.all(color: Color(0xff2a9df4), width: 3),
-                borderRadius: BorderRadius.circular(nodeSize)),
+                color: element.sideColor,
+                border: Border.all(color: element.mainColor, width: 6),
+                borderRadius: BorderRadius.circular(element.size)),
           ),
         ),
       ));
@@ -124,17 +138,19 @@ class _ForceDirectedState extends State<ForceDirected>
         transformationController.value = animation.value;
       });
     });
+
     flag = false;
     map = context.read<AppProvider>().currentMap;
     controller = ForceDirectedController(map.relations, map.concepts);
     controller.crToVE();
-    frame = Offset(4000, 4000);
+    frame = Offset(controller.vertices.length.toDouble()*800
+        , controller.vertices.length.toDouble()*800);
     controller.setVerticesPos(frame);
-    controller.forceCalc(frame, 100);
+    controller.forceCalc(frame, 50);
+    context.read<AppProvider>().setTree(controller.balloon.three);
+    controller.setVerticesEdgesColors(controller.balloon.three);
     fillWidg();
     flag = true;
-    //    print(controller.vertices.indexWhere((element) => element.id == controller.rootId.toString()));
-    //print(controller.concepts[controller.concepts.indexWhere((element) => element.id == controller.rootId)]);
 
     super.initState();
   }
@@ -143,27 +159,33 @@ class _ForceDirectedState extends State<ForceDirected>
   void didChangeDependencies() {
     final size = MediaQuery.of(context).size;
 
-    Vector2 v = Vector2.copy(controller
-        .vertices[controller.vertices.indexWhere(
-            (element) => element.id == controller.rootId.toString())]
-        .position);
-    transformationController.value = Matrix4(
-        0.5,
-        0,
-        0,
-        0,
-        0,
-        0.5,
-        0,
-        0,
-        0,
-        0,
-        0.5,
-        0,
-        -v.x * 0.5 + size.width / 2,
-        -v.y * 0.5 + size.height / 2,
-        0,
-        1);
+    if(Provider.of<AppProvider>(context).animationStart == true){
+      Vector2 v = controller.vertices[controller.vertices.indexWhere((a) =>
+        a.id == Provider.of<AppProvider>(context).animationId)].position;
+      runAnimation(Offset(v.x, v.y),
+          0.7);
+      Provider.of<AppProvider>(context).bottomSheetFlag = true;
+      context.read<AppProvider>().focusNode = controller.balloon
+          .three[controller.balloon.three.indexWhere((a) => a.id ==
+          Provider.of<AppProvider>(context).animationId)];
+    }
+    else if(Provider.of<AppProvider>(context).bottomSheetFlag == null){
+      context.read<AppProvider>().focusNode = Node("", [], "", controller.
+      vertices[controller.vertices.indexWhere((element) =>
+      element.id == controller.rootId.toString())].title);
+
+      Vector2 v = Vector2.copy(controller
+          .vertices[controller.vertices.indexWhere(
+              (element) => element.id == controller.rootId.toString())]
+          .position);
+
+      transformationController.value = Matrix4(
+          0.2, 0, 0, 0,
+          0, 0.2, 0, 0,
+          0, 0, 0.2, 0,
+          -v.x * 0.2 + size.width / 2, -v.y * 0.2 + size.height / 2, 0, 1);
+    }
+
     super.didChangeDependencies();
   }
 
@@ -176,9 +198,9 @@ class _ForceDirectedState extends State<ForceDirected>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        //bottomSheet: BottomSheetPannel(),
+        bottomSheet: BottomSheetPannel(),
+        appBar: SearchAppBar(),
         drawer: DrawerMenu(),
-        appBar: AppBar(title: Text("Concept Map")),
         body: Container(
           child: InteractiveViewer(
             constrained: false,
@@ -186,8 +208,7 @@ class _ForceDirectedState extends State<ForceDirected>
             minScale: 0.1,
             maxScale: 5.6,
             onInteractionUpdate: (a) {
-              //print(transformationController.value);
-              // print("__________________");
+
             },
             transformationController: transformationController,
             child: Container(

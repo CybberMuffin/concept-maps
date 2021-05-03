@@ -1,12 +1,23 @@
-
+import 'package:flutter/material.dart';
 
 class Node{
 
-  Node(this.id, this.child, this.parent, this.title);
+  Node(this.id, this.child, this.parent, this.title, [this.mainColor, this.sideColor, this.d]);
 
   var id;
-  var child;
+  List<String> child;
+  List<Node> nodeChild;
+  Node nodeParent;
   var parent;
-  var title;
+  String title;
+
+  Color mainColor;
+  Color sideColor;
+
+  double x, y;
+  double r;
+  double d;
+  double bigR;
+  double deg;
 
 }

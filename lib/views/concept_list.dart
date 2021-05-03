@@ -26,7 +26,6 @@ class _ConceptListState extends State<ConceptList> {
     } else {
       sons.add(Container());
     }
-    print(sons);
     return ListPosition(title: node.title, sons: sons);
   }
 
@@ -44,7 +43,7 @@ class _ConceptListState extends State<ConceptList> {
     tree = BalloonTreeController().relationToNodes(map.relations, map.concepts);
     parseTitle();
     listPositions =
-        parseSons(tree[tree.indexWhere((element) => element.parent == -1)]);
+        parseSons(tree[tree.indexWhere((element) => element.parent == "-1")]);
   }
 
   Widget build(BuildContext context) {

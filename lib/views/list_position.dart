@@ -36,10 +36,8 @@ class _ListPositionState extends State<ListPosition> {
   }
 
   arrowIcon(){
-    if (rollUp == true) {
+    if (rollUp == true && noSons == true) {
       arrow = Icons.arrow_right;
-    } else if (rollUp == false && noSons == true) {
-      arrow = Icons.arrow_left;
     } else if (rollUp == false){
       arrow = Icons.arrow_drop_down;
     }
@@ -75,9 +73,8 @@ class _ListPositionState extends State<ListPosition> {
 
             Row(
                 children:[
-                  (rollUp == false && noSons == true) ? Container(margin: EdgeInsets.only(left: 35, bottom: 40),) : Icon((rollUp == true) ? Icons.arrow_right : Icons.arrow_drop_down,
-                      size: 35)
-                  ,
+                  (noSons == true) ? Container(margin: EdgeInsets.only(left: 35, bottom: 40),) : Icon((rollUp == true) ? Icons.arrow_right : Icons.arrow_drop_down, size: 35,),
+
                   Flexible(
                     child: Text(title, style: GoogleFonts.montserrat(
                       fontSize: 18,
