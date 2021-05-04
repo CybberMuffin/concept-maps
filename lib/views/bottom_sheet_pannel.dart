@@ -1,6 +1,7 @@
 import 'package:concept_maps/providers/app_provider.dart';
 import 'package:concept_maps/views/bottom_pannel.dart';
 import 'package:concept_maps/views/bottom_sheet_graph.dart';
+import 'package:concept_maps/views/bottom_sheet_related_concepts.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -25,39 +26,43 @@ class _BottomSheetPannelState extends State<BottomSheetPannel>
   double stickersHeight;
   bool purpleSticker;
   bool greenSticker;
+  bool yellowSticker;
   List<Widget> pages;
   int pageIndex;
 
   dragPanelUp() {
     final size = MediaQuery.of(context).size;
-    if (isPannelAdded == false) {
+    if (height == 40) {
       setState(() {
+        pageIndex = 0;
         runAnimation(size.height * 0.4);
-        isPannelAdded = true;
-        panel = BottomPannel();
       });
-    } else if (isPannelAdded == true && isPannelAddedUpper == false) {
+    } else if (height == size.height * 0.4 && purpleSticker != true) {
       setState(() {
-        height = size.height;
-        isPannelAddedUpper = true;
-        panel = BottomPannel();
+        runAnimation(size.height - 115);
       });
     }
   }
 
   dragPanelDown() {
     final size = MediaQuery.of(context).size;
-    if (isPannelAdded == true && isPannelAddedUpper == false) {
+    if (height == size.height * 0.4) {
       setState(() {
         runAnimation(40);
-        isPannelAdded = false;
-        panel = Container();
+        yellowSticker = false;
+        greenSticker = false;
+        purpleSticker = false;
       });
-    } else if (isPannelAdded == true && isPannelAddedUpper == true) {
+    } else if (height == size.height - 115 && yellowSticker != true) {
       setState(() {
         runAnimation(size.height * 0.4);
-        isPannelAddedUpper = false;
-        panel = Container();
+      });
+    } else if (height == size.height - 115 && yellowSticker == true) {
+      setState(() {
+        runAnimation(40);
+        yellowSticker = false;
+        greenSticker = false;
+        purpleSticker = false;
       });
     }
   }
@@ -76,7 +81,7 @@ class _BottomSheetPannelState extends State<BottomSheetPannel>
     super.initState();
     pageIndex = 0;
     height = 40;
-
+    yellowSticker = false;
     purpleSticker = false;
     greenSticker = false;
     controller =
@@ -94,22 +99,28 @@ class _BottomSheetPannelState extends State<BottomSheetPannel>
 
   @override
   void didChangeDependencies() {
-    pages = [BottomPannel(), BottomSheetGraph()];
+    pages = [BottomPannel(), BottomSheetGraph(), RelatedConcepts()];
     final size = MediaQuery.of(context).size;
 
     if (Provider.of<AppProvider>(context).bottomSheetFlag == true) {
       runAnimation(size.height * 0.4);
 
-      if (purpleSticker == false && pageIndex == 0) {
+      if (purpleSticker == false && yellowSticker == false && pageIndex == 0) {
         greenSticker = true;
       }
-      if (greenSticker == false && pageIndex == 1) {
+      if (greenSticker == false && yellowSticker == false && pageIndex == 1) {
         purpleSticker = true;
       }
+
+      if (greenSticker == false && purpleSticker == false && pageIndex == 2) {
+        yellowSticker = true;
+      }
+
       Provider.of<AppProvider>(context).bottomSheetFlag = false;
     } else {
       greenSticker = false;
       purpleSticker = false;
+      yellowSticker = false;
       pageIndex = 0;
 
       runAnimation(40);
@@ -119,77 +130,135 @@ class _BottomSheetPannelState extends State<BottomSheetPannel>
   }
 
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return Container(
       height: height + 30,
       child: Stack(children: [
-        Positioned(
-          left: 80,
-          top: (purpleSticker == false) ? 15 : 0,
-          child: InkWell(
-            onTap: () {
-              setState(() {
-                purpleSticker = !purpleSticker;
-                if (greenSticker == true) {
-                  greenSticker = false;
-                }
-                pageIndex = 1;
+        (purpleSticker == false)
+            ? Positioned(
+                left: 80,
+                top: (purpleSticker == false) ? 15 : 0,
+                child: InkWell(
+                  onTap: () {
+                    setState(() {
+                      purpleSticker = !purpleSticker;
+                      if (height == size.height - 115) {
+                        runAnimation(size.height * 0.4);
+                      }
+                      if (greenSticker == true) {
+                        greenSticker = false;
+                      } else if (yellowSticker == true) {
+                        yellowSticker = false;
+                      }
+                      pageIndex = 1;
+                      if (greenSticker == false &&
+                          purpleSticker == false &&
+                          yellowSticker == false) {
+                        setState(() {
+                          runAnimation(40);
+                          pageIndex = 0;
+                        });
+                      }
+                    });
+                  },
+                  child: Container(
+                    width: 30,
+                    height: 30,
+                    decoration: BoxDecoration(
+                      color: Color(0xFFAA46FF),
+                    ),
+                    child: Icon(
+                      Icons.share,
+                      size: 20,
+                      color: Color(0xFFcc91ff),
+                    ),
+                  ),
+                ),
+              )
+            : Container(),
+        (greenSticker == false)
+            ? Positioned(
+                left: 40,
+                top: (greenSticker == false) ? 15 : 0,
+                child: InkWell(
+                  onTap: () {
+                    setState(() {
+                      greenSticker = !greenSticker;
+                      if (purpleSticker == true) {
+                        purpleSticker = false;
+                      } else if (yellowSticker == true) {
+                        yellowSticker = false;
+                      }
+                      pageIndex = 0;
 
-                if (greenSticker == false && purpleSticker == false) {
-                  setState(() {
-                    runAnimation(40);
-                    pageIndex = 0;
-                  });
-                }
-              });
-            },
-            child: Container(
-              width: 30,
-              height: 30,
-              decoration: BoxDecoration(
-                color: Color(0xFFAA46FF),
-              ),
-              child: Icon(
-                Icons.share,
-                size: 20,
-                color: Color(0xFFcc91ff),
-              ),
-            ),
-          ),
-        ),
-        Positioned(
-          left: 40,
-          top: (greenSticker == false) ? 15 : 0,
-          child: InkWell(
-            onTap: () {
-              setState(() {
-                greenSticker = !greenSticker;
-                if (purpleSticker == true) {
-                  purpleSticker = false;
-                }
-                pageIndex = 0;
+                      if (greenSticker == false &&
+                          purpleSticker == false &&
+                          yellowSticker == false) {
+                        setState(() {
+                          runAnimation(40);
+                          pageIndex = 0;
+                        });
+                      }
+                    });
+                  },
+                  child: Container(
+                    width: 30,
+                    height: 30,
+                    decoration: BoxDecoration(
+                      color: Color(0xFF46FFAE),
+                    ),
+                    child: Icon(
+                      Icons.my_library_books,
+                      size: 20,
+                      color: Color(0xFFc9ffe7),
+                    ),
+                  ),
+                ),
+              )
+            : Container(),
+        (yellowSticker == false)
+            ? Positioned(
+                left: 120,
+                top: (yellowSticker == false) ? 15 : 0,
+                child: InkWell(
+                  onTap: () {
+                    setState(() {
+                      yellowSticker = !yellowSticker;
+                      if (height == size.height * 0.4) {
+                        runAnimation(size.height - 115);
+                      }
+                      if (purpleSticker == true) {
+                        purpleSticker = false;
+                      } else if (greenSticker == true) {
+                        greenSticker = false;
+                      }
+                      pageIndex = 2;
 
-                if (greenSticker == false && purpleSticker == false) {
-                  setState(() {
-                    runAnimation(40);
-                    pageIndex = 0;
-                  });
-                }
-              });
-            },
-            child: Container(
-              width: 30,
-              height: 30,
-              decoration: BoxDecoration(
-                color: Color(0xFF46FFAE),
-              ),
-              child: Icon(
-                Icons.my_library_books,
-                size: 20,
-                color: Color(0xFFc9ffe7),
-              ),
-            ),
-          ),
-        ),
+                      if (greenSticker == false &&
+                          purpleSticker == false &&
+                          yellowSticker == false) {
+                        setState(() {
+                          runAnimation(40);
+                          pageIndex = 0;
+                        });
+                      }
+                    });
+                  },
+                  child: Container(
+                    width: 30,
+                    height: 30,
+                    decoration: BoxDecoration(
+                      color: Color(0xFFffab51),
+                    ),
+                    child: Icon(
+                      Icons.mediation,
+                      size: 20,
+                      color: Color(0xFFffcb94),
+                    ),
+                  ),
+                ),
+              )
+            : Container(),
         Align(
           alignment: Alignment.bottomCenter,
           child: Container(
@@ -215,9 +284,18 @@ class _BottomSheetPannelState extends State<BottomSheetPannel>
                 SwipeDetector(
                   onSwipeUp: () {
                     dragPanelUp();
+                    if (greenSticker == false && purpleSticker == false) {
+                      greenSticker = true;
+                    }
                   },
                   onSwipeDown: () {
                     dragPanelDown();
+                    if (height == MediaQuery.of(context).size.height * 0.4) {
+                      if (greenSticker == true || purpleSticker == true) {
+                        greenSticker = false;
+                        purpleSticker = false;
+                      }
+                    }
                   },
                   child: Container(
                     child: InkWell(
@@ -278,6 +356,126 @@ class _BottomSheetPannelState extends State<BottomSheetPannel>
             )),
           ),
         ),
+        (purpleSticker == true)
+            ? Positioned(
+                left: 80,
+                top: (purpleSticker == false) ? 15 : 3,
+                child: InkWell(
+                  onTap: () {
+                    setState(() {
+                      purpleSticker = !purpleSticker;
+                      if (greenSticker == true) {
+                        greenSticker = false;
+                      } else if (yellowSticker == true) {
+                        yellowSticker = false;
+                      }
+                      pageIndex = 1;
+
+                      if (greenSticker == false &&
+                          purpleSticker == false &&
+                          yellowSticker == false) {
+                        setState(() {
+                          runAnimation(40);
+                          pageIndex = 0;
+                        });
+                      }
+                    });
+                  },
+                  child: Container(
+                    width: 30,
+                    height: 45,
+                    decoration: BoxDecoration(
+                      color: Color(0xFFAA46FF),
+                    ),
+                    child: Icon(
+                      Icons.share,
+                      size: 20,
+                      color: Color(0xFFcc91ff),
+                    ),
+                  ),
+                ),
+              )
+            : Container(),
+        (greenSticker == true)
+            ? Positioned(
+                left: 40,
+                top: (greenSticker == false) ? 15 : 3,
+                child: InkWell(
+                  onTap: () {
+                    setState(() {
+                      greenSticker = !greenSticker;
+                      if (purpleSticker == true) {
+                        purpleSticker = false;
+                      } else if (yellowSticker == true) {
+                        yellowSticker = false;
+                      }
+                      pageIndex = 0;
+
+                      if (greenSticker == false &&
+                          purpleSticker == false &&
+                          yellowSticker == false) {
+                        setState(() {
+                          runAnimation(40);
+                          pageIndex = 0;
+                        });
+                      }
+                    });
+                  },
+                  child: Container(
+                    width: 30,
+                    height: 45,
+                    decoration: BoxDecoration(
+                      color: Color(0xFF46FFAE),
+                    ),
+                    child: Icon(
+                      Icons.my_library_books,
+                      size: 20,
+                      color: Color(0xFFc9ffe7),
+                    ),
+                  ),
+                ),
+              )
+            : Container(),
+        (yellowSticker == true)
+            ? Positioned(
+                left: 120,
+                top: (yellowSticker == false) ? 15 : 3,
+                child: InkWell(
+                  onTap: () {
+                    setState(() {
+                      yellowSticker = !yellowSticker;
+                      if (purpleSticker == true) {
+                        purpleSticker = false;
+                      } else if (greenSticker == true) {
+                        greenSticker = false;
+                      }
+                      pageIndex = 2;
+
+                      if (greenSticker == false &&
+                          purpleSticker == false &&
+                          yellowSticker == false) {
+                        setState(() {
+                          runAnimation(40);
+                          pageIndex = 0;
+                        });
+                      }
+                    });
+                  },
+                  child: Container(
+                    width: 30,
+                    height: 45,
+                    decoration: BoxDecoration(
+                      color: Color(0xFFffab51),
+                    ),
+                    child: Icon(
+                      Icons.mediation,
+                      size: 20,
+                      color: Color(0xFFffcb94),
+                    ),
+                  ),
+                ),
+              )
+            : Container(),
       ]),
     );
   }

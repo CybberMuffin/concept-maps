@@ -14,7 +14,7 @@ class Definition extends StatelessWidget {
         margin: EdgeInsets.only(bottom: 10),
         child: Text(
           definition,
-          style: TextStyle(fontSize: 16),
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
         ),
       ),
     );

@@ -13,6 +13,8 @@ class AppProvider with ChangeNotifier {
 
   List<Node> tree;
 
+  List<String> recentList = ["Dart", "String"];
+
   Future<MapModel> getMapModel(String field) async {
     if (field != currentMap?.field) currentMap = null;
     currentMap ??= await ApiService.fetchConceptRelations(field);
@@ -37,5 +39,13 @@ class AppProvider with ChangeNotifier {
 
   void setTree(List<Node> t) {
     tree = t;
+  }
+
+  void addSearchHistory(String recentItem) {
+    recentList.insert(0, recentItem);
+  }
+
+  void removeSearchHistory() {
+    recentList.removeLast();
   }
 }

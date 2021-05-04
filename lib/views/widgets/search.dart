@@ -35,13 +35,12 @@ class Search extends SearchDelegate {
   List<Node> tree;
   Search(this.listExample, this.tree);
 
-  List<String> recentList = ["Dart", "String"];
-
   @override
   Widget buildSuggestions(BuildContext context) {
     List<String> suggestionList = [];
     query.isEmpty
-        ? suggestionList = recentList //In the true case
+        ? suggestionList =
+            context.read<AppProvider>().recentList //In the true case
         : suggestionList.addAll(listExample.where(
             // In the false case
             (element) => element.toLowerCase().contains(query),
@@ -58,11 +57,15 @@ class Search extends SearchDelegate {
           onTap: () {
             selectedResult = suggestionList[index];
             showResults(context);
-            if (recentList.length < 10) {
-              recentList.insert(0, suggestionList[index]);
+            if (context.read<AppProvider>().recentList.length < 10) {
+              context
+                  .read<AppProvider>()
+                  .addSearchHistory(suggestionList[index]);
             } else {
-              recentList.removeLast();
-              recentList.insert(0, suggestionList[index]);
+              context.read<AppProvider>().removeSearchHistory();
+              context
+                  .read<AppProvider>()
+                  .addSearchHistory(suggestionList[index]);
             }
           },
         );
