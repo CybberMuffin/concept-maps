@@ -1,3 +1,5 @@
+import 'package:concept_maps/models/graph_entities/concept_header.dart';
+import 'package:concept_maps/models/graph_entities/map_model.dart';
 import 'package:concept_maps/models/graph_entities/node.dart';
 import 'package:concept_maps/models/graph_entities/relations.dart';
 import 'package:concept_maps/models/general_entities/concept.dart';
@@ -9,6 +11,7 @@ class BalloonTreeController {
   BalloonTreeController();
 
   List<Node> three = [];
+  String firstId;
 
 
   void setNode(Concept concept, Node parent, List<Relation> relations, List<Concept> concepts, int depth){
@@ -17,6 +20,11 @@ class BalloonTreeController {
         three.add(Node(concept.id, [], parent.id, concept.concept, NodeValueList.color[0][0], NodeValueList.color[0][1], NodeValueList.size.last, "1"));
       }else{
         three.add(Node(concept.id, [], parent.id, concept.concept, NodeValueList.color[depth+1][0], NodeValueList.color[depth+1][1], NodeValueList.size[depth], "0"));
+      }
+      if(concept.type == "unattached"){
+        three.last.d = 30.0;
+        three.last.mainColor = Colors.blueGrey;
+        three.last.sideColor = Colors.grey;
       }
 
       List<String> childs = relations.where((a) => a.toConceptId == concept.id).map((e) => e.conceptId).toList();
@@ -32,36 +40,63 @@ class BalloonTreeController {
     }
   }
 
-  List<Node> relationToNodes(List<Relation> relations, List<Concept> concepts){
+  List<Node> relationToNodes(MapModel map){
     three.clear();
-    String firstId;
-    relations.forEach((element) {
-      if(element.relationClass != "c2c-part-of")
-        print(element.relationClass);
-    });
-    relations.removeWhere((a) => a.relationClass == "c2c-similar");
-    concepts.forEach((a) {
+      map.relations.removeWhere((a) => a.relationClass == "c2c-similar");
+
+    firstId = map.headerConcepts[0].conceptId;
+
+    List<Concept> unattached = [];
+    map.concepts.forEach((a) {
       bool isExist = false;
       if(a.isAspect == "0"){
-        relations.forEach((b) {
+        map.relations.forEach((b) {
           if(a.id == b.conceptId){
             isExist = true;
           }
         });
-        if(isExist == false){
-          firstId = a.id;
+        if(isExist == false && a.id != firstId){
+          unattached.add(a);
+          print(a.toString());
         }
       }
     });
-    concepts.forEach((a) {
+    if(unattached.length > 0){
+      map.concepts.add(Concept(
+          id: "0",
+          concept: "<usage>",
+          isAspect: "0",
+          aspectOf: null
+      ));
+      map.concepts.last.type = "unattached";
+      unattached.asMap().forEach((key, element) {
+        map.relations.add(Relation(
+            id: "1$key",
+            conceptId: element.id.toString(),
+            toConceptId: map.concepts.last.id.toString(),
+            relationClass: "c2c-part-of"
+        ));
+      });
+
+      map.relations.add(Relation(
+          id: "0",
+          conceptId: map.concepts.last.id.toString(),
+          toConceptId: firstId,
+          relationClass: "imaginary"
+      ));
+    }
+
+
+
+    map.concepts.forEach((a) {
       if(a.isAspect == "1"){
-        relations.add(Relation(id:"", conceptId: a.id, toConceptId: a.aspectOf));
+        map.relations.add(Relation(id:"", conceptId: a.id, toConceptId: a.aspectOf));
       }
     });
-    setNode(concepts.firstWhere((a) => a.id == firstId),
-        Node("-1", [], "-1", "-1", Colors.deepPurpleAccent, Colors.deepPurpleAccent), relations, concepts, 0);
+    setNode(map.concepts.firstWhere((a) => a.id == firstId),
+        Node("-1", [], "-1", "-1", Colors.deepPurpleAccent, Colors.deepPurpleAccent), map.relations, map.concepts, 0);
     three.forEach((a) {
-      print([a.id, a.title, a.child, a.parent]);
+      //print([a.id, a.title, a.child, a.parent]);
     });
   }
 

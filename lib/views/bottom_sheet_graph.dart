@@ -45,17 +45,6 @@ class _BottomSheetGraphState extends State<BottomSheetGraph>
     double textWidth = textPainter.width;
 
     widgets.add(Positioned(
-        top: node.y + node.r,
-        left: node.x - textWidth * 0.63,
-        child: Text(
-          node.title,
-          style: GoogleFonts.montserrat(
-            fontSize: 14,
-            fontWeight: FontWeight.w700,
-          ),
-        )));
-
-    widgets.add(Positioned(
       top: node.y - node.r,
       left: node.x - node.r,
       child: GestureDetector(
@@ -74,6 +63,19 @@ class _BottomSheetGraphState extends State<BottomSheetGraph>
         ),
       ),
     ));
+
+    widgets.add(Positioned(
+        top: node.y + node.r,
+        left: node.x - textWidth * 0.63,
+        child: Container(
+          child: Text(
+            node.title,
+            style: GoogleFonts.montserrat(
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        )));
   }
 
   void addBorderWidget(Node node) {
@@ -95,10 +97,10 @@ class _BottomSheetGraphState extends State<BottomSheetGraph>
     List<bool> dots = [];
     tree.firstWhere((a) => a.id == node.id).child.forEach((element) {
       if(node.child.contains(element)){
-        dots.add(true);
+        dots.insert(0, true);
       }
       else{
-        dots.add(false);
+        dots.insert(0, false);
       }
     });
     widgets.add(Positioned(

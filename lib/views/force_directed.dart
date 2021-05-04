@@ -144,7 +144,7 @@ class _ForceDirectedState extends State<ForceDirected>
     });
 
     flag = false;
-    controller = ForceDirectedController(map.relations, map.concepts);
+    controller = ForceDirectedController(map);
     controller.crToVE();
     frame = Offset(controller.vertices.length.toDouble() * 800,
         controller.vertices.length.toDouble() * 800);
@@ -225,7 +225,7 @@ class _ForceDirectedState extends State<ForceDirected>
           child: InteractiveViewer(
             constrained: false,
             boundaryMargin: const EdgeInsets.all(double.infinity),
-            minScale: 0.1,
+            minScale: 0.01,
             maxScale: 5.6,
             onInteractionUpdate: (a) {},
             transformationController: transformationController,

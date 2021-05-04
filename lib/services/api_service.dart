@@ -3,6 +3,7 @@ import 'package:concept_maps/models/dedactic_relations_entities/concept_in_these
 import 'package:concept_maps/models/general_entities/concept.dart';
 import 'package:concept_maps/models/general_entities/thesis.dart';
 import 'package:concept_maps/models/graph_entities/map_model.dart';
+import 'package:concept_maps/models/graph_entities/concept_header.dart';
 import 'package:concept_maps/utils/course_key_list.dart';
 import 'package:http/http.dart' as http;
 
@@ -13,26 +14,31 @@ abstract class ApiService {
     final String relationsUrl =
         "$_hostUrl/api/branch/$field/concepts/relations";
     final String conceptsUrl = "$_hostUrl/api/branch/$field/concepts";
+    final String headerUrl = "$_hostUrl/api/CinH/$field";
 
     final response = await Future.wait<http.Response>(
       [
         http.get(relationsUrl),
         http.get(conceptsUrl),
+        http.get(headerUrl)
       ],
     );
 
     final relationsResponse = response.first;
     final conceptsResponse = response[1];
+    final headerResponse = response[2];
 
     if (relationsResponse.statusCode == 200 &&
         conceptsResponse.statusCode == 200) {
       final List relationsResult = jsonDecode(relationsResponse.body);
       final List conceptsResult = jsonDecode(conceptsResponse.body);
+      final List headerResult = jsonDecode(headerResponse.body);
 
       return MapModel.fromMap(
         field,
         relationsResult,
         conceptsResult,
+        headerResult
       );
     }
 
@@ -132,4 +138,5 @@ abstract class ApiService {
 
     throw Exception("Error occured during fetch of selected theses");
   }
+
 }

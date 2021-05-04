@@ -1,5 +1,7 @@
 import 'package:concept_maps/controllers/balloon_tree_controller.dart';
+import 'package:concept_maps/models/graph_entities/concept_header.dart';
 import 'package:concept_maps/models/graph_entities/edge.dart';
+import 'package:concept_maps/models/graph_entities/map_model.dart';
 import 'package:concept_maps/models/graph_entities/vertice.dart';
 import 'package:concept_maps/utils/node_value_list.dart';
 import 'package:flutter/material.dart';
@@ -8,10 +10,9 @@ import 'dart:math';
 import 'package:concept_maps/models/graph_entities/node.dart';
 
 class ForceDirectedController {
-  ForceDirectedController(this.relations, this.concepts);
+  ForceDirectedController(this.map);
 
-  var relations;
-  var concepts;
+  MapModel map;
 
   BalloonTreeController balloon;
 
@@ -22,20 +23,16 @@ class ForceDirectedController {
   int rootId;
 
   crToVE() {
-    int n = 10000000000;
-    concepts.forEach((a) {
-      if (int.parse(a.id) < n) {
-        n = int.parse(a.id);
-        rootId = n;
-      }
-
+    balloon = BalloonTreeController()..relationToNodes(map);
+    rootId = int.parse(balloon.firstId);
+    map.concepts.forEach((a) {
       vertices.add(Vertice(a.id, a.concept));
     });
-    relations.forEach((a) {
+    map.relations.forEach((a) {
       edges.add(Edge(vertices[vertices.indexWhere((b) => b.id == a.conceptId)],
           vertices[vertices.indexWhere((b) => b.id == a.toConceptId)]));
     });
-    concepts.forEach((a) {
+    map.concepts.forEach((a) {
       if (a.isAspect == "1") {
         edges.add(Edge(vertices[vertices.indexWhere((b) => b.id == a.id)],
             vertices[vertices.indexWhere((b) => b.id == a.aspectOf)]));
@@ -118,7 +115,6 @@ class ForceDirectedController {
     int x;
     int y;
     Random rand = new Random();
-    balloon = BalloonTreeController()..relationToNodes(relations, concepts);
     balloon.three[balloon.three.indexWhere((element) => element.parent == "-1")]
         .x = size.dx / 2;
     balloon.three[balloon.three.indexWhere((element) => element.parent == "-1")]
@@ -132,7 +128,7 @@ class ForceDirectedController {
     double startDeg = 45.0;
     double r = 150.0;
     branch.forEach((element) {
-      print(element.id);
+
       double x = r * cos(startDeg * (pi / 180.0)) + size.dx / 2;
       double y = r * sin(startDeg * (pi / 180.0)) + size.dy / 2;
       balloon.three[balloon.three.indexWhere((a) => a.id == element.id)].x = x;
