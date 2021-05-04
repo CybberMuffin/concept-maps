@@ -84,7 +84,7 @@ class ForceDirectedController {
         double y = r * sin(deg * (pi / 180.0)) + node.y;
         three[three.indexWhere((a) => a.id == element)].x = x;
         three[three.indexWhere((a) => a.id == element)].y = y;
-        print([x, y]);
+        //print([x, y]);
         nodeRecursion(
             three[three.indexWhere((a) => a.id == element)], deg, three);
         deg = deg + deltaDeg;
@@ -141,13 +141,13 @@ class ForceDirectedController {
       startDeg = startDeg + 360.0 / branch.length.toDouble();
     });
     balloon.three.forEach((element) {
-      print(element.id);
-      print(vertices[vertices.indexWhere((a) => a.id == element.id)].id);
-      print(element.x);
-      print(element.x.runtimeType);
-      print(element.y);
-      print(element.y.runtimeType);
-      print("_________________________");
+      // print(element.id);
+      // print(vertices[vertices.indexWhere((a) => a.id == element.id)].id);
+      // print(element.x);
+      // print(element.x.runtimeType);
+      // print(element.y);
+      // print(element.y.runtimeType);
+      // print("_________________________");
       vertices[vertices.indexWhere((a) => a.id == element.id)].position =
           Vector2(element.x, element.y);
     });
