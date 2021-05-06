@@ -6,8 +6,8 @@ class PaintGraph extends CustomPainter {
   List<Edge> edges;
   List<Vertice> vertices;
 
-  List<Edge> edges_start;
-  List<Vertice> vertices_start;
+  List<Edge> edgesStart;
+  List<Vertice> verticesStart;
   var flag;
 
   PaintGraph(this.edges, this.vertices, this.flag);
@@ -15,8 +15,7 @@ class PaintGraph extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     var paint = Paint()
-      ..color = Color(0xff54c5f8)
-      ..strokeWidth = 3
+      ..strokeWidth = 6
       ..isAntiAlias = true;
 
     var paint_start = Paint()
@@ -43,6 +42,7 @@ class PaintGraph extends CustomPainter {
        */
 
       edges.forEach((element) {
+        paint.color = element.edgeColor;
         canvas.drawLine(Offset(element.v.position.x, element.v.position.y),
             Offset(element.u.position.x, element.u.position.y), paint);
       });

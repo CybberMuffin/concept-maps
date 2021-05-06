@@ -28,7 +28,7 @@ class _SearchAppBarState extends State<SearchAppBar> {
   @override
   void initState() {
     final map = context.read<AppProvider>().currentMap;
-    tree = BalloonTreeController().relationToNodes(map.relations, map.concepts);
+    tree = context.read<AppProvider>().tree;
     parseTitle();
     super.initState();
   }

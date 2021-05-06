@@ -103,17 +103,18 @@ class _BottomSheetPannelState extends State<BottomSheetPannel>
     final size = MediaQuery.of(context).size;
 
     if (Provider.of<AppProvider>(context).bottomSheetFlag == true) {
-      runAnimation(size.height * 0.4);
-
       if (purpleSticker == false && yellowSticker == false && pageIndex == 0) {
         greenSticker = true;
+        runAnimation(size.height * 0.4);
       }
       if (greenSticker == false && yellowSticker == false && pageIndex == 1) {
         purpleSticker = true;
+        runAnimation(size.height * 0.4);
       }
 
       if (greenSticker == false && purpleSticker == false && pageIndex == 2) {
         yellowSticker = true;
+        runAnimation(size.height - 115);
       }
 
       Provider.of<AppProvider>(context).bottomSheetFlag = false;

@@ -1,34 +1,29 @@
-class Relations{
+class Relations {
   final List<Relation> relations;
 
   Relations({this.relations});
 
-  factory Relations.fromJson(List<dynamic> parsedJson){
+  factory Relations.fromJson(List<dynamic> parsedJson) {
+    List<Relation> rs = [];
+    rs = parsedJson.map((i) => Relation.fromJson(i)).toList();
 
-    List<Relation> rs = new List<Relation>();
-    rs = parsedJson.map((i)=>Relation.fromJson(i)).toList();
-
-    return new Relations(
-        relations: rs
-    );
+    return Relations(relations: rs);
   }
-
 }
 
-class Relation{
+class Relation {
   final String id;
-  final String concept_id;
-  final String to_concept_id;
-  final String view;
+  final String conceptId;
+  final String toConceptId;
+  final String relationClass;
 
-  Relation({this.id, this.concept_id, this.to_concept_id, this.view});
+  Relation({this.id, this.conceptId, this.toConceptId, this.relationClass});
 
-  factory Relation.fromJson(Map<String, dynamic> parsedJson){
+  factory Relation.fromJson(Map<String, dynamic> parsedJson) {
     return Relation(
         id: parsedJson['id'],
-        concept_id: parsedJson['concept_id'],
-        to_concept_id: parsedJson['to_concept_id'],
-        view: parsedJson['view']
-    );
+        conceptId: parsedJson['concept_id'],
+        toConceptId: parsedJson['to_concept_id'],
+        relationClass: parsedJson['class']);
   }
 }
