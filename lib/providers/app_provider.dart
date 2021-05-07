@@ -15,6 +15,8 @@ class AppProvider with ChangeNotifier {
   ///Key - concept id, value - Thesis
   Map<int, List<Thesis>> _conceptTheses = {};
   List<ConceptInTheses> _conceptReferences = [];
+  // Key - focus node id, value List of didactic concepts after
+  Map<int, List<Concept>> didacticConceptsAfter = {};
 
   MapModel get currentMap => _currentMap;
 
@@ -34,7 +36,7 @@ class AppProvider with ChangeNotifier {
     return _conceptTheses[concept.iid];
   }
 
-  ///Use this to get all CinT refrences for a selected concept
+  ///Use this to get all CinT references for a selected concept
   Future<ConceptInTheses> fetchConceptInTheses(Concept concept) async {
     if (!_conceptReferences.any((element) => element.id == concept.iid)) {
       _conceptReferences
@@ -43,6 +45,15 @@ class AppProvider with ChangeNotifier {
 
     return _conceptReferences.firstWhere((element) => element.id == concept.iid,
         orElse: () => null);
+  }
+
+  //Use this to get all ConceptsDidacticAfter references foa a selected concept id
+  Future<List<Concept>> fetchConceptsDidacticAfter(int conceptId) async {
+    if (!didacticConceptsAfter.keys.any((element) => element == conceptId)) {
+      didacticConceptsAfter[conceptId] =
+          await ApiService.fetchConceptsDidacticAfter(conceptId);
+    }
+    return didacticConceptsAfter[conceptId];
   }
 
   Node focusNode;
