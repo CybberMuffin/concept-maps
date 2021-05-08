@@ -1,4 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:concept_maps/models/dedactic_relations_entities/concept_in_theses.dart';
+import 'package:concept_maps/models/general_entities/concept.dart';
+import 'package:concept_maps/models/general_entities/thesis.dart';
 import 'package:concept_maps/providers/app_provider.dart';
 import 'package:concept_maps/views/widgets/dots_indicator.dart';
 import 'package:flutter/material.dart';
@@ -10,9 +13,14 @@ class RelatedConcepts extends StatefulWidget {
 }
 
 class _RelatedConceptsState extends State<RelatedConcepts> {
-  List<String> concepts = [];
+  List<Concept> concepts = [];
   List<bool> dots = [];
+  List<int> compareCinT = [];
+  ConceptInTheses currentConceptsInTheses;
+  ConceptInTheses nextConceptsInTheses;
   int conceptIndex;
+  List<Thesis> thesis = [];
+  String thesisData;
 
   calculateDots() {
     for (int i = 0; i < concepts.length; i++) {
@@ -25,6 +33,78 @@ class _RelatedConceptsState extends State<RelatedConcepts> {
     ;
   }
 
+  void fillCurrentCinT() {
+    context
+        .read<AppProvider>()
+        .fetchConceptInTheses(
+            int.tryParse(context.read<AppProvider>().focusNode.id))
+        .then((value) => currentConceptsInTheses = value);
+  }
+
+  void fillNextCinT() {
+    context
+        .read<AppProvider>()
+        .fetchConceptInTheses(int.tryParse(concepts[conceptIndex].id))
+        .then((value) => nextConceptsInTheses = value)
+        .then((_) => compare());
+  }
+
+  void compare() {
+    currentConceptsInTheses.innerReferences.forEach((a) {
+      nextConceptsInTheses.innerReferences.forEach((b) {
+        if (a.thesisId == b.thesisId) {
+          if (!compareCinT.contains(a.thesisId)) {
+            compareCinT.add(a.thesisId);
+          }
+        }
+      });
+      nextConceptsInTheses.outerReferences.forEach((b) {
+        if (a.thesisId == b.thesisId) {
+          if (!compareCinT.contains(a.thesisId)) {
+            compareCinT.add(a.thesisId);
+          }
+        }
+      });
+    });
+    currentConceptsInTheses.outerReferences.forEach((a) {
+      nextConceptsInTheses.outerReferences.forEach((b) {
+        if (a.thesisId == b.thesisId) {
+          if (!compareCinT.contains(a.thesisId)) {
+            compareCinT.add(a.thesisId);
+          }
+        }
+      });
+      nextConceptsInTheses.innerReferences.forEach((b) {
+        if (a.thesisId == b.thesisId) {
+          if (!compareCinT.contains(a.thesisId)) {
+            compareCinT.add(a.thesisId);
+          }
+        }
+      });
+    });
+  }
+
+  void getThesis() {
+    compareCinT.forEach((element) {
+      print(element);
+    });
+    context
+        .read<AppProvider>()
+        .fetchTheses(compareCinT)
+        .then((value) => thesis = value)
+        .then((value) => value.forEach((element) {
+              setState(() {
+                thesisData += element.data + "\n";
+              });
+            }));
+  }
+
+  void parseFuture() async {
+    await fillCurrentCinT();
+    await fillNextCinT();
+    await getThesis();
+  }
+
   parseDidacticAfter() {
     FutureBuilder(
       future: context
@@ -32,10 +112,12 @@ class _RelatedConceptsState extends State<RelatedConcepts> {
           .fetchConceptsDidacticAfter(
               int.tryParse(context.read<AppProvider>().focusNode.id))
           .then((a) => setState(() {
-                concepts.clear();
                 a.forEach((element) {
-                  concepts.add(element.concept);
+                  if (context.read<AppProvider>().focusNode.id != element.id) {
+                    concepts.add(element);
+                  }
                 });
+                parseFuture();
                 calculateDots();
               })),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -52,7 +134,8 @@ class _RelatedConceptsState extends State<RelatedConcepts> {
 
   @override
   void didChangeDependencies() {
-    concepts = [""];
+    concepts = [];
+    thesisData = "";
     parseDidacticAfter();
     super.didChangeDependencies();
   }
@@ -68,8 +151,8 @@ class _RelatedConceptsState extends State<RelatedConcepts> {
         child: Column(
           children: [
             Container(
-              color: Colors.red,
-              //margin: EdgeInsets.only(bottom: 15),
+              child: SingleChildScrollView(
+                  scrollDirection: Axis.vertical, child: Text(thesisData)),
               height: (size.height - 115) * 0.47,
             ),
             Container(
@@ -121,6 +204,9 @@ class _RelatedConceptsState extends State<RelatedConcepts> {
                       controller: PageController(viewportFraction: 0.4),
                       onPageChanged: (int index) => setState(() {
                         conceptIndex = index;
+                        thesisData = "";
+                        compareCinT.clear();
+                        parseFuture();
                         if (dots.isNotEmpty) {
                           dots.clear();
                           calculateDots();
@@ -131,7 +217,7 @@ class _RelatedConceptsState extends State<RelatedConcepts> {
                           alignment: Alignment.centerLeft,
                           child: Container(
                               child: AutoSizeText(
-                            concepts[i],
+                            concepts[i].concept,
                             style: TextStyle(
                                 fontSize: 17,
                                 fontWeight: (i == conceptIndex)
