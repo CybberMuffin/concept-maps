@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class Tag extends StatelessWidget {
-  Tag(this.tag);
+  final String tag;
 
-  String tag;
+  Tag(this.tag);
 
   @override
   Widget build(BuildContext context) {

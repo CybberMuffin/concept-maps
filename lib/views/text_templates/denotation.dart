@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class Denotation extends StatelessWidget {
-  Denotation(this.denotation);
+  final String denotation;
 
-  String denotation;
+  Denotation(this.denotation);
 
   @override
   Widget build(BuildContext context) {

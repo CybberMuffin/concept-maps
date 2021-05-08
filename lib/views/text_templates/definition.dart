@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class Definition extends StatelessWidget {
-  Definition(this.definition);
+  final String definition;
 
-  String definition;
+  Definition(this.definition);
 
   @override
   Widget build(BuildContext context) {
