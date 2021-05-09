@@ -1,4 +1,5 @@
 import 'package:concept_maps/models/dedactic_relations_entities/concept_in_theses.dart';
+import 'package:concept_maps/models/enums/thesis_type.dart';
 import 'package:concept_maps/models/general_entities/concept.dart';
 import 'package:concept_maps/models/general_entities/thesis.dart';
 import 'package:concept_maps/models/graph_entities/concept_header.dart';
@@ -30,10 +31,12 @@ class AppProvider with ChangeNotifier {
   }
 
   ///Use this to get all related theses to a selected concept
-  Future<List<Thesis>> fetchThesesByConcept(Concept concept) async {
-    _conceptTheses[concept.iid] ??=
-        await ApiService.fetchThesesByConceptId(concept.iid);
-    return _conceptTheses[concept.iid];
+  Future<List<Thesis>> fetchThesesByConcept(int conceptId) async {
+    _conceptTheses[conceptId] ??=
+        (await ApiService.fetchThesesByConceptId(conceptId))
+            .where((element) => element.type != ThesisType.other)
+            .toList();
+    return _conceptTheses[conceptId];
   }
 
   ///Use this to get all CinT references for a selected concept

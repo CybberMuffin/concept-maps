@@ -40,7 +40,7 @@ abstract class ApiService {
   static Future<List<MapModel>> fetchBranches() async {
     final List<MapModel> maps = await Future.wait<MapModel>(
       CourseListInfo.courseKeyList
-          .sublist(0, 9)
+          .sublist(0, 6)
           .map<Future<MapModel>>((key) => _fetchConceptRelations(key))
           .toList(),
     );

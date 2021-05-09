@@ -79,6 +79,10 @@ class Thesis {
         return ThesisType.democode;
       case 'denotation':
         return ThesisType.denotation;
+      case 'note':
+        return ThesisType.note;
+      case 'tag':
+        return ThesisType.note;
       default:
         return ThesisType.other;
     }

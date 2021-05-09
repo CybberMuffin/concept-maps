@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class Note extends StatelessWidget {
-  Note(this.note);
+  final String note;
 
-  String note;
+  Note(this.note);
 
   @override
   Widget build(BuildContext context) {
