@@ -8,16 +8,19 @@ class Essence extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: MediaQuery.of(context).size.width,
       margin: EdgeInsets.only(bottom: 10, left: 15),
       padding: const EdgeInsets.only(left: 15, right: 15),
       child: Row(
         children: [
           Icon(Icons.brightness_1_rounded, size: 8, color: Colors.black),
-          Container(
-            margin: EdgeInsets.only(left: 15),
-            child: Text(
-              essence,
-              style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
+          Expanded(
+            child: Container(
+              margin: EdgeInsets.only(left: 15),
+              child: Text(
+                essence,
+                style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
+              ),
             ),
           )
         ],

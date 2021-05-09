@@ -1,1 +1,1 @@
-enum ThesisType { essence, definition, democode, denotation, other }
+enum ThesisType { essence, definition, democode, denotation, note, other }

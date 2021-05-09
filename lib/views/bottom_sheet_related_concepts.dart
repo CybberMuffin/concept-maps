@@ -33,20 +33,24 @@ class _RelatedConceptsState extends State<RelatedConcepts> {
     ;
   }
 
-  void fillCurrentCinT() {
+  Future<ConceptInTheses> fillCurrentCinT() async {
     context
         .read<AppProvider>()
         .fetchConceptInTheses(
             int.tryParse(context.read<AppProvider>().focusNode.id))
         .then((value) => currentConceptsInTheses = value);
+
+    return currentConceptsInTheses;
   }
 
-  void fillNextCinT() {
+  Future<ConceptInTheses> fillNextCinT() async {
     context
         .read<AppProvider>()
         .fetchConceptInTheses(int.tryParse(concepts[conceptIndex].id))
         .then((value) => nextConceptsInTheses = value)
         .then((_) => compare());
+
+    return nextConceptsInTheses;
   }
 
   void compare() {
@@ -84,7 +88,7 @@ class _RelatedConceptsState extends State<RelatedConcepts> {
     });
   }
 
-  void getThesis() {
+  Future<String> getThesis() async {
     compareCinT.forEach((element) {
       print(element);
     });
@@ -94,15 +98,20 @@ class _RelatedConceptsState extends State<RelatedConcepts> {
         .then((value) => thesis = value)
         .then((value) => value.forEach((element) {
               setState(() {
+                print(thesisData);
                 thesisData += element.data + "\n";
               });
             }));
+
+    return thesisData;
   }
 
-  void parseFuture() async {
+  Future<String> parseFuture() async {
     await fillCurrentCinT();
     await fillNextCinT();
     await getThesis();
+
+    return thesisData;
   }
 
   parseDidacticAfter() {
