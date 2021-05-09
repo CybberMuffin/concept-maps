@@ -5,6 +5,7 @@ import 'package:concept_maps/providers/app_provider.dart';
 import 'package:concept_maps/views/paint_graph.dart';
 import 'package:concept_maps/views/widgets/drawer_menu.dart';
 import 'package:concept_maps/views/widgets/search_app_bar.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -12,6 +13,7 @@ import 'package:provider/provider.dart';
 import 'package:concept_maps/views/bottom_sheet_pannel.dart';
 import 'package:concept_maps/models/graph_entities/node.dart';
 import 'package:vector_math/vector_math_64.dart';
+import 'dart:math';
 
 import 'bottom_sheet_pannel.dart';
 
@@ -21,17 +23,31 @@ class ForceDirected extends StatefulWidget {
 }
 
 class _ForceDirectedState extends State<ForceDirected>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   AnimationController animationController;
   Animation<Matrix4> animation;
 
+  Animation<double> graphAnimation, graphCurve;
+  AnimationController graphAnimationController;
+
   Node focusNode;
+  bool graphFlag;
+  int count;
+  Vector2 temp;
   MapModel map;
   ForceDirectedController controller;
   var flag;
   Offset frame;
   TransformationController transformationController =
       TransformationController();
+
+  void runGraphAnimation(Duration d){
+    graphAnimationController.duration = Duration(microseconds: d.inMicroseconds);
+    graphCurve =
+        CurvedAnimation(parent: graphAnimationController, curve: Curves.easeInOut);
+
+    graphAnimationController.forward(from: 0.0);
+  }
 
   void runAnimation(Offset position, double scale) {
     final size = MediaQuery.of(context).size;
@@ -60,6 +76,57 @@ class _ForceDirectedState extends State<ForceDirected>
     var nodeSize = 100.0;
     controller.widgets.clear();
     controller.titles.clear();
+
+    controller.edges.forEach((element) {
+      double a, c, angle = 0;
+      if(element.v.position.y <= element.u.position.y && element.v.position.x <= element.u.position.x){
+        a = Vector2(element.v.position.x - element.v.position.x, element.v.position.y - element.u.position.y).length;
+        c = Vector2(element.v.position.x - element.u.position.x, element.v.position.y - element.u.position.y).length;
+        angle = asin(a/c);
+      } else if(element.u.position.y <= element.v.position.y && element.v.position.x <= element.u.position.x){
+        a = Vector2(element.v.position.x - element.v.position.x, element.v.position.y - element.u.position.y).length;
+        c = Vector2(element.v.position.x - element.u.position.x, element.v.position.y - element.u.position.y).length;
+        angle = -asin(a/c);
+      } else if(element.v.position.y <= element.u.position.y && element.u.position.x <= element.v.position.x){
+        a = Vector2(element.v.position.x - element.v.position.x, element.v.position.y - element.u.position.y).length;
+        c = Vector2(element.v.position.x - element.u.position.x, element.v.position.y - element.u.position.y).length;
+        angle = -pi - asin(a/c);
+      } else if(element.u.position.y <= element.v.position.y && element.u.position.x <= element.v.position.x){
+        a = Vector2(element.v.position.x - element.v.position.x, element.v.position.y - element.u.position.y).length;
+        c = Vector2(element.v.position.x - element.u.position.x, element.v.position.y - element.u.position.y).length;
+        angle = -pi + asin(a/c);
+      }
+
+      controller.widgets.add(
+          Positioned(
+            top: element.v.position.y - 25,
+            left: element.v.position.x + 25,
+            child: Transform.rotate(
+              angle: angle,
+              alignment: Alignment.centerLeft,
+              child: InkWell(
+                enableFeedback: false,
+                canRequestFocus: false,
+                highlightColor: Color(0x0032f16f),
+                hoverColor: Color(0x0032f16f),
+                splashColor: Color(0x0032f16f),
+                onTap: (){
+                  setState(() {
+                    print(element.u.title+"----"+element.v.title);
+                  });
+                },
+                child: Container(
+                  width: Vector2(element.u.position.x - element.v.position.x, element.u.position.y - element.v.position.y).length,
+                  height: 50,
+                ),
+              ),
+            ),
+          )
+      );
+    });
+
+
+
     controller.vertices.forEach((element) {
       TextPainter textPainter = TextPainter(
           text: TextSpan(text: element.title),
@@ -73,6 +140,7 @@ class _ForceDirectedState extends State<ForceDirected>
           left: element.position.x - textWidth,
           child: Text(
             element.title,
+            //+"\n"+element.atr.x.toString()+"\n"+element.atr.y.toString()
             //+"\n"+element.displacement.x.toString()+"\n"+element.displacement.y.toString(),
             style: GoogleFonts.montserrat(
               fontSize: 22,
@@ -81,19 +149,30 @@ class _ForceDirectedState extends State<ForceDirected>
           )));
 
       controller.widgets.add(Positioned(
-        top: element.position.y - element.size / 2,
-        left: element.position.x - element.size / 2,
+        top: element.position.y*graphAnimation.value + element.prevPosition.y*(1 - graphAnimation.value) - element.size / 2,
+        left: element.position.x*graphAnimation.value + element.prevPosition.x*(1 - graphAnimation.value) - element.size / 2,
         child: GestureDetector(
           onPanDown: (details) {
             element.isOn = true;
           },
           onPanUpdate: (details) {
-            setState(() {
-              controller.forceCalc(frame, 1);
-              element.position.x += details.delta.dx;
-              element.position.y += details.delta.dy;
-              fillWidg();
-            });
+            count++;
+            temp.x += details.delta.dx;
+            temp.y += details.delta.dy;
+            if(count>10){
+              count = 0;
+              setState(() {
+                graphFlag = false;
+                element.prevPosition = Vector2(element.position.x, element.position.y);
+                Duration d = controller.forceCalc(frame, 1, 1);
+                runGraphAnimation(d);
+                element.position.x += temp.x;
+                element.position.y += temp.y;
+                temp = Vector2(0, 0);
+                fillWidg();
+              });
+            }
+
           },
           onPanEnd: (details) {
             element.isOn = false;
@@ -130,11 +209,16 @@ class _ForceDirectedState extends State<ForceDirected>
           ),
         ),
       ));
+
     });
+    graphFlag = true;
   }
 
   @override
   void initState() {
+
+    Stopwatch s = Stopwatch();
+    s.start();
     final map = context.read<AppProvider>().currentMap;
     animationController =
         AnimationController(duration: Duration(microseconds: 200), vsync: this);
@@ -144,25 +228,53 @@ class _ForceDirectedState extends State<ForceDirected>
       });
     });
 
+    graphAnimationController =
+        AnimationController(vsync: this);
+    graphAnimationController.addListener(() {
+      setState(() {
+      });
+    });
+    graphAnimation = animationController
+        .drive(CurveTween(curve: Curves.easeInOut))
+        .drive(Tween<double>(begin: 0.0, end: 1.0));
+
     flag = false;
+    graphFlag = true;
+    count = 10;
+    temp = Vector2(0, 0);
     controller = ForceDirectedController(map);
     controller.crToVE();
     frame = Offset(controller.vertices.length.toDouble() * 800,
         controller.vertices.length.toDouble() * 800);
     controller.setVerticesPos(frame);
-    controller.forceCalc(frame, 50);
+    controller.forceCalc(frame, 50, 50);
     context.read<AppProvider>().setTree(controller.balloon.three);
     controller.setVerticesEdgesColors(controller.balloon.three);
     fillWidg();
     flag = true;
-
+    force = 50;
+    print(s.elapsedMilliseconds);
     super.initState();
+  }
+
+  int force;
+
+  void d(){
+    if(force > 0){
+      Duration d = controller.forceCalc(frame, 1, force.toDouble());
+      fillWidg();
+      runGraphAnimation(d);
+    }
+    force--;
   }
 
   @override
   void didChangeDependencies() {
-    final size = MediaQuery.of(context).size;
+    Stopwatch ss = Stopwatch()
+    ..start();
 
+    final size = MediaQuery.of(context).size;
+    //d();
     if (Provider.of<AppProvider>(context).animationStart == true) {
       Vector2 v = controller
           .vertices[controller.vertices.indexWhere(
@@ -206,13 +318,14 @@ class _ForceDirectedState extends State<ForceDirected>
           0,
           1);
     }
-
+    print(ss.elapsedMilliseconds);
     super.didChangeDependencies();
   }
 
   @override
   void dispose() {
     animationController.dispose();
+    graphAnimationController.dispose();
     super.dispose();
   }
 

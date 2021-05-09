@@ -21,8 +21,6 @@ dependencies:
   material_floating_search_bar: ^0.3.3
   syntax_highlighter: ^0.1.0
   auto_size_text: ^2.1.0
-  carousel_slider: ^3.0.0
-  infinite_listview: ^1.1.0
 
 
 dev_dependencies:
