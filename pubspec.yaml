@@ -22,7 +22,6 @@ dependencies:
   syntax_highlighter: ^0.1.0
   auto_size_text: ^2.1.0
 
-
 dev_dependencies:
   flutter_test:
     sdk: flutter

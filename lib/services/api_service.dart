@@ -1,9 +1,9 @@
 import 'dart:convert';
+
 import 'package:concept_maps/models/dedactic_relations_entities/concept_in_theses.dart';
 import 'package:concept_maps/models/general_entities/concept.dart';
 import 'package:concept_maps/models/general_entities/thesis.dart';
 import 'package:concept_maps/models/graph_entities/map_model.dart';
-import 'package:concept_maps/models/graph_entities/concept_header.dart';
 import 'package:concept_maps/utils/course_key_list.dart';
 import 'package:http/http.dart' as http;
 
@@ -17,11 +17,7 @@ abstract class ApiService {
     final String headerUrl = "$_hostUrl/api/CinH/$field";
 
     final response = await Future.wait<http.Response>(
-      [
-        http.get(relationsUrl),
-        http.get(conceptsUrl),
-        http.get(headerUrl)
-      ],
+      [http.get(relationsUrl), http.get(conceptsUrl), http.get(headerUrl)],
     );
 
     final relationsResponse = response.first;
@@ -35,14 +31,10 @@ abstract class ApiService {
       final List headerResult = jsonDecode(headerResponse.body);
 
       return MapModel.fromMap(
-        field,
-        relationsResult,
-        conceptsResult,
-        headerResult
-      );
+          field, relationsResult, conceptsResult, headerResult);
     }
 
-    throw Exception("Error occured during fetch of map model");
+    throw Exception("Error occurred during fetch of map model");
   }
 
   static Future<List<MapModel>> fetchBranches() async {
@@ -67,7 +59,7 @@ abstract class ApiService {
       return ConceptInTheses.fromMap(result, conceptId);
     }
 
-    throw Exception("Error occured during fetch of concepts in theses");
+    throw Exception("Error occurred during fetch of concepts in theses");
   }
 
   static Future<List<Concept>> fetchConceptsDidacticBefore(
@@ -85,7 +77,7 @@ abstract class ApiService {
     }
 
     throw Exception(
-        "Error occured during fetch of concepts in didactic before");
+        "Error occurred during fetch of concepts in didactic before");
   }
 
   static Future<List<Concept>> fetchConceptsDidacticAfter(int conceptId) async {
@@ -101,7 +93,8 @@ abstract class ApiService {
       );
     }
 
-    throw Exception("Error occured during fetch of concepts in didactic after");
+    throw Exception(
+        "Error occurred during fetch of concepts in didactic after");
   }
 
   static Future<List<Thesis>> fetchThesesByConceptId(int conceptId) async {
@@ -117,7 +110,7 @@ abstract class ApiService {
       );
     }
 
-    throw Exception("Error occured during fetch of theses by concept id");
+    throw Exception("Error occurred during fetch of theses by concept id");
   }
 
   static Future<List<Thesis>> fetchTheses(List<int> thesisIds) async {
@@ -136,7 +129,6 @@ abstract class ApiService {
       );
     }
 
-    throw Exception("Error occured during fetch of selected theses");
+    throw Exception("Error occurred during fetch of selected theses");
   }
-
 }
