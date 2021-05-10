@@ -34,8 +34,15 @@ class ForceDirectedController {
     });
     map.concepts.forEach((a) {
       if (a.isAspect == "1") {
+        vertices.firstWhere((element) => element.id == a.id).fullTitle =
+            vertices.firstWhere((element) => element.id == a.aspectOf).title
+                +": "
+                +a.concept;
         edges.add(Edge(vertices[vertices.indexWhere((b) => b.id == a.id)],
             vertices[vertices.indexWhere((b) => b.id == a.aspectOf)]));
+      }else{
+        vertices.firstWhere((element) => element.id == a.id).fullTitle =
+            a.concept;
       }
     });
   }

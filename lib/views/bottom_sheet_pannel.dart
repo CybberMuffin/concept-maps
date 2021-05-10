@@ -29,15 +29,16 @@ class _BottomSheetPannelState extends State<BottomSheetPannel>
   bool yellowSticker;
   List<Widget> pages;
   int pageIndex;
+  double bottomSheetCof = 0.5;
 
   dragPanelUp() {
     final size = MediaQuery.of(context).size;
     if (height == 40) {
       setState(() {
         pageIndex = 0;
-        runAnimation(size.height * 0.4);
+        runAnimation(size.height * bottomSheetCof);
       });
-    } else if (height == size.height * 0.4 && purpleSticker != true) {
+    } else if (height == size.height * bottomSheetCof && purpleSticker != true) {
       setState(() {
         runAnimation(size.height - 115);
       });
@@ -46,7 +47,7 @@ class _BottomSheetPannelState extends State<BottomSheetPannel>
 
   dragPanelDown() {
     final size = MediaQuery.of(context).size;
-    if (height == size.height * 0.4) {
+    if (height == size.height * bottomSheetCof) {
       setState(() {
         runAnimation(40);
         yellowSticker = false;
@@ -55,7 +56,7 @@ class _BottomSheetPannelState extends State<BottomSheetPannel>
       });
     } else if (height == size.height - 115 && yellowSticker != true) {
       setState(() {
-        runAnimation(size.height * 0.4);
+        runAnimation(size.height * bottomSheetCof);
       });
     } else if (height == size.height - 115 && yellowSticker == true) {
       setState(() {
@@ -105,11 +106,11 @@ class _BottomSheetPannelState extends State<BottomSheetPannel>
     if (Provider.of<AppProvider>(context).bottomSheetFlag == true) {
       if (purpleSticker == false && yellowSticker == false && pageIndex == 0) {
         greenSticker = true;
-        runAnimation(size.height * 0.4);
+        runAnimation(size.height * bottomSheetCof);
       }
       if (greenSticker == false && yellowSticker == false && pageIndex == 1) {
         purpleSticker = true;
-        runAnimation(size.height * 0.4);
+        runAnimation(size.height * bottomSheetCof);
       }
 
       if (greenSticker == false && purpleSticker == false && pageIndex == 2) {
@@ -144,7 +145,7 @@ class _BottomSheetPannelState extends State<BottomSheetPannel>
                     setState(() {
                       purpleSticker = !purpleSticker;
                       if (height == size.height - 115) {
-                        runAnimation(size.height * 0.4);
+                        runAnimation(size.height * bottomSheetCof);
                       }
                       if (greenSticker == true) {
                         greenSticker = false;
@@ -225,7 +226,7 @@ class _BottomSheetPannelState extends State<BottomSheetPannel>
                   onTap: () {
                     setState(() {
                       yellowSticker = !yellowSticker;
-                      if (height == size.height * 0.4) {
+                      if (height == size.height * bottomSheetCof) {
                         runAnimation(size.height - 115);
                       }
                       if (purpleSticker == true) {
@@ -271,7 +272,7 @@ class _BottomSheetPannelState extends State<BottomSheetPannel>
                     topRight: Radius.circular(25)),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.grey.withOpacity(0.5),
+                    color: Colors.grey.withOpacity(bottomSheetCof),
                     spreadRadius: 5,
                     blurRadius: 7,
                     //offset: Offset(0, 3),
@@ -291,7 +292,7 @@ class _BottomSheetPannelState extends State<BottomSheetPannel>
                   },
                   onSwipeDown: () {
                     dragPanelDown();
-                    if (height == MediaQuery.of(context).size.height * 0.4) {
+                    if (height == MediaQuery.of(context).size.height * bottomSheetCof) {
                       if (greenSticker == true || purpleSticker == true) {
                         greenSticker = false;
                         purpleSticker = false;

@@ -6,6 +6,7 @@ class Vertice {
 
   var id;
   String title;
+  String fullTitle;
   Vector2 position;
   Vector2 prevPosition;
   Vector2 displacement;
@@ -15,6 +16,7 @@ class Vertice {
   Color mainColor;
   Color sideColor;
   double size;
+
 
   bool isHot;
   double hotDistance;

@@ -32,7 +32,7 @@ class _BottomPannelState extends State<BottomPannel> {
                 padding: const EdgeInsets.only(left: 15, right: 15),
                 margin: EdgeInsets.only(top: 5),
                 child: Text(
-                  provider.focusNode.title,
+                  provider.focusTitle,
                   style: GoogleFonts.montserrat(
                     fontSize: 24,
                     fontWeight: FontWeight.w900,
@@ -51,8 +51,8 @@ class _BottomPannelState extends State<BottomPannel> {
               ),
             ),
             FutureBuilder<List<Thesis>>(
-                future: provider.fetchThesesByConcept(
-                  int.parse(provider.focusNode.id.toString()),
+                future: provider.fetchThesesByConceptFork(
+                  int.parse(provider.focusNode.id),
                 ),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {

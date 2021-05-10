@@ -7,4 +7,5 @@ class Edge {
   Vertice v;
   Vertice u;
   Color edgeColor;
+  
 }

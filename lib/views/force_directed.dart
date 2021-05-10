@@ -54,7 +54,7 @@ class _ForceDirectedState extends State<ForceDirected>
     Matrix4 matrix = Matrix4.copy(transformationController.value);
     matrix.row0 = Vector4(scale, 0, 0, -position.dx * scale + size.width / 2);
     matrix.row1 =
-        Vector4(0, scale, 0, -position.dy * scale + size.height * 0.25);
+        Vector4(0, scale, 0, -position.dy * scale + size.height * 0.2);
     matrix.row2 = Vector4(0, 0, scale, 0);
     //matrix.row3 = Vector4(position.dx, position.dy, 0, 1);
 
@@ -112,7 +112,15 @@ class _ForceDirectedState extends State<ForceDirected>
                 splashColor: Color(0x0032f16f),
                 onTap: (){
                   setState(() {
-                    print(element.u.title+"----"+element.v.title);
+                    runAnimation(Offset((element.u.position.x + element.v.position.x)/2, (element.u.position.y + element.v.position.y)/2), 0.5);
+                    context.read<AppProvider>().setFocusNode(controller.balloon.three[
+                    controller.balloon.three
+                        .indexWhere((a) => a.id == element.u.id)]);
+                    context.read<AppProvider>().animationStart = false;
+                    context.read<AppProvider>().isEdgeActive = true;
+                    context.read<AppProvider>().focusEdge = element;
+                    context.read<AppProvider>().focusTitle = element.u.fullTitle+" 一 "+element.v.fullTitle;
+                    context.read<AppProvider>().setBottomSheetFlag(true);
                   });
                 },
                 child: Container(
@@ -186,6 +194,8 @@ class _ForceDirectedState extends State<ForceDirected>
               context.read<AppProvider>().setFocusNode(controller.balloon.three[
                   controller.balloon.three
                       .indexWhere((a) => a.id == element.id)]);
+              context.read<AppProvider>().isEdgeActive = false;
+              context.read<AppProvider>().focusTitle = element.fullTitle;
               context.read<AppProvider>().animationStart = false;
               context.read<AppProvider>().setBottomSheetFlag(true);
             });
