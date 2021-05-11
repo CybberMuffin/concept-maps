@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:syntax_highlighter/syntax_highlighter.dart';
 
 class Democode extends StatefulWidget {
+  final String democode;
   Democode(this.democode);
-  String democode;
 
   @override
   _DemocodeState createState() => _DemocodeState(this.democode);

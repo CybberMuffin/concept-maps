@@ -160,8 +160,13 @@ class _RelatedConceptsState extends State<RelatedConcepts> {
         child: Column(
           children: [
             Container(
+              padding: EdgeInsets.only(top: 10),
               child: SingleChildScrollView(
-                  scrollDirection: Axis.vertical, child: Text(thesisData)),
+                  scrollDirection: Axis.vertical,
+                  child: Text(
+                    thesisData,
+                    style: TextStyle(fontSize: 17, fontStyle: FontStyle.italic),
+                  )),
               height: (size.height - 115) * 0.47,
             ),
             Container(
