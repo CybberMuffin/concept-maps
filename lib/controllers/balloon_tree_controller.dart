@@ -61,7 +61,7 @@ class BalloonTreeController {
         }
       }
     });
-    if(unattached.length > 0){
+    if(unattached.length > 0 && map.age < 2){
       map.concepts.add(Concept(
           id: "0",
           concept: "<usage>",
@@ -89,7 +89,7 @@ class BalloonTreeController {
 
 
     map.concepts.forEach((a) {
-      if(a.isAspect == "1"){
+      if(a.isAspect == "1" && map.age < 2){
         map.relations.add(Relation(id:"", conceptId: a.id, toConceptId: a.aspectOf));
       }
     });

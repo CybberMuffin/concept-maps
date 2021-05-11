@@ -25,6 +25,7 @@ class _BottomSheetGraphState extends State<BottomSheetGraph>
 
   Animation<double> animation, curve;
   AnimationController animationController;
+  double bottomSheetCof = 0.5;
 
   void runAnimation(double velocity) {
     curve =
@@ -49,6 +50,7 @@ class _BottomSheetGraphState extends State<BottomSheetGraph>
       left: node.x - node.r,
       child: GestureDetector(
         onTap: () {
+
           Provider.of<AppProvider>(context, listen: false)
               .setAnimationParam(node.id);
         },
@@ -79,6 +81,7 @@ class _BottomSheetGraphState extends State<BottomSheetGraph>
   }
 
   void addBorderWidget(Node node) {
+    final size = MediaQuery.of(context).size;
     widgets.add(Positioned(
       top: node.y,
       child: GestureDetector(
@@ -103,8 +106,24 @@ class _BottomSheetGraphState extends State<BottomSheetGraph>
         dots.insert(0, false);
       }
     });
+
     widgets.add(Positioned(
       top: 0,
+        child: Container(
+          width: size.width - 30,
+          child: Text(
+            "Child nodes of "+node.title,
+            textAlign: TextAlign.center,
+            style: GoogleFonts.montserrat(
+              fontSize: node.r/2,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+      ),
+    ));
+
+    widgets.add(Positioned(
+      top: node.r/2 + 8,
       child: DotsIndicator(dots),
     ));
   }
@@ -497,17 +516,17 @@ class _BottomSheetGraphState extends State<BottomSheetGraph>
     int c = (node.child.length > 4)? 4 : node.child.length;
     double deltaDegNum = (c - 1)/2.0;
     double deg = deltaDegNum*deltaDeg - 90;
-    double circleR = (size.height*0.4 - 45)/10;
+    double circleR = (size.height*bottomSheetCof - 45)/11;
     double r = circleR*5.5;
     newNodes.add(Node(node.id, [], "-1", node.title, node.mainColor, node.sideColor));
     newNodes[0].x = size.width/2 - 15;
-    newNodes[0].y = size.height*0.4 - 40 - circleR*3.5;
+    newNodes[0].y = size.height*bottomSheetCof - 40 - circleR*3.2;
     newNodes[0].r = circleR*1.3;
 
     newNodes.add(Node(node.parent, [node.id], "-2", ""));
     newNodes[1].mainColor = node.mainColor;
     newNodes[1].x = size.width/2 - 15;
-    newNodes[1].y = size.height*0.4 - 40 - circleR*0.5;
+    newNodes[1].y = size.height*bottomSheetCof - 40 - circleR*0.5;
     newNodes[1].r = circleR;
     if(node.parent != "-1") {
       newNodes[1].r = circleR;

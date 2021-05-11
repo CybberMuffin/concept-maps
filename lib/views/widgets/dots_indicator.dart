@@ -17,7 +17,7 @@ class DotsIndicator extends StatelessWidget {
           width: circleSize,
           height: circleSize,
           decoration: BoxDecoration(
-              color: Colors.blueAccent,
+              color: Colors.blue[700],
               borderRadius: BorderRadius.circular(20)),
         ));
       } else {

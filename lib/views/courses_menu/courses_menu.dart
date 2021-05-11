@@ -10,6 +10,8 @@ class CoursesMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    //Provider.of<AppProvider>(context).animationStart = false;
     final List<MapModel> maps = context.read<AppProvider>().maps;
 
     return Scaffold(

@@ -8,13 +8,14 @@ class MapModel {
   List<Concept> concepts;
   List<ConceptHeader> headerConcepts;
   String field;
+  int age;
 
   MapModel({
     @required this.relations,
     @required this.concepts,
     @required this.headerConcepts,
     @required this.field,
-  });
+  }): age = 0;
 
   MapModel copyWith({
     List<Relation> relations,
