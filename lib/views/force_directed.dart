@@ -230,6 +230,7 @@ class _ForceDirectedState extends State<ForceDirected>
     Stopwatch s = Stopwatch();
     s.start();
     final map = context.read<AppProvider>().currentMap;
+    map.age++;
     animationController =
         AnimationController(duration: Duration(microseconds: 200), vsync: this);
     animationController.addListener(() {
@@ -250,6 +251,8 @@ class _ForceDirectedState extends State<ForceDirected>
 
     flag = false;
     graphFlag = true;
+    context.read<AppProvider>().bottomSheetFlag = null;
+    context.read<AppProvider>().animationStart = false;
     count = 10;
     temp = Vector2(0, 0);
     controller = ForceDirectedController(map);
@@ -290,6 +293,8 @@ class _ForceDirectedState extends State<ForceDirected>
           .vertices[controller.vertices.indexWhere(
               (a) => a.id == Provider.of<AppProvider>(context).animationId)]
           .position;
+      context.read<AppProvider>().isEdgeActive = false;
+      context.read<AppProvider>().focusTitle = controller.vertices.firstWhere((a) => a.id == Provider.of<AppProvider>(context).animationId).fullTitle;
       runAnimation(Offset(v.x, v.y), 0.7);
       Provider.of<AppProvider>(context).bottomSheetFlag = true;
       context.read<AppProvider>().focusNode = controller.balloon.three[

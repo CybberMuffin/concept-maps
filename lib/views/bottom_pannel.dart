@@ -69,10 +69,11 @@ class _BottomPannelState extends State<BottomPannel> {
                   }
 
                   if (snapshot.hasError) {
-                    return Text(
-                      snapshot.error.toString(),
-                      style: TextStyle(color: Colors.red),
-                    );
+                    return Container();
+                    // return Text(
+                    //   snapshot.error.toString(),
+                    //   style: TextStyle(color: Colors.red),
+                    // );
                   }
 
                   return CircularProgressIndicator();

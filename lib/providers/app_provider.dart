@@ -85,7 +85,6 @@ class AppProvider with ChangeNotifier {
         }
       });
     });
-    
     return fetchTheses(thesisIds);
   }
 

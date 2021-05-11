@@ -50,6 +50,7 @@ class _BottomSheetGraphState extends State<BottomSheetGraph>
       left: node.x - node.r,
       child: GestureDetector(
         onTap: () {
+
           Provider.of<AppProvider>(context, listen: false)
               .setAnimationParam(node.id);
         },
