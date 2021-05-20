@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:concept_maps/models/dedactic_relations_entities/concept_reference.dart';
 
-class ConceptInTheses {
+  class ConceptInTheses {
   int id;
 
   ///This concept refences on other concepts

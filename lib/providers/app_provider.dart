@@ -68,29 +68,43 @@ class AppProvider with ChangeNotifier {
     ConceptInTheses conceptInTheses1 =
       await fetchConceptInTheses(
           currentMap.concepts.firstWhere((a) => a.id == focusEdge.u.id));
-    ConceptInTheses conceptInTheses2 =
-      await fetchConceptInTheses(
-          currentMap.concepts.firstWhere((a) => a.id == focusEdge.v.id));
+    //ConceptInTheses conceptInTheses2 =
+    //  await fetchConceptInTheses(
+    //      currentMap.concepts.firstWhere((a) => a.id == focusEdge.v.id));
 
-    List<int> thesisIds = [];
-    
-    conceptInTheses1.innerReferences.addAll(conceptInTheses1.outerReferences);
-    conceptInTheses2.innerReferences.addAll(conceptInTheses2.outerReferences);
-    conceptInTheses1.innerReferences.forEach((a) {
-      conceptInTheses2.innerReferences.forEach((b) {
-        if(a.thesisId == b.thesisId){
-          if(!thesisIds.contains(a.thesisId)){
-            thesisIds.add(a.thesisId);
-          }
-        }
-      });
+    List<int> thesisIdsU = [];
+    List<int> thesisIdsV = [];
+    conceptInTheses1.innerReferences.forEach((element) {
+      if(element.conceptId.toString() == focusEdge.v.id){
+        thesisIdsU.add(element.thesisId);
+      }
     });
-    return fetchTheses(thesisIds);
+
+    conceptInTheses1.outerReferences.forEach((element) {
+      if(element.conceptId.toString() == focusEdge.v.id){
+        thesisIdsU.add(element.thesisId);
+      }
+    });
+
+    //List<Thesis> thesisU = await fetchTheses(thesisIdsU);
+    //List<Thesis> thesisV = await fetchTheses(thesisIdsV);
+
+    // conceptInTheses1.innerReferences.addAll(conceptInTheses1.outerReferences);
+    // conceptInTheses2.innerReferences.addAll(conceptInTheses2.outerReferences);
+    // conceptInTheses1.innerReferences.forEach((a) {
+    //   conceptInTheses2.innerReferences.forEach((b) {
+    //     if(a.thesisId == b.thesisId){
+    //       if(!thesisIds.contains(a.thesisId)){
+    //         thesisIds.add(a.thesisId);
+    //       }
+    //     }
+    //   });
+    // });
+    return fetchTheses(thesisIdsU);
   }
 
   Future<List<Thesis>> fetchThesesByConceptFork(int conceptId) async{
-    print(isEdgeActive);
-    if(isEdgeActive == true){
+    if(isEdgeActive){
       return fetchEdgeTheses(conceptId);
     }
     else{

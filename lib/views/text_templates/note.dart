@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class Note extends StatelessWidget {
-  final String note;
+  final Function note;
 
   Note(this.note);
 
@@ -25,10 +25,7 @@ class Note extends StatelessWidget {
             ),
           ),
           Container(
-            child: Text(
-              note,
-              style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
-            ),
+            child: note(context, TextStyle(fontSize: 17, fontStyle: FontStyle.italic, color: Colors.black))
           ),
         ],
       ),

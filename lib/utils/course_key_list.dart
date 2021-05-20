@@ -12,18 +12,22 @@ abstract class CourseListInfo {
     'python',
     'html',
     'swift',
+    'data-science',
+    'java',
   ];
 
   static Map<String, Color> backgroundColor = {
     'php': Colors.purple,
     'flutter': Colors.blue,
-    'dart': Colors.blue[700],
-    'angular': Colors.red,
-    'react': Colors.blue[400],
-    'javascript': Colors.yellow[700],
-    'scala': Colors.green,
-    'python': Colors.blue[600],
-    'html': Colors.orange[600],
-    'swift': Colors.orange[400],
+    'dart': Colors.red,
+    'angular': Colors.blue[700],
+    'react': Colors.yellow[700],
+    'javascript': Colors.green,
+    'scala': Colors.indigoAccent,
+    'python': Colors.pink,
+    'html': Colors.deepOrange,
+    'swift': Colors.amber,
+    'data-science': Colors.deepPurpleAccent,
+    'java': Colors.blue,
   };
 }

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class Denotation extends StatelessWidget {
-  final String denotation;
+  final Function denotation;
 
   Denotation(this.denotation);
 
@@ -26,10 +27,7 @@ class Denotation extends StatelessWidget {
               width: size.width - size.width * 0.04,
               padding: const EdgeInsets.only(left: 5, right: 15),
               margin: EdgeInsets.only(bottom: 10),
-              child: Text(
-                denotation,
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-              ),
+              child: denotation(context, fontSize: 17, fontWeight: FontWeight.w500, color: Colors.black)
             ),
           ],
         ),
