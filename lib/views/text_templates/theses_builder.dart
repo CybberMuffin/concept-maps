@@ -26,7 +26,6 @@ class ThesisViewBuilder extends StatelessWidget {
       );
     }
     List<InlineSpan> list = [];
-
     String c1s = edge.u.forms;
     String c2s = edge.v.forms;
     List<String> c1 = c1s.split("; ");
@@ -43,17 +42,37 @@ class ThesisViewBuilder extends StatelessWidget {
     c2.forEach((element) {
       mainMap[element] = "2";
     });
+    mainMap.remove("");
+    print(mainMap);
 
-    List<String> splitThesis = thesis.data.split(" ");
+    List<String> splitThesis = thesis.data.replaceAll("\n", " ").split(" ");
     List<String> keys = mainMap.keys.toList();
 
-    print(mainMap);
     for(int m = 0; m < splitThesis.length; m++){
       int i = 0;
       for(int j = 0; j < mainMap.length; j++){
         TextStyle textStyle;
-        if(splitThesis[m].replaceAll(RegExp(r'[:;,.!?\n]'), "") == keys[j]){
-          print("2");
+        List<String> formDecompose = keys[j].split(" ");
+        if(formDecompose.length > 1){
+          if(m + formDecompose.length < splitThesis.length){
+            String check = splitThesis[m];
+            for(int n = 1; n < formDecompose.length; n++){
+              check += " " + splitThesis[m+n];
+            }
+            if(check.replaceAll(RegExp(r'[:;,.!?]'), "") == keys[j]){
+              if(mainMap[keys[j]] == "1"){
+                textStyle = TextStyle(backgroundColor: edge.u.sideColor.withOpacity(0.85));
+              }
+              else if(mainMap[keys[j]] == "2"){
+                textStyle = TextStyle(backgroundColor: edge.v.sideColor.withOpacity(0.85));
+              }
+              list.add(TextSpan(text: check + " ", style: textStyle));
+              i = -1000;
+              m += formDecompose.length;
+            }
+          }
+        }
+        if(splitThesis[m].replaceAll(RegExp(r'[:;,.!?]'), "") == keys[j] && i > -1){
           if(mainMap[keys[j]] == "1"){
             textStyle = TextStyle(backgroundColor: edge.u.sideColor.withOpacity(0.85));
           }
@@ -68,13 +87,6 @@ class ThesisViewBuilder extends StatelessWidget {
         i++;
       }
     }
-    thesis.data.split(" ").forEach((b) {
-
-    });
-
-    //concept2.forms.split("; ").forEach((element) {
-    //  list.add(TextSpan(text: element, style: TextStyle(backgroundColor: Colors.amberAccent)));
-    //});
 
     return RichText(
         text: TextSpan(
