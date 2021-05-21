@@ -41,13 +41,12 @@ class AppProvider with ChangeNotifier {
   }
 
   ///Use this to get all CinT references for a selected concept
-  Future<ConceptInTheses> fetchConceptInTheses(Concept concept) async {
-    if (!_conceptReferences.any((element) => element.id == concept.iid)) {
-      _conceptReferences
-          .add(await ApiService.fecthConceptsInTheses(concept.iid));
+  Future<ConceptInTheses> fetchConceptInTheses(int conceptId) async {
+    if (!_conceptReferences.any((element) => element.id == conceptId)) {
+      _conceptReferences.add(await ApiService.fecthConceptsInTheses(conceptId));
     }
 
-    return _conceptReferences.firstWhere((element) => element.id == concept.iid,
+    return _conceptReferences.firstWhere((element) => element.id == conceptId,
         orElse: () => null);
   }
 
@@ -110,6 +109,10 @@ class AppProvider with ChangeNotifier {
     else{
       return fetchThesesByConcept(conceptId);
     }
+  }
+
+  Future<List<Thesis>> fetchTheses(List<int> thesisIds) async {
+    return await ApiService.fetchTheses(thesisIds);
   }
 
   Node focusNode;

@@ -9,7 +9,6 @@ class Essence extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-
     return Container(
       margin: EdgeInsets.only(bottom: 10, left: 10),
       padding: const EdgeInsets.only(left: 10, right: 15),
