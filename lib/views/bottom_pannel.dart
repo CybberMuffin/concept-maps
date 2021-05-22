@@ -93,8 +93,6 @@ class _BottomPannelState extends State<BottomPannel> {
                       }
                       final uTitle = provider.focusEdge.u.title;
                       final vTitle = provider.focusEdge.v.title;
-                      print(concept1.concept);
-                      print(concept2.concept);
                       return Column(
                           children: [
                           Align(
@@ -113,7 +111,7 @@ class _BottomPannelState extends State<BottomPannel> {
                           ),
                             ...thesesU.map<Widget>(
                                   (thesis) => ThesisViewBuilder(
-                                thesis: thesis, edge: provider.focusEdge,
+                                thesis: thesis, conceptU: concept1, conceptV: concept2,
                               ),
                             ).toList(),
                             Align(
@@ -131,7 +129,7 @@ class _BottomPannelState extends State<BottomPannel> {
                             ),
                             ...thesesV.map<Widget>(
                                   (thesis) => ThesisViewBuilder(
-                                thesis: thesis, edge: provider.focusEdge,
+                                thesis: thesis, conceptU: concept1, conceptV: concept2,
                               ),
                             ).toList()
 
