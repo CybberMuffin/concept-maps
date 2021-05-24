@@ -1,6 +1,5 @@
 import 'package:concept_maps/views/concept_list.dart';
 import 'package:concept_maps/views/force_directed.dart';
-import 'package:concept_maps/views/liner_graph.dart';
 import 'package:flutter/material.dart';
 
 class DrawerMenu extends StatelessWidget {
@@ -36,7 +35,7 @@ class DrawerMenu extends StatelessWidget {
               MaterialPageRoute(
                 builder: (BuildContext context) => ForceDirected(),
               ),
-                  (_) => false,
+              (_) => false,
             ),
           ),
           ListTile(
@@ -50,10 +49,10 @@ class DrawerMenu extends StatelessWidget {
               MaterialPageRoute(
                 builder: (BuildContext context) => ConceptList(),
               ),
-                  (_) => false,
+              (_) => false,
             ),
           ),
-          ListTile(
+          /*   ListTile(
             leading: Icon(
               Icons.call_made,
               color: mainColor,
@@ -66,7 +65,7 @@ class DrawerMenu extends StatelessWidget {
               ),
                   (_) => false,
             ),
-          ),
+          ), */
         ],
       ),
     );
