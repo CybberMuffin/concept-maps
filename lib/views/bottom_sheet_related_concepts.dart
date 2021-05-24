@@ -282,6 +282,7 @@ class _RelatedConceptsState extends State<RelatedConcepts> {
                             fontSize: 18, fontWeight: FontWeight.bold),
                         maxLines: 3,
                       )),
+
                   Expanded(
                     child: Container(
                       height: 4,
