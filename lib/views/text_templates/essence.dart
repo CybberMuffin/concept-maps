@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class Essence extends StatelessWidget {
-  final String essence;
+  final Function essence;
 
   Essence(this.essence);
 
@@ -18,10 +19,12 @@ class Essence extends StatelessWidget {
           Container(
             margin: EdgeInsets.only(left: 15),
             width: size.width * 0.85,
-            child: Text(
-              essence,
-              style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
-            ),
+            child: essence(context, TextStyle(fontSize: 17, fontStyle: FontStyle.italic, color: Colors.black))
+            //Text(
+            //  essence,
+//          //      style: GoogleFonts.montserrat(fontSize: 16, fontStyle: FontStyle.italic)
+            //  style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
+            //),
           )
         ],
       ),

@@ -26,7 +26,7 @@ class ForceDirectedController {
     balloon = BalloonTreeController()..relationToNodes(map);
     rootId = int.parse(balloon.firstId);
     map.concepts.forEach((a) {
-      vertices.add(Vertice(a.id, a.concept));
+      vertices.add(Vertice(a.id, a.concept, a.isAspect, a.forms));
     });
     map.relations.forEach((a) {
       edges.add(Edge(vertices[vertices.indexWhere((b) => b.id == a.conceptId)],

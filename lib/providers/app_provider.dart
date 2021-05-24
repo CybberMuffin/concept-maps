@@ -63,32 +63,36 @@ class AppProvider with ChangeNotifier {
     return await ApiService.fetchTheses(thesisIds);
   }
 
-  Future<List<Thesis>> fetchEdgeTheses(int conceptId) async {
-    ConceptInTheses conceptInTheses1 = await fetchConceptInTheses(
-        currentMap.concepts.firstWhere((a) => a.id == focusEdge.u.id).iid);
-    ConceptInTheses conceptInTheses2 = await fetchConceptInTheses(
-        currentMap.concepts.firstWhere((a) => a.id == focusEdge.v.id).iid);
+  Future<List<Thesis>> fetchEdgeTheses(int conceptId1, int conceptId2) async {
+    ConceptInTheses conceptInTheses1 = await fetchConceptInTheses(currentMap
+        .concepts
+        .firstWhere((a) => a.id == conceptId1.toString())
+        .iid);
+    //ConceptInTheses conceptInTheses2 =
+    //  await fetchConceptInTheses(
+    //      currentMap.concepts.firstWhere((a) => a.id == focusEdge.v.id));
 
-    List<int> thesisIds = [];
-
-    conceptInTheses1.innerReferences.addAll(conceptInTheses1.outerReferences);
-    conceptInTheses2.innerReferences.addAll(conceptInTheses2.outerReferences);
-    conceptInTheses1.innerReferences.forEach((a) {
-      conceptInTheses2.innerReferences.forEach((b) {
-        if (a.thesisId == b.thesisId) {
-          if (!thesisIds.contains(a.thesisId)) {
-            thesisIds.add(a.thesisId);
-          }
-        }
-      });
+    List<int> thesisIdsU = [];
+    List<int> thesisIdsV = [];
+    conceptInTheses1.innerReferences.forEach((element) {
+      if (element.conceptId.toString() == conceptId2.toString()) {
+        thesisIdsU.add(element.thesisId);
+      }
     });
-    return fetchTheses1(thesisIds);
+
+    conceptInTheses1.outerReferences.forEach((element) {
+      if (element.conceptId.toString() == conceptId2.toString()) {
+        thesisIdsU.add(element.thesisId);
+      }
+    });
+
+    return fetchTheses(thesisIdsU);
   }
 
   Future<List<Thesis>> fetchThesesByConceptFork(int conceptId) async {
-    print(isEdgeActive);
-    if (isEdgeActive == true) {
-      return fetchEdgeTheses(conceptId);
+    if (isEdgeActive) {
+      return fetchEdgeTheses(
+          int.parse(focusEdge.u.id), int.parse(focusEdge.v.id));
     } else {
       return fetchThesesByConcept(conceptId);
     }
