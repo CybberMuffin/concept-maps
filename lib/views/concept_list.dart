@@ -40,11 +40,13 @@ class _ConceptListState extends State<ConceptList> {
   void initState() {
     super.initState();
     final map = context.read<AppProvider>().currentMap;
-    tree = BalloonTreeController().relationToNodes(map.relations, map.concepts);
+    tree = context.read<AppProvider>().tree;
     parseTitle();
     listPositions =
         parseSons(tree[tree.indexWhere((element) => element.parent == "-1")]);
   }
+
+
 
   Widget build(BuildContext context) {
     return Scaffold(

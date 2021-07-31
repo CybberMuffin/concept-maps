@@ -1,4 +1,13 @@
+import 'package:concept_maps/models/general_entities/thesis.dart';
 import 'package:concept_maps/providers/app_provider.dart';
+import 'package:concept_maps/views/text_templates/definition.dart';
+import 'package:concept_maps/views/text_templates/democode.dart';
+import 'package:concept_maps/views/text_templates/denotation.dart';
+import 'package:concept_maps/views/text_templates/essence.dart';
+import 'package:concept_maps/views/text_templates/note.dart';
+import 'package:concept_maps/views/text_templates/tag.dart';
+import 'package:concept_maps/views/text_templates/theses_builder.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -10,6 +19,8 @@ class BottomPannel extends StatefulWidget {
 
 class _BottomPannelState extends State<BottomPannel> {
   Widget build(BuildContext context) {
+    final provider = context.read<AppProvider>();
+
     return Container(
       child: SingleChildScrollView(
         scrollDirection: Axis.vertical,
@@ -18,9 +29,10 @@ class _BottomPannelState extends State<BottomPannel> {
             Align(
               alignment: Alignment.centerLeft,
               child: Container(
+                padding: const EdgeInsets.only(left: 15, right: 15),
                 margin: EdgeInsets.only(top: 5),
                 child: Text(
-                  context.read<AppProvider>().focusNode.title,
+                  provider.focusTitle,
                   style: GoogleFonts.montserrat(
                     fontSize: 24,
                     fontWeight: FontWeight.w900,
@@ -28,134 +40,114 @@ class _BottomPannelState extends State<BottomPannel> {
                 ),
               ),
             ),
-            Divider(
-              color: Colors.black,
-              height: 20,
-              thickness: 4.3,
-              endIndent: 275,
-            ),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Container(
-                margin: EdgeInsets.only(top: 5),
-                child: Text(
-                  "Lorem ipsum dolor sit amet, consecte adipiscing elit, sed do eiusmod.",
-                ),
-              ),
-            ),
             Container(
-              margin: EdgeInsets.only(top: 11, left: 15),
-              child: Row(
-                children: [
-                  Icon(Icons.brightness_1_rounded,
-                      size: 8, color: Colors.black),
-                  Container(
-                    margin: EdgeInsets.only(left: 15),
-                    child: Text(
-                      "Lorem ipsum dolor.",
-                    ),
-                  )
-                ],
+              padding: const EdgeInsets.only(left: 15, right: 15),
+              margin: EdgeInsets.only(bottom: 5),
+              child: Divider(
+                color: Colors.black,
+                height: 20,
+                thickness: 4.3,
+                endIndent: 275,
               ),
             ),
-            Container(
-              margin: EdgeInsets.only(top: 11, left: 15),
-              child: Row(
-                children: [
-                  Icon(Icons.brightness_1_rounded,
-                      size: 8, color: Colors.black),
-                  Container(
-                    margin: EdgeInsets.only(left: 15),
-                    child: Text(
-                      "Ut enim ad minima veniam.",
-                    ),
-                  )
-                ],
-              ),
-            ),
-            Container(
-              margin: EdgeInsets.only(top: 11, left: 15),
-              child: Row(
-                children: [
-                  Icon(Icons.brightness_1_rounded,
-                      size: 8, color: Colors.black),
-                  Container(
-                    margin: EdgeInsets.only(left: 15),
-                    child: Text(
-                      "Duis aute irure dolor.",
-                    ),
-                  )
-                ],
-              ),
-            ),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Container(
-                margin: EdgeInsets.only(top: 11),
-                child: Text(
-                  "Lorem ipsum dolor sit amet, consectet adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.",
-                  style: GoogleFonts.montserrat(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400,
-                  ),
+            FutureBuilder <List<Thesis>>(
+                future: provider.fetchThesesByConceptFork(
+                  int.parse(provider.focusNode.id),
                 ),
-              ),
-            ),
-            Container(
-              margin: EdgeInsets.only(top: 20),
-              child: Row(children: [
-                Container(
-                  child: FlatButton(
-                      color: Colors.lightBlueAccent.withOpacity(0.2),
-                      padding: EdgeInsets.only(right: 32, left: 32),
-                      //highlightColor: Colors.deepPurpleAccent,
-                      onPressed: () {},
-                      textColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(18.0),
-                      ),
-                      child: Text("TAG_01",
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold))),
-                ),
-                Container(
-                  margin: EdgeInsets.only(left: 10),
-                  child: FlatButton(
-                      color: Colors.lightBlueAccent.withOpacity(0.2),
-                      padding: EdgeInsets.only(right: 32, left: 32),
-                      //highlightColor: Colors.deepPurpleAccent,
-                      onPressed: () {},
-                      textColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(18.0),
-                      ),
-                      child: Text("TAG_01",
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold))),
-                ),
-                Container(
-                  margin: EdgeInsets.only(left: 10),
-                  child: FlatButton(
-                      color: Colors.lightBlueAccent.withOpacity(0.2),
-                      padding: EdgeInsets.only(right: 32, left: 32),
-                      //highlightColor: Colors.deepPurpleAccent,
-                      onPressed: () {},
-                      textColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(18.0),
-                      ),
-                      child: Text("TAG_01",
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold))),
-                ),
-              ]),
-            ),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+
+                    final theses = snapshot.data;
+                    if(!provider.isEdgeActive){
+                      return Column(
+                        children: theses
+                            .map<Widget>(
+                              (thesis) => ThesisViewBuilder(
+                            thesis: thesis,
+                          ),
+                        ).toList(),
+                      );
+                    }else {
+                      int k = -1;
+                      int difId = theses[0].conceptId;
+                      theses.asMap().forEach((key, value) {
+                        if(value.conceptId != difId)
+                        {
+                          k = key;
+                          difId = value.conceptId;
+                        }
+                      });
+                      final concept1 = provider.currentMap.concepts.firstWhere((a) => a.id == provider.focusEdge.u.id);
+                      final concept2 = provider.currentMap.concepts.firstWhere((a) => a.id == provider.focusEdge.v.id);
+                      List<Thesis> thesesU = [];
+                      List<Thesis> thesesV = [];
+                      if(k == -1){
+                        if(difId.toString() == concept1.id){
+                          thesesV = theses;
+                        }else if(difId.toString() == concept2.id){
+                          thesesU = theses;
+                        }
+                      }else{
+                        thesesV = List.from(theses.sublist(0, k));
+                        thesesU = List.from(theses.sublist(k, theses.length));
+                      }
+                      final uTitle = provider.focusEdge.u.title;
+                      final vTitle = provider.focusEdge.v.title;
+                      return Column(
+                          children: [
+                          Align(
+                          alignment: Alignment.centerLeft,
+                            child: Container(
+                              padding: const EdgeInsets.only(left: 15, right: 15),
+                              margin: EdgeInsets.only(bottom: 5),
+                              child: Text(
+                                thesesU.isEmpty? "" : uTitle+" in "+vTitle+" theses",
+                                style: GoogleFonts.montserrat(
+                                 fontSize: 18,
+                                 fontWeight: FontWeight.w800,
+                                ),
+                              ),
+                            ),
+                          ),
+                            ...thesesU.map<Widget>(
+                                  (thesis) => ThesisViewBuilder(
+                                thesis: thesis, conceptU: concept1, conceptV: concept2,
+                              ),
+                            ).toList(),
+                            Align(
+                            alignment: Alignment.centerLeft,
+                            child: Container(
+                              padding: const EdgeInsets.only(left: 15, right: 15),
+                              margin: EdgeInsets.only(bottom: 5),
+                              child: Text(
+                                thesesV.isEmpty? "" : vTitle+" in "+uTitle+" theses",
+                                style: GoogleFonts.montserrat(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w800,
+                                ),),
+                              ),
+                            ),
+                            ...thesesV.map<Widget>(
+                                  (thesis) => ThesisViewBuilder(
+                                thesis: thesis, conceptU: concept1, conceptV: concept2,
+                              ),
+                            ).toList()
+
+                          ]
+                      );
+                    }
+                  }
+
+                  if (snapshot.hasError) {
+                    return Container();
+                    // return Text(
+                    //   snapshot.error.toString(),
+                    //   style: TextStyle(color: Colors.red),
+                    // );
+                  }
+
+                  return CircularProgressIndicator();
+                }),
           ],
         ),
       ),

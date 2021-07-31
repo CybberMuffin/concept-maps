@@ -32,13 +32,18 @@ class _LinerGraphState extends State<LinerGraph>
 
   Offset setPosition(Offset startPosition, double displX, double displY){
     Vector2 position = Vector2(startPosition.dx, startPosition.dy);
+    int count = 0;
+    double displ = displX;
     for(int i = linerTree.length - 1; i >= 0; i--){
       linerTree[i].x = position.x;
       linerTree[i].y = position.y;
       position.x += displX;
       position.y += displY;
+      print([i, i%2, displX]);
       displX *= -1;
+
     }
+
 
     // linerTree.forEach((element) {
     //   element.x = position.x;
@@ -150,7 +155,7 @@ class _LinerGraphState extends State<LinerGraph>
   void didChangeDependencies() {
     final size = MediaQuery.of(context).size;
 
-    setPosition(Offset(size.width*0.25, size.height*0.3), size.width*0.5, size.height*0.2);
+    setPosition(Offset(size.width*0.375, size.height*0.3), size.width*0.25, size.height*0.2);
 
     fillWidg();
 

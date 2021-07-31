@@ -12,6 +12,7 @@ class _CourseMainState extends State<CourseMain> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
+
       future: context.read<AppProvider>().fetchAllMaps().then(
             (_) => Navigator.pushAndRemoveUntil(
               context,
