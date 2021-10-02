@@ -8,12 +8,10 @@ import 'bottom_pannel_linear.dart';
 
 class BottomSheetPannelLinear extends StatefulWidget {
   @override
-  _BottomSheetPannelLinearState createState() =>
-      _BottomSheetPannelLinearState();
+  _BottomSheetPannelLinearState createState() => _BottomSheetPannelLinearState();
 }
 
-class _BottomSheetPannelLinearState extends State<BottomSheetPannelLinear>
-    with SingleTickerProviderStateMixin {
+class _BottomSheetPannelLinearState extends State<BottomSheetPannelLinear> with SingleTickerProviderStateMixin {
   Widget panel;
   bool isPannelAdded;
   bool isPannelAddedUpper;
@@ -63,8 +61,7 @@ class _BottomSheetPannelLinearState extends State<BottomSheetPannelLinear>
   @override
   void initState() {
     super.initState();
-    controller =
-        AnimationController(duration: Duration(seconds: 3), vsync: this);
+    controller = AnimationController(duration: Duration(seconds: 3), vsync: this);
     curve = CurvedAnimation(parent: controller, curve: Curves.easeIn);
     panelAnimation = Tween<double>(begin: 40, end: 370).animate(curve)
       ..addListener(() {
@@ -120,8 +117,7 @@ class _BottomSheetPannelLinearState extends State<BottomSheetPannelLinear>
           height: height,
           decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(25), topRight: Radius.circular(25)),
+              borderRadius: const BorderRadius.only(topLeft: Radius.circular(25), topRight: Radius.circular(25)),
               boxShadow: [
                 BoxShadow(
                   color: Colors.grey.withOpacity(0.5),

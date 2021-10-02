@@ -1,15 +1,11 @@
-import 'package:concept_maps/models/graph_entities/map_model.dart';
 import 'package:concept_maps/providers/app_provider.dart';
-import 'package:concept_maps/views/paint_liner_graph.dart';
+import 'package:concept_maps/views/painter/paint_liner_graph.dart';
 import 'package:concept_maps/views/widgets/drawer_menu.dart';
 import 'package:flutter/material.dart';
-import 'package:concept_maps/controllers/force_directed_controller.dart';
-import 'package:concept_maps/views/paint_graph.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vector_math/vector_math_64.dart';
-import 'package:flutter/physics.dart';
 import 'package:provider/provider.dart';
-import 'package:concept_maps/views/bottom_sheet_pannel.dart';
+import 'package:concept_maps/views/bottom_panel/bottom_sheet_pannel.dart';
 import 'package:concept_maps/models/graph_entities/node.dart';
 
 class LinerGraph extends StatefulWidget {
@@ -17,33 +13,27 @@ class LinerGraph extends StatefulWidget {
   _LinerGraphState createState() => _LinerGraphState();
 }
 
-class _LinerGraphState extends State<LinerGraph>
-    with SingleTickerProviderStateMixin {
-
-
+class _LinerGraphState extends State<LinerGraph> with SingleTickerProviderStateMixin {
   List<Node> tree;
   List<Node> linerTree = [];
   List<Widget> titles = [];
   List<Widget> widgets = [];
   Vector2 lastPos;
   List<double> rSizes = [];
-  TransformationController transformationController =
-  TransformationController();
+  TransformationController transformationController = TransformationController();
 
-  Offset setPosition(Offset startPosition, double displX, double displY){
+  Offset setPosition(Offset startPosition, double displX, double displY) {
     Vector2 position = Vector2(startPosition.dx, startPosition.dy);
     int count = 0;
     double displ = displX;
-    for(int i = linerTree.length - 1; i >= 0; i--){
+    for (int i = linerTree.length - 1; i >= 0; i--) {
       linerTree[i].x = position.x;
       linerTree[i].y = position.y;
       position.x += displX;
       position.y += displY;
-      print([i, i%2, displX]);
+      print([i, i % 2, displX]);
       displX *= -1;
-
     }
-
 
     // linerTree.forEach((element) {
     //   element.x = position.x;
@@ -64,25 +54,20 @@ class _LinerGraphState extends State<LinerGraph>
     //   });
     // }
     // return nextPos;
-
   }
 
   void fillWidg() {
     widgets.clear();
     titles.clear();
     tree.forEach((element) {
-
-      TextPainter textPainter = TextPainter(
-          text: TextSpan(text: element.title),
-          maxLines: 1,
-          textDirection: TextDirection.ltr)
-        ..layout(minWidth: 0, maxWidth: double.infinity);
+      TextPainter textPainter =
+          TextPainter(text: TextSpan(text: element.title), maxLines: 1, textDirection: TextDirection.ltr)
+            ..layout(minWidth: 0, maxWidth: double.infinity);
       double textWidth = textPainter.width;
-
 
       titles.add(Positioned(
           top: element.y + element.r,
-          left: element.x - textWidth*0.63,
+          left: element.x - textWidth * 0.63,
           child: Text(
             element.title,
             //+"\n"+element.displacement.x.toString()+"\n"+element.displacement.y.toString()
@@ -96,44 +81,34 @@ class _LinerGraphState extends State<LinerGraph>
         top: element.y - element.r,
         left: element.x - element.r,
         child: GestureDetector(
-          onPanDown: (details) {
-
-          },
+          onPanDown: (details) {},
           onPanUpdate: (details) {
-            setState(() {
-
-            });
+            setState(() {});
           },
-          onPanEnd: (details) {
-
-          },
+          onPanEnd: (details) {},
           onTap: () {
-            setState(() {
-
-            });
+            setState(() {});
           },
           onDoubleTap: () {
-            setState(() {
-
-            });
+            setState(() {});
           },
           child: Container(
-            height: element.r*2,
-            width: element.r*2,
+            height: element.r * 2,
+            width: element.r * 2,
             decoration: BoxDecoration(
                 color: Color(0xffd0efff),
                 border: Border.all(color: Color(0xff2a9df4), width: 3),
-                borderRadius: BorderRadius.circular(element.r*2)),
+                borderRadius: BorderRadius.circular(element.r * 2)),
           ),
         ),
       ));
     });
   }
 
-  void updateTree(Node node, int depth){
+  void updateTree(Node node, int depth) {
     linerTree.add(node);
-    linerTree[linerTree.length-1].r = rSizes[depth];
-    if(node.child != null){
+    linerTree[linerTree.length - 1].r = rSizes[depth];
+    if (node.child != null) {
       node.child.forEach((element) {
         depth++;
         updateTree(tree[tree.indexWhere((a) => a.id == element)], depth);
@@ -155,19 +130,14 @@ class _LinerGraphState extends State<LinerGraph>
   void didChangeDependencies() {
     final size = MediaQuery.of(context).size;
 
-    setPosition(Offset(size.width*0.375, size.height*0.3), size.width*0.25, size.height*0.2);
+    setPosition(Offset(size.width * 0.375, size.height * 0.3), size.width * 0.25, size.height * 0.2);
 
     fillWidg();
 
-    transformationController.value = Matrix4(
-        1, 0, 0, 0,
-        0, 1, 0, 0,
-        0, 0, 1, 0,
-        0, -linerTree[0].y + size.height/2, 0, 1);
+    transformationController.value =
+        Matrix4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, -linerTree[0].y + size.height / 2, 0, 1);
     super.didChangeDependencies();
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -177,23 +147,17 @@ class _LinerGraphState extends State<LinerGraph>
         drawer: DrawerMenu(),
         appBar: AppBar(title: Text("Liner Concept Map")),
         body: Container(
-          child: InteractiveViewer(
-              constrained: false,
-              transformationController: transformationController,
-            child: Container(
-              width: size.width,
-                height: (linerTree[0].y + size.height/2).abs(),
-                child: CustomPaint(
-                  painter: PaintLineGraph(linerTree),
-                  child: Stack(
-                    children: [
-                      ...widgets,
-                      ...titles
-                    ],
-                  ),
-                )
-            )
-          )
-        ));
+            child: InteractiveViewer(
+                constrained: false,
+                transformationController: transformationController,
+                child: Container(
+                    width: size.width,
+                    height: (linerTree[0].y + size.height / 2).abs(),
+                    child: CustomPaint(
+                      painter: PaintLineGraph(linerTree),
+                      child: Stack(
+                        children: [...widgets, ...titles],
+                      ),
+                    )))));
   }
 }

@@ -1,37 +1,47 @@
 import 'package:concept_maps/models/graph_entities/map_model.dart';
 import 'package:concept_maps/providers/app_provider.dart';
+import 'package:concept_maps/utils/app_colors.dart';
 import 'package:concept_maps/utils/course_key_list.dart';
 import 'package:concept_maps/views/force_directed.dart';
 import 'package:flutter/material.dart';
+import 'package:new_gradient_app_bar/new_gradient_app_bar.dart';
 import 'package:provider/provider.dart';
 
-class CoursesMenu extends StatelessWidget {
-  const CoursesMenu({Key key}) : super(key: key);
+class AllCoursesScreen extends StatelessWidget {
+  const AllCoursesScreen({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-
-    //Provider.of<AppProvider>(context).animationStart = false;
-    final List<MapModel> maps = context.read<AppProvider>().maps;
-
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
+      appBar: NewGradientAppBar(
+        title: Text('All Courses'),
         centerTitle: true,
-        title: Text('Courses'),
+        automaticallyImplyLeading: false,
+        gradient: LinearGradient(colors: [kPurpleColor, kBreezeColor]),
       ),
-      body: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-        child: GridView.count(
-          crossAxisCount: 3,
-          crossAxisSpacing: 10,
-          mainAxisSpacing: 10,
-          children: maps
-              .map<Widget>(
-                (e) => _CourseTile(map: e),
-              )
-              .toList(),
-        ),
+      body: FutureBuilder(
+        future: context.read<AppProvider>().fetchAllMaps(),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            final List<MapModel> maps = context.read<AppProvider>().maps;
+
+            return Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+              child: GridView.count(
+                crossAxisCount: 3,
+                crossAxisSpacing: 8,
+                mainAxisSpacing: 8,
+                children: maps
+                    .map<Widget>(
+                      (e) => _CourseTile(map: e),
+                    )
+                    .toList(),
+              ),
+            );
+          }
+
+          return Center(child: CircularProgressIndicator());
+        },
       ),
     );
   }
