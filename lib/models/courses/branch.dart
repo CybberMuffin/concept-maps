@@ -1,4 +1,6 @@
 import 'dart:convert';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class Branch {
@@ -6,24 +8,35 @@ class Branch {
   final String parentView;
   final String caption;
   final String intro;
+  final String text;
+  final List<Branch> children;
+
   Branch({
     @required this.view,
     @required this.parentView,
     @required this.caption,
     @required this.intro,
+    this.text = '',
+    this.children = const [],
   });
+
+  bool get endBranch => children.isEmpty;
 
   Branch copyWith({
     String view,
     String parentView,
     String caption,
     String intro,
+    String text,
+    List<Branch> children,
   }) {
     return Branch(
       view: view ?? this.view,
       parentView: parentView ?? this.parentView,
       caption: caption ?? this.caption,
       intro: intro ?? this.intro,
+      text: text ?? this.text,
+      children: children ?? this.children,
     );
   }
 
@@ -33,6 +46,8 @@ class Branch {
       'parentView': parentView,
       'caption': caption,
       'intro': intro,
+      'text': text,
+      'children': children?.map((x) => x.toMap())?.toList(),
     };
   }
 
@@ -42,6 +57,7 @@ class Branch {
       parentView: map['parentView'],
       caption: map['caption'],
       intro: map['intro'],
+      text: map['text'],
     );
   }
 
@@ -51,7 +67,7 @@ class Branch {
 
   @override
   String toString() {
-    return 'Branch(view: $view, parentView: $parentView, caption: $caption, intro: $intro)';
+    return 'Branch(view: $view, parentView: $parentView, caption: $caption, intro: $intro, text: $text, children: $children)';
   }
 
   @override
@@ -62,11 +78,13 @@ class Branch {
         other.view == view &&
         other.parentView == parentView &&
         other.caption == caption &&
-        other.intro == intro;
+        other.intro == intro &&
+        other.text == text &&
+        listEquals(other.children, children);
   }
 
   @override
   int get hashCode {
-    return view.hashCode ^ parentView.hashCode ^ caption.hashCode ^ intro.hashCode;
+    return view.hashCode ^ parentView.hashCode ^ caption.hashCode ^ intro.hashCode ^ text.hashCode ^ children.hashCode;
   }
 }

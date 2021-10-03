@@ -32,14 +32,12 @@ abstract class ApiService {
     final conceptsResponse = response[1];
     final headerResponse = response[2];
 
-    if (relationsResponse.statusCode == 200 &&
-        conceptsResponse.statusCode == 200) {
+    if (relationsResponse.statusCode == 200 && conceptsResponse.statusCode == 200) {
       final List relationsResult = jsonDecode(relationsResponse.body);
       final List conceptsResult = jsonDecode(conceptsResponse.body);
       final List headerResult = jsonDecode(headerResponse.body);
 
-      return MapModel.fromMap(
-          field, relationsResult, conceptsResult, headerResult);
+      return MapModel.fromMap(field, relationsResult, conceptsResult, headerResult);
     }
 
     throw Exception("Error occurred during fetch of map model");
@@ -70,8 +68,7 @@ abstract class ApiService {
     throw Exception("Error occurred during fetch of concepts in theses");
   }
 
-  static Future<List<Concept>> fetchConceptsDidacticBefore(
-      int conceptId) async {
+  static Future<List<Concept>> fetchConceptsDidacticBefore(int conceptId) async {
     assert(conceptId != null);
     final url = Uri.parse('$_hostUrl/api/concept/$conceptId/didactic/before');
 
@@ -84,8 +81,7 @@ abstract class ApiService {
       );
     }
 
-    throw Exception(
-        "Error occurred during fetch of concepts in didactic before");
+    throw Exception("Error occurred during fetch of concepts in didactic before");
   }
 
   static Future<List<Concept>> fetchConceptsDidacticAfter(int conceptId) async {
@@ -101,8 +97,7 @@ abstract class ApiService {
       );
     }
 
-    throw Exception(
-        "Error occurred during fetch of concepts in didactic after");
+    throw Exception("Error occurred during fetch of concepts in didactic after");
   }
 
   static Future<List<Thesis>> fetchThesesByConceptId(int conceptId) async {
@@ -147,14 +142,46 @@ abstract class ApiService {
     final response = await http.get(url);
     if (response.statusCode == 200) {
       final result = jsonDecode(response.body);
-      final courseQueries = result[kCourses]
-          .map<Future<Course>>((course) => _fetchCourseDetails(course[kCourse]))
-          .toList();
+      final courseQueries =
+          result[kCourses].map<Future<Course>>((course) => _fetchCourseDetails(course[kCourse])).toList();
 
       return await Future.wait(courseQueries);
     }
 
     throw Exception("Error occurred during fetch of user courses");
+  }
+
+  static Future<Branch> fetchBranchChildren(String branchName) async {
+    assert(branchName?.isNotEmpty ?? false);
+    final url = Uri.parse('$_api/branch/$branchName/children');
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final chlildrenResult = jsonDecode(response.body) as List;
+      final branch = await fetchBranchInfo(branchName);
+
+      if (chlildrenResult.isNotEmpty) {
+        final childrenBranches = await Future.wait(
+            chlildrenResult.map<Future<Branch>>((branchInfo) => fetchBranchChildren(branchInfo['view'])).toList());
+        return branch.copyWith(children: childrenBranches);
+      }
+
+      return branch;
+    }
+
+    throw Exception("Error occurred during fetch of $branchName children");
+  }
+
+  static Future<Branch> fetchBranchInfo(String branchName) async {
+    assert(branchName?.isNotEmpty ?? false);
+    final url = Uri.parse('$_api/branch/$branchName/view');
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      return Branch.fromJson(response.body);
+    }
+
+    throw Exception("Error occurred during fetch of $branchName info");
   }
 
   static Future<Course> _fetchCourseDetails(String course) async {
@@ -168,8 +195,7 @@ abstract class ApiService {
       return Course(
         name: result[kCourse][kCourse] as String,
         caption: result[kCourse][kCaption] as String,
-        nameBranches:
-            List<String>.from(result[kBranches]?.map((x) => x as String)),
+        nameBranches: List<String>.from(result[kBranches]?.map((x) => x as String)),
       );
     }
     throw Exception("Error occurred during fetch of $course Course Details");

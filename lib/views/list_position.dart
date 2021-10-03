@@ -9,8 +9,7 @@ class ListPosition extends StatefulWidget {
   String title;
 
   @override
-  _ListPositionState createState() =>
-      _ListPositionState(sons: this.sons, title: this.title);
+  _ListPositionState createState() => _ListPositionState(sons: this.sons, title: this.title);
 }
 
 class _ListPositionState extends State<ListPosition> {
@@ -46,35 +45,24 @@ class _ListPositionState extends State<ListPosition> {
     super.initState();
     rollUp = false;
     noSons = checkSons();
-    print(noSons);
-    //arrow = arrowIcon();
   }
 
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(5.0),
-      //margin: EdgeInsets.only(bottom: 2),
       decoration: BoxDecoration(
         color: Colors.grey[50],
         border: Border(left: BorderSide(color: Colors.grey[400])),
       ),
       child: InkWell(
-        onTap: () {
-          setState(() {
-            rollUp = !rollUp;
-          });
-        },
+        onTap: () => setState(() => rollUp = !rollUp),
         child: Column(
           children: [
             Row(children: [
               (noSons == true)
-                  ? Container(
-                      margin: EdgeInsets.only(left: 35, bottom: 40),
-                    )
+                  ? Container(margin: EdgeInsets.only(left: 35, bottom: 40))
                   : Icon(
-                      (rollUp == true)
-                          ? Icons.arrow_right
-                          : Icons.arrow_drop_down,
+                      (rollUp == true) ? Icons.arrow_right : Icons.arrow_drop_down,
                       size: 35,
                     ),
               Flexible(

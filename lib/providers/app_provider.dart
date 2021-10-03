@@ -94,7 +94,7 @@ class AppProvider with ChangeNotifier {
       return fetchEdgeTheses(
           int.parse(focusEdge.u.id), int.parse(focusEdge.v.id));
     } else {
-      return fetchThesesByConcept(conceptId);
+      return fetchThesesByConcept(conceptId ?? _currentMap.concepts.first.iid);
     }
   }
 

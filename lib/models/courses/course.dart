@@ -1,7 +1,5 @@
 import 'dart:convert';
-
 import 'package:flutter/foundation.dart';
-
 import 'package:concept_maps/models/courses/branch.dart';
 
 const kCourse = 'course';
@@ -13,21 +11,26 @@ class Course {
   final String name;
   final String caption;
   final List<String> nameBranches;
+  final List<Branch> branches;
+
   Course({
     @required this.name,
     @required this.caption,
     @required this.nameBranches,
+    this.branches,
   });
 
   Course copyWith({
     String name,
     String caption,
     List<String> nameBranches,
+    List<Branch> branches,
   }) {
     return Course(
       name: name ?? this.name,
       caption: caption ?? this.caption,
       nameBranches: nameBranches ?? this.nameBranches,
+      branches: branches ?? this.branches,
     );
   }
 
