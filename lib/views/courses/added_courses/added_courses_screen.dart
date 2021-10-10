@@ -1,13 +1,13 @@
 import 'package:concept_maps/models/courses/course.dart';
 import 'package:concept_maps/providers/my_courses_provider.dart';
 import 'package:concept_maps/utils/app_colors.dart';
-import 'package:concept_maps/views/course_tree/course_tree.dart';
+import 'package:concept_maps/views/courses/added_courses/course_tree/course_tree.dart';
 import 'package:flutter/material.dart';
 import 'package:new_gradient_app_bar/new_gradient_app_bar.dart';
 import 'package:provider/provider.dart';
 
-class MyCoursesScreen extends StatelessWidget {
-  const MyCoursesScreen({Key key}) : super(key: key);
+class AddedCoursesScreen extends StatelessWidget {
+  const AddedCoursesScreen({Key key}) : super(key: key);
 
   Widget get appBar => NewGradientAppBar(
         title: Text('My Courses'),
@@ -27,7 +27,7 @@ class MyCoursesScreen extends StatelessWidget {
             final List<Course> courses = context.read<MyCoursesProvider>().myCourses;
 
             return Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               child: ListView(
                 children: courses
                     .map<Widget>((course) => ListTile(

@@ -1,5 +1,5 @@
 import 'package:concept_maps/views/courses/all_courses_screen.dart';
-import 'package:concept_maps/views/courses/my_courses_screen.dart';
+import 'package:concept_maps/views/courses/added_courses/added_courses_screen.dart';
 import 'package:flutter/material.dart';
 
 class CourseMain extends StatefulWidget {
@@ -18,11 +18,11 @@ class _CourseMainState extends State<CourseMain> {
   Widget get _currentTab {
     switch (_currentTabIndex) {
       case 0:
-        return MyCoursesScreen();
+        return AddedCoursesScreen();
       case 1:
         return AllCoursesScreen();
       default:
-        return MyCoursesScreen();
+        return AddedCoursesScreen();
     }
   }
 
