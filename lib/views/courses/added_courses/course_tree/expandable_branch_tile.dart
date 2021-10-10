@@ -43,13 +43,11 @@ class _ExpandableBranchTileState extends State<ExpandableBranchTile> {
           ),
         );
 
-  Widget get title => Flexible(
-        child: Text(
-          _branch.caption,
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-          ),
+  Widget get title => Text(
+        _branch.caption,
+        style: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.w700,
         ),
       );
 

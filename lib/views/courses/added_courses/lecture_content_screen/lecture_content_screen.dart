@@ -26,12 +26,14 @@ class _LectureContentScreenState extends State<LectureContentScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: appBar,
-      body: SingleChildScrollView(
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          child: Html(
-            shrinkWrap: true,
-            data: _branch.text ?? '',
+      body: Scrollbar(
+        child: SingleChildScrollView(
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Html(
+              shrinkWrap: true,
+              data: _branch.text ?? '',
+            ),
           ),
         ),
       ),
