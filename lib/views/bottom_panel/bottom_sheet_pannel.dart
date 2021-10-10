@@ -1,7 +1,7 @@
 import 'package:concept_maps/providers/app_provider.dart';
-import 'package:concept_maps/views/bottom_pannel.dart';
-import 'package:concept_maps/views/bottom_sheet_graph.dart';
-import 'package:concept_maps/views/bottom_sheet_related_concepts.dart';
+import 'package:concept_maps/views/bottom_panel/bottom_pannel.dart';
+import 'package:concept_maps/views/bottom_panel/bottom_sheet_graph.dart';
+import 'package:concept_maps/views/bottom_panel/bottom_sheet_related_concepts.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -12,8 +12,7 @@ class BottomSheetPannel extends StatefulWidget {
   _BottomSheetPannelState createState() => _BottomSheetPannelState();
 }
 
-class _BottomSheetPannelState extends State<BottomSheetPannel>
-    with SingleTickerProviderStateMixin {
+class _BottomSheetPannelState extends State<BottomSheetPannel> with SingleTickerProviderStateMixin {
   Widget panel;
   bool isPannelAdded;
   bool isPannelAddedUpper;
@@ -71,9 +70,8 @@ class _BottomSheetPannelState extends State<BottomSheetPannel>
   void runAnimation(double newHeight) {
     curve = CurvedAnimation(parent: controller, curve: Curves.easeIn);
 
-    panelAnimation = controller
-        .drive(CurveTween(curve: Curves.easeInOut))
-        .drive(Tween<double>(begin: height, end: newHeight));
+    panelAnimation =
+        controller.drive(CurveTween(curve: Curves.easeInOut)).drive(Tween<double>(begin: height, end: newHeight));
     controller.forward(from: 0.0);
   }
 
@@ -85,13 +83,12 @@ class _BottomSheetPannelState extends State<BottomSheetPannel>
     yellowSticker = false;
     purpleSticker = false;
     greenSticker = false;
-    controller =
-        AnimationController(duration: Duration(milliseconds: 500), vsync: this)
-          ..addListener(() {
-            setState(() {
-              height = panelAnimation.value;
-            });
-          });
+    controller = AnimationController(duration: Duration(milliseconds: 500), vsync: this)
+      ..addListener(() {
+        setState(() {
+          height = panelAnimation.value;
+        });
+      });
     isPannelAdded = false;
     isPannelAddedUpper = false;
     panel = Container();
@@ -153,9 +150,7 @@ class _BottomSheetPannelState extends State<BottomSheetPannel>
                         yellowSticker = false;
                       }
                       pageIndex = 1;
-                      if (greenSticker == false &&
-                          purpleSticker == false &&
-                          yellowSticker == false) {
+                      if (greenSticker == false && purpleSticker == false && yellowSticker == false) {
                         setState(() {
                           runAnimation(40);
                           pageIndex = 0;
@@ -193,9 +188,7 @@ class _BottomSheetPannelState extends State<BottomSheetPannel>
                       }
                       pageIndex = 0;
 
-                      if (greenSticker == false &&
-                          purpleSticker == false &&
-                          yellowSticker == false) {
+                      if (greenSticker == false && purpleSticker == false && yellowSticker == false) {
                         setState(() {
                           runAnimation(40);
                           pageIndex = 0;
@@ -236,9 +229,7 @@ class _BottomSheetPannelState extends State<BottomSheetPannel>
                       }
                       pageIndex = 2;
 
-                      if (greenSticker == false &&
-                          purpleSticker == false &&
-                          yellowSticker == false) {
+                      if (greenSticker == false && purpleSticker == false && yellowSticker == false) {
                         setState(() {
                           runAnimation(40);
                           pageIndex = 0;
@@ -267,9 +258,7 @@ class _BottomSheetPannelState extends State<BottomSheetPannel>
             height: height,
             decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(25),
-                    topRight: Radius.circular(25)),
+                borderRadius: const BorderRadius.only(topLeft: Radius.circular(25), topRight: Radius.circular(25)),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.grey.withOpacity(bottomSheetCof),
@@ -373,9 +362,7 @@ class _BottomSheetPannelState extends State<BottomSheetPannel>
                       }
                       pageIndex = 1;
 
-                      if (greenSticker == false &&
-                          purpleSticker == false &&
-                          yellowSticker == false) {
+                      if (greenSticker == false && purpleSticker == false && yellowSticker == false) {
                         setState(() {
                           runAnimation(40);
                           pageIndex = 0;
@@ -413,9 +400,7 @@ class _BottomSheetPannelState extends State<BottomSheetPannel>
                       }
                       pageIndex = 0;
 
-                      if (greenSticker == false &&
-                          purpleSticker == false &&
-                          yellowSticker == false) {
+                      if (greenSticker == false && purpleSticker == false && yellowSticker == false) {
                         setState(() {
                           runAnimation(40);
                           pageIndex = 0;
@@ -453,9 +438,7 @@ class _BottomSheetPannelState extends State<BottomSheetPannel>
                       }
                       pageIndex = 2;
 
-                      if (greenSticker == false &&
-                          purpleSticker == false &&
-                          yellowSticker == false) {
+                      if (greenSticker == false && purpleSticker == false && yellowSticker == false) {
                         setState(() {
                           runAnimation(40);
                           pageIndex = 0;
