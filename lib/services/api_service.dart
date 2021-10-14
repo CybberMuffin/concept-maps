@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:concept_maps/constants/general.dart';
 import 'package:concept_maps/models/courses/branch.dart';
 import 'package:concept_maps/models/courses/course.dart';
 import 'package:concept_maps/models/dedactic_relations_entities/concept_in_theses.dart';
@@ -10,10 +10,8 @@ import 'package:concept_maps/utils/course_key_list.dart';
 import 'package:http/http.dart' as http;
 
 abstract class ApiService {
-  static const String _hostUrl = 'https://semantic-portal.net';
-
-  static String get _api => '$_hostUrl/api';
-  static String get _logApi => '$_hostUrl/log/api';
+  static String get _api => '$hostUrl/api';
+  static String get _logApi => '$hostUrl/log/api';
 
   static Future<MapModel> _fetchConceptRelations(String field) async {
     final relationsUrl = Uri.parse('$_api/branch/$field/concepts/relations');
@@ -56,7 +54,7 @@ abstract class ApiService {
 
   static Future<ConceptInTheses> fecthConceptsInTheses(int conceptId) async {
     assert(conceptId != null);
-    final url = Uri.parse('$_hostUrl/api/concept/$conceptId/CinT');
+    final url = Uri.parse('$hostUrl/api/concept/$conceptId/CinT');
 
     final response = await http.get(url);
     if (response.statusCode == 200) {
@@ -70,7 +68,7 @@ abstract class ApiService {
 
   static Future<List<Concept>> fetchConceptsDidacticBefore(int conceptId) async {
     assert(conceptId != null);
-    final url = Uri.parse('$_hostUrl/api/concept/$conceptId/didactic/before');
+    final url = Uri.parse('$hostUrl/api/concept/$conceptId/didactic/before');
 
     final response = await http.get(url);
     if (response.statusCode == 200) {
@@ -86,7 +84,7 @@ abstract class ApiService {
 
   static Future<List<Concept>> fetchConceptsDidacticAfter(int conceptId) async {
     assert(conceptId != null);
-    final url = Uri.parse('$_hostUrl/api/concept/$conceptId/didactic/after');
+    final url = Uri.parse('$hostUrl/api/concept/$conceptId/didactic/after');
 
     final response = await http.get(url);
     if (response.statusCode == 200) {
@@ -102,7 +100,7 @@ abstract class ApiService {
 
   static Future<List<Thesis>> fetchThesesByConceptId(int conceptId) async {
     assert(conceptId != null);
-    final url = Uri.parse('$_hostUrl/api/concept/$conceptId/thesis');
+    final url = Uri.parse('$hostUrl/api/concept/$conceptId/thesis');
 
     final response = await http.get(url);
     if (response.statusCode == 200) {

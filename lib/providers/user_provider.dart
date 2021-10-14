@@ -1,14 +1,37 @@
 import 'package:concept_maps/models/courses/branch.dart';
 import 'package:concept_maps/models/courses/course.dart';
 import 'package:concept_maps/services/api_service.dart';
+import 'package:concept_maps/services/auth_service.dart';
+import 'package:concept_maps/services/preferences.dart';
 import 'package:flutter/material.dart';
 
-class MyCoursesProvider with ChangeNotifier {
-  static const userId = '156';
+class UserProvider with ChangeNotifier {
+  String _userId;
   List<Course> myCourses;
 
+  Future<bool> authorizeUser(String login, String password) async {
+    final result = await AuthService.authorize(login, password);
+    if (result?.isNotEmpty ?? false) {
+      _userId = result;
+      Preferences.saveUserId(_userId);
+    }
+
+    return _userId != null;
+  }
+
+  Future<bool> authorizeSilently() async {
+    final userId = await Preferences.getUserId();
+    _userId = userId;
+    return _userId != null;
+  }
+
+  void logOut() {
+    _userId = null;
+    Preferences.removeUserId();
+  }
+
   Future<void> fetchCourses() async {
-    myCourses ??= await ApiService.fetchCoursesByUserId(userId);
+    myCourses ??= await ApiService.fetchCoursesByUserId(_userId);
   }
 
   Future<void> fetchCourseBranches(Course course) async {

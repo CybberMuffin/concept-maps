@@ -24,6 +24,8 @@ dependencies:
   auto_size_text: ^2.1.0
   new_gradient_app_bar: ^0.2.0
   flutter_html: ^2.1.5
+  shared_preferences: ^2.0.8
+  url_launcher: ^6.0.12
 
 dev_dependencies:
   flutter_test:
@@ -32,3 +34,7 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+  assets:
+    - assets/images/
+ 

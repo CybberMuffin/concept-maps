@@ -1,6 +1,8 @@
 import 'package:concept_maps/providers/app_provider.dart';
-import 'package:concept_maps/providers/my_courses_provider.dart';
+import 'package:concept_maps/providers/user_provider.dart';
 import 'package:concept_maps/utils/app_colors.dart';
+import 'package:concept_maps/views/authorization/auto_auth.dart';
+import 'package:concept_maps/views/authorization/login_screen.dart';
 import 'package:concept_maps/views/course_main.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -16,7 +18,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<AppProvider>(create: (_) => AppProvider()),
-        ChangeNotifierProvider<MyCoursesProvider>(create: (_) => MyCoursesProvider()),
+        ChangeNotifierProvider<UserProvider>(create: (_) => UserProvider()),
       ],
       child: MaterialApp(
         title: "My Demo Media Query",
@@ -31,7 +33,7 @@ class MyApp extends StatelessWidget {
             Theme.of(context).textTheme,
           ),
         ),
-        home: CourseMain(),
+        home: AutoAuth(),
       ),
     );
   }
