@@ -3,7 +3,7 @@ import 'package:concept_maps/providers/user_provider.dart';
 import 'package:concept_maps/utils/app_colors.dart';
 import 'package:concept_maps/utils/gradient_decorations.dart';
 import 'package:concept_maps/views/course_main.dart';
-import 'package:concept_maps/views/widgets/butttons/gradient_button.dart';
+import 'package:concept_maps/views/widgets/buttons/gradient_button.dart';
 import 'package:concept_maps/views/widgets/textfields/semantic_textfield.dart';
 import 'package:concept_maps/views/widgets/texts/gradient_text.dart';
 import 'package:concept_maps/views/widgets/texts/main_text.dart';

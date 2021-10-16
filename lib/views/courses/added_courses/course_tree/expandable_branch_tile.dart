@@ -3,12 +3,6 @@ import 'package:concept_maps/utils/app_colors.dart';
 import 'package:concept_maps/views/courses/added_courses/lecture_content_screen/lecture_content_screen.dart';
 import 'package:flutter/material.dart';
 
-const Map<int, Color> _levelColors = {
-  0: kPurpleColor,
-  1: kGreyBlueColor,
-  2: kBreezeColor,
-};
-
 class ExpandableBranchTile extends StatefulWidget {
   final Branch branch;
   final int level;
@@ -22,8 +16,8 @@ class _ExpandableBranchTileState extends State<ExpandableBranchTile> {
   bool isOpen = false;
 
   Branch get _branch => widget.branch;
-  Color get _branchColor => _levelColors[widget.level % 3];
-  Color get _nextBranchColor => _levelColors[(widget.level + 1) % 3];
+  Color get _branchColor => levelColors[widget.level % 3];
+  Color get _nextBranchColor => levelColors[(widget.level + 1) % 3];
 
   Widget get leadingIcon => _branch.endBranch
       ? Padding(

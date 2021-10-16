@@ -3,8 +3,10 @@ import 'package:concept_maps/models/courses/course.dart';
 import 'package:concept_maps/providers/user_provider.dart';
 import 'package:concept_maps/services/auth_service.dart';
 import 'package:concept_maps/utils/app_colors.dart';
+import 'package:concept_maps/utils/gradient_decorations.dart';
 import 'package:concept_maps/views/authorization/login_screen.dart';
 import 'package:concept_maps/views/courses/added_courses/course_tree/course_tree.dart';
+import 'package:concept_maps/views/widgets/cards/course_card.dart';
 import 'package:concept_maps/views/widgets/texts/main_text.dart';
 import 'package:concept_maps/views/widgets/texts/secondary_text.dart';
 import 'package:flutter/material.dart';
@@ -39,19 +41,17 @@ class AddedCoursesScreen extends StatelessWidget {
 
             return ListView(
               children: courses
-                  .map<Widget>((course) => ListTile(
-                        title: MainText(
-                          course.caption,
-                          small: true,
-                          textAlign: TextAlign.start,
-                        ),
-                        onTap: () async {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (_) => CourseTree(course: course)),
-                          );
-                        },
-                      ))
+                  .map<Widget>(
+                    (course) => CourseCard(
+                      title: course.caption.toUpperCase(),
+                      decoration: GradientDecorations.getGradientByIndex(courses.indexOf(course))
+                          .copyWith(boxShadow: [kShadow]),
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => CourseTree(course: course)),
+                      ),
+                    ),
+                  )
                   .toList(),
             );
           }

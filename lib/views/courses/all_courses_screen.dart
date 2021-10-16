@@ -91,9 +91,7 @@ class _CourseTile extends StatelessWidget {
     provider.currentMap = map;
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (BuildContext context) => ForceDirected(),
-      ),
+      MaterialPageRoute(builder: (_) => ForceDirected()),
     );
   }
 }
