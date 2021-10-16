@@ -33,10 +33,9 @@ class AppProvider with ChangeNotifier {
 
   ///Use this to get all related theses to a selected concept
   Future<List<Thesis>> fetchThesesByConcept(int conceptId) async {
-    _conceptTheses[conceptId] ??=
-        (await ApiService.fetchThesesByConceptId(conceptId))
-            .where((element) => element.type != ThesisType.other)
-            .toList();
+    _conceptTheses[conceptId] ??= (await ApiService.fetchThesesByConceptId(conceptId))
+        .where((element) => element.type != ThesisType.other)
+        .toList();
     return _conceptTheses[conceptId];
   }
 
@@ -46,15 +45,13 @@ class AppProvider with ChangeNotifier {
       _conceptReferences.add(await ApiService.fecthConceptsInTheses(conceptId));
     }
 
-    return _conceptReferences.firstWhere((element) => element.id == conceptId,
-        orElse: () => null);
+    return _conceptReferences.firstWhere((element) => element.id == conceptId, orElse: () => null);
   }
 
   //Use this to get all ConceptsDidacticAfter references foa a selected concept id
   Future<List<Concept>> fetchConceptsDidacticAfter(int conceptId) async {
     if (!didacticConceptsAfter.keys.any((element) => element == conceptId)) {
-      didacticConceptsAfter[conceptId] =
-          await ApiService.fetchConceptsDidacticAfter(conceptId);
+      didacticConceptsAfter[conceptId] = await ApiService.fetchConceptsDidacticAfter(conceptId);
     }
     return didacticConceptsAfter[conceptId];
   }
@@ -64,10 +61,8 @@ class AppProvider with ChangeNotifier {
   }
 
   Future<List<Thesis>> fetchEdgeTheses(int conceptId1, int conceptId2) async {
-    ConceptInTheses conceptInTheses1 = await fetchConceptInTheses(currentMap
-        .concepts
-        .firstWhere((a) => a.id == conceptId1.toString())
-        .iid);
+    ConceptInTheses conceptInTheses1 =
+        await fetchConceptInTheses(currentMap.concepts.firstWhere((a) => a.id == conceptId1.toString()).iid);
     //ConceptInTheses conceptInTheses2 =
     //  await fetchConceptInTheses(
     //      currentMap.concepts.firstWhere((a) => a.id == focusEdge.v.id));
@@ -91,8 +86,7 @@ class AppProvider with ChangeNotifier {
 
   Future<List<Thesis>> fetchThesesByConceptFork(int conceptId) async {
     if (isEdgeActive) {
-      return fetchEdgeTheses(
-          int.parse(focusEdge.u.id), int.parse(focusEdge.v.id));
+      return fetchEdgeTheses(int.parse(focusEdge.u.id), int.parse(focusEdge.v.id));
     } else {
       return fetchThesesByConcept(conceptId ?? _currentMap.concepts.first.iid);
     }
