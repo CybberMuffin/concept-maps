@@ -11,13 +11,15 @@ import 'package:flutter/physics.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:concept_maps/views/bottom_panel/bottom_sheet_pannel.dart';
-import 'package:concept_maps/models/graph_entities/node.dart';
 import 'package:vector_math/vector_math_64.dart';
 import 'dart:math';
 
 import 'bottom_panel/bottom_sheet_pannel.dart';
 
 class ForceDirected extends StatefulWidget {
+  final String title;
+
+  const ForceDirected({Key key, this.title}) : super(key: key);
   @override
   _ForceDirectedState createState() => _ForceDirectedState();
 }
@@ -311,10 +313,12 @@ class _ForceDirectedState extends State<ForceDirected> with TickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
+    final map = context.read<AppProvider>().currentMap;
+
     return Scaffold(
         bottomSheet: BottomSheetPannel(),
-        appBar: SearchAppBar(),
-        drawer: DrawerMenu(),
+        appBar: SearchAppBar(barTitle: widget.title),
+        drawer: DrawerMenu(title: widget.title),
         body: Container(
           child: InteractiveViewer(
             constrained: false,

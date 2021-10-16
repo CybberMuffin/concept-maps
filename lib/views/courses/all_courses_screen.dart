@@ -38,11 +38,7 @@ class AllCoursesScreen extends StatelessWidget {
                 crossAxisCount: 3,
                 crossAxisSpacing: 8,
                 mainAxisSpacing: 8,
-                children: maps
-                    .map<Widget>(
-                      (e) => _CourseTile(map: e),
-                    )
-                    .toList(),
+                children: maps.map<Widget>((e) => _CourseTile(map: e)).toList(),
               ),
             );
           }

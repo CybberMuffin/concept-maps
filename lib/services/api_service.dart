@@ -13,7 +13,7 @@ abstract class ApiService {
   static String get _api => '$hostUrl/api';
   static String get _logApi => '$hostUrl/log/api';
 
-  static Future<MapModel> _fetchConceptRelations(String field) async {
+  static Future<MapModel> fetchConceptRelations(String field) async {
     final relationsUrl = Uri.parse('$_api/branch/$field/concepts/relations');
     final conceptsUrl = Uri.parse('$_api/branch/$field/concepts');
     final headerUrl = Uri.parse('$_api/CinH/$field');
@@ -45,7 +45,7 @@ abstract class ApiService {
     final List<MapModel> maps = await Future.wait<MapModel>(
       CourseListInfo.courseKeyList
           //.sublist(0, 6)
-          .map<Future<MapModel>>((key) => _fetchConceptRelations(key))
+          .map<Future<MapModel>>((key) => fetchConceptRelations(key))
           .toList(),
     );
 

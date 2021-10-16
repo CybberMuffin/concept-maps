@@ -7,10 +7,11 @@ import 'package:concept_maps/models/graph_entities/edge.dart';
 import 'package:concept_maps/models/graph_entities/map_model.dart';
 import 'package:concept_maps/models/graph_entities/node.dart';
 import 'package:concept_maps/services/api_service.dart';
+import 'package:concept_maps/utils/course_key_list.dart';
 import 'package:flutter/material.dart';
 
 class AppProvider with ChangeNotifier {
-  List<MapModel> maps;
+  List<MapModel> maps = [];
   MapModel _currentMap;
   List<ConceptHeader> headerConcepts;
 
@@ -23,12 +24,23 @@ class AppProvider with ChangeNotifier {
   MapModel get currentMap => _currentMap;
 
   set currentMap(MapModel currentMap) {
-    _currentMap = currentMap;
-    notifyListeners();
+    if (currentMap != null) {
+      _currentMap = currentMap;
+      notifyListeners();
+    }
   }
 
   Future<void> fetchAllMaps() async {
-    maps ??= await ApiService.fetchBranches();
+    if (!maps.any((element) => element.field == CourseListInfo.courseKeyList.first))
+      maps = await ApiService.fetchBranches();
+  }
+
+  Future<MapModel> fetchMapByBranch(String branchName) async {
+    if (!maps.any((map) => map.field == branchName)) {
+      maps.add(await ApiService.fetchConceptRelations(branchName));
+    }
+    currentMap = maps.firstWhere((map) => map.field == branchName, orElse: () => null);
+    return currentMap;
   }
 
   ///Use this to get all related theses to a selected concept

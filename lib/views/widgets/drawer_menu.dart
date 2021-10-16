@@ -1,13 +1,15 @@
+import 'package:concept_maps/utils/app_colors.dart';
 import 'package:concept_maps/views/concept_list.dart';
 import 'package:concept_maps/views/force_directed.dart';
 import 'package:flutter/material.dart';
 
 class DrawerMenu extends StatelessWidget {
-  const DrawerMenu({Key key}) : super(key: key);
+  final String title;
+  const DrawerMenu({Key key, this.title}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final mainColor = Colors.blue;
+    final mainColor = kPurpleColor;
     return Drawer(
       child: Column(
         children: [
@@ -15,10 +17,10 @@ class DrawerMenu extends StatelessWidget {
             decoration: BoxDecoration(color: mainColor),
             child: Center(
               child: Text(
-                "Concept maps",
+                title ?? "Concept maps",
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontSize: 24,
+                  fontSize: 22,
                   color: Colors.white,
                 ),
               ),

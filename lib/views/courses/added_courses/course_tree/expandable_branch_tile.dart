@@ -1,7 +1,12 @@
 import 'package:concept_maps/models/courses/branch.dart';
+import 'package:concept_maps/providers/app_provider.dart';
+import 'package:concept_maps/providers/user_provider.dart';
 import 'package:concept_maps/utils/app_colors.dart';
+import 'package:concept_maps/views/authorization/navigate_when_ready_load_screen.dart';
 import 'package:concept_maps/views/courses/added_courses/lecture_content_screen/lecture_content_screen.dart';
+import 'package:concept_maps/views/force_directed.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/src/provider.dart';
 
 class ExpandableBranchTile extends StatefulWidget {
   final Branch branch;
@@ -37,6 +42,17 @@ class _ExpandableBranchTileState extends State<ExpandableBranchTile> {
           ),
         );
 
+  Widget get trailingIcon => Align(
+        alignment: Alignment.topRight,
+        child: IconButton(
+          onPressed: onMapTap,
+          icon: Icon(
+            Icons.map_outlined,
+            color: _nextBranchColor,
+          ),
+        ),
+      );
+
   Widget get title => Text(
         _branch.caption,
         style: TextStyle(
@@ -60,6 +76,7 @@ class _ExpandableBranchTileState extends State<ExpandableBranchTile> {
                 onTap: onBranchTileTap,
               ),
             ),
+            trailingIcon,
           ],
         ),
       );
@@ -107,6 +124,28 @@ class _ExpandableBranchTileState extends State<ExpandableBranchTile> {
       );
     } else {
       setState(() => isOpen = !isOpen);
+    }
+  }
+
+  void onMapTap() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => NavigateWhenReadyLoadScreen(callWhenReady: navigateAfterMapLoaded),
+      ),
+    );
+  }
+
+  Future<void> navigateAfterMapLoaded(BuildContext context) async {
+    final appProvider = context.read<AppProvider>();
+    final result = await appProvider.fetchMapByBranch(_branch.view);
+    if (result.field == _branch.view) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => ForceDirected(title: _branch.caption)),
+      );
+    } else {
+      Navigator.pop(context);
     }
   }
 }

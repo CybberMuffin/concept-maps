@@ -8,7 +8,6 @@ import 'package:concept_maps/views/authorization/login_screen.dart';
 import 'package:concept_maps/views/courses/added_courses/course_tree/course_tree.dart';
 import 'package:concept_maps/views/widgets/cards/course_card.dart';
 import 'package:concept_maps/views/widgets/texts/main_text.dart';
-import 'package:concept_maps/views/widgets/texts/secondary_text.dart';
 import 'package:flutter/material.dart';
 import 'package:new_gradient_app_bar/new_gradient_app_bar.dart';
 import 'package:provider/provider.dart';

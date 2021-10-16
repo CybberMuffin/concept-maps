@@ -1,11 +1,16 @@
-import 'package:concept_maps/controllers/balloon_tree_controller.dart';
 import 'package:concept_maps/models/graph_entities/node.dart';
 import 'package:concept_maps/providers/app_provider.dart';
+import 'package:concept_maps/utils/app_colors.dart';
 import 'package:concept_maps/views/widgets/search.dart';
 import 'package:flutter/material.dart';
+import 'package:new_gradient_app_bar/new_gradient_app_bar.dart';
 import 'package:provider/provider.dart';
 
 class SearchAppBar extends StatefulWidget with PreferredSizeWidget {
+  final String barTitle;
+
+  const SearchAppBar({Key key, @required this.barTitle}) : super(key: key);
+
   @override
   _SearchAppBarState createState() => _SearchAppBarState();
 
@@ -27,7 +32,6 @@ class _SearchAppBarState extends State<SearchAppBar> {
 
   @override
   void initState() {
-    final map = context.read<AppProvider>().currentMap;
     tree = context.read<AppProvider>().tree;
     parseTitle();
     super.initState();
@@ -35,16 +39,15 @@ class _SearchAppBarState extends State<SearchAppBar> {
 
   @override
   Widget build(BuildContext context) {
-    return AppBar(
+    return NewGradientAppBar(
+      gradient: LinearGradient(colors: [kPurpleColor, kBreezeColor]),
       actions: <Widget>[
         IconButton(
-          onPressed: () {
-            showSearch(context: context, delegate: Search(nodeTitles, tree));
-          },
+          onPressed: () => showSearch(context: context, delegate: Search(nodeTitles, tree)),
           icon: Icon(Icons.search),
         )
       ],
-      title: Text('Concept maps'),
+      title: Text(widget.barTitle ?? 'Concept maps'),
     );
   }
 }
