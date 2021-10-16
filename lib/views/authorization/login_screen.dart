@@ -59,7 +59,7 @@ class _LoginScreenState extends State<LoginScreen> {
       child: _instructionsText,
     );
 
-    final emailField = Container(
+    final loginField = Container(
       margin: EdgeInsets.only(
         top: screenHeight * 0.02,
       ),
@@ -71,7 +71,7 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
 
-    final pinField = Container(
+    final passField = Container(
       margin: EdgeInsets.only(
         top: screenHeight * 0.02,
       ),
@@ -80,6 +80,7 @@ class _LoginScreenState extends State<LoginScreen> {
         label: 'Password',
         keyboardType: TextInputType.visiblePassword,
         validator: (value) => _validateField(value),
+        obscureText: true,
       ),
     );
 
@@ -138,8 +139,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     logoImage,
                     title,
                     instructions,
-                    emailField,
-                    pinField,
+                    loginField,
+                    passField,
                     submitButton,
                     accountAbsenceQuestion,
                     signUpTextButton,

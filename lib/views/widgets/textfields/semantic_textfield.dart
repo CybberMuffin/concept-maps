@@ -11,6 +11,7 @@ class SemanticTextField extends StatelessWidget {
   final bool requiredToFill;
   final TextEditingController controller;
   final List<TextInputFormatter> inputFormatter;
+  final bool obscureText;
 
   const SemanticTextField({
     Key key,
@@ -22,6 +23,7 @@ class SemanticTextField extends StatelessWidget {
     this.requiredToFill = false,
     this.controller,
     this.inputFormatter,
+    this.obscureText = false,
   }) : super(key: key);
 
   @override
@@ -54,6 +56,7 @@ class SemanticTextField extends StatelessWidget {
         initialValue: initialValue,
         validator: validator,
         onChanged: onChanged,
+        obscureText: obscureText,
       ),
     );
   }
