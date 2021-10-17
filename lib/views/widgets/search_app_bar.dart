@@ -8,8 +8,9 @@ import 'package:provider/provider.dart';
 
 class SearchAppBar extends StatefulWidget with PreferredSizeWidget {
   final String barTitle;
+  final bool isSearchAvailable;
 
-  const SearchAppBar({Key key, @required this.barTitle}) : super(key: key);
+  const SearchAppBar({Key key, @required this.barTitle, this.isSearchAvailable = true}) : super(key: key);
 
   @override
   _SearchAppBarState createState() => _SearchAppBarState();
@@ -32,20 +33,24 @@ class _SearchAppBarState extends State<SearchAppBar> {
 
   @override
   void initState() {
-    tree = context.read<AppProvider>().tree;
-    parseTitle();
+    if (widget.isSearchAvailable) {
+      tree = context.read<AppProvider>().tree;
+      parseTitle();
+    }
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return NewGradientAppBar(
+      automaticallyImplyLeading: !widget.isSearchAvailable,
       gradient: LinearGradient(colors: [kPurpleColor, kBreezeColor]),
       actions: <Widget>[
-        IconButton(
-          onPressed: () => showSearch(context: context, delegate: Search(nodeTitles, tree)),
-          icon: Icon(Icons.search),
-        )
+        if (widget.isSearchAvailable)
+          IconButton(
+            onPressed: () => showSearch(context: context, delegate: Search(nodeTitles, tree)),
+            icon: Icon(Icons.search),
+          )
       ],
       title: Text(widget.barTitle ?? 'Concept maps'),
     );

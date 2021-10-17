@@ -1,7 +1,5 @@
-import 'package:concept_maps/constants/general.dart';
 import 'package:concept_maps/models/courses/course.dart';
 import 'package:concept_maps/providers/user_provider.dart';
-import 'package:concept_maps/services/auth_service.dart';
 import 'package:concept_maps/utils/app_colors.dart';
 import 'package:concept_maps/utils/gradient_decorations.dart';
 import 'package:concept_maps/views/authorization/login_screen.dart';

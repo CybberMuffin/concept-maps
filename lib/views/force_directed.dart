@@ -5,6 +5,7 @@ import 'package:concept_maps/providers/app_provider.dart';
 import 'package:concept_maps/views/painter/paint_graph.dart';
 import 'package:concept_maps/views/widgets/drawer_menu.dart';
 import 'package:concept_maps/views/widgets/search_app_bar.dart';
+import 'package:concept_maps/views/widgets/texts/main_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
@@ -40,6 +41,7 @@ class _ForceDirectedState extends State<ForceDirected> with TickerProviderStateM
   var flag;
   Offset frame;
   TransformationController transformationController = TransformationController();
+  bool errorDetected = false;
 
   void runGraphAnimation(Duration d) {
     graphAnimationController.duration = Duration(microseconds: d.inMicroseconds);
@@ -220,42 +222,47 @@ class _ForceDirectedState extends State<ForceDirected> with TickerProviderStateM
 
   @override
   void initState() {
-    Stopwatch s = Stopwatch();
-    s.start();
-    final map = context.read<AppProvider>().currentMap;
-    map.age++;
-    animationController = AnimationController(duration: Duration(microseconds: 200), vsync: this);
-    animationController.addListener(() {
-      setState(() {
-        transformationController.value = animation.value;
-      });
-    });
-
-    graphAnimationController = AnimationController(vsync: this);
-    graphAnimationController.addListener(() {
-      setState(() {});
-    });
-    graphAnimation =
-        animationController.drive(CurveTween(curve: Curves.easeInOut)).drive(Tween<double>(begin: 0.0, end: 1.0));
-
-    flag = false;
-    graphFlag = true;
-    context.read<AppProvider>().bottomSheetFlag = null;
-    context.read<AppProvider>().animationStart = false;
-    count = 10;
-    temp = Vector2(0, 0);
-    controller = ForceDirectedController(map);
-    controller.crToVE();
-    frame = Offset(controller.vertices.length.toDouble() * 800, controller.vertices.length.toDouble() * 800);
-    controller.setVerticesPos(frame);
-    controller.forceCalc(frame, 50, 50);
-    context.read<AppProvider>().setTree(controller.balloon.three);
-    controller.setVerticesEdgesColors(controller.balloon.three);
-    fillWidg();
-    flag = true;
-    force = 50;
-    print(s.elapsedMilliseconds);
     super.initState();
+    try {
+      Stopwatch s = Stopwatch();
+      s.start();
+      final map = context.read<AppProvider>().currentMap;
+      map.age++;
+      animationController = AnimationController(duration: Duration(microseconds: 200), vsync: this);
+      animationController.addListener(() {
+        setState(() {
+          transformationController.value = animation.value;
+        });
+      });
+
+      graphAnimationController = AnimationController(vsync: this);
+      graphAnimationController.addListener(() {
+        setState(() {});
+      });
+      graphAnimation =
+          animationController.drive(CurveTween(curve: Curves.easeInOut)).drive(Tween<double>(begin: 0.0, end: 1.0));
+
+      flag = false;
+      graphFlag = true;
+      context.read<AppProvider>().bottomSheetFlag = null;
+      context.read<AppProvider>().animationStart = false;
+      count = 10;
+      temp = Vector2(0, 0);
+      controller = ForceDirectedController(map);
+      controller.crToVE();
+      frame = Offset(controller.vertices.length.toDouble() * 800, controller.vertices.length.toDouble() * 800);
+      controller.setVerticesPos(frame);
+      controller.forceCalc(frame, 50, 50);
+      context.read<AppProvider>().setTree(controller.balloon.three);
+      controller.setVerticesEdgesColors(controller.balloon.three);
+      fillWidg();
+      flag = true;
+      force = 50;
+      print(s.elapsedMilliseconds);
+    } catch (e) {
+      print(e.toString());
+      errorDetected = true;
+    }
   }
 
   int force;
@@ -272,35 +279,40 @@ class _ForceDirectedState extends State<ForceDirected> with TickerProviderStateM
   @override
   void didChangeDependencies() {
     Stopwatch ss = Stopwatch()..start();
+    try {
+      final size = MediaQuery.of(context).size;
+      //d();
+      if (Provider.of<AppProvider>(context).animationStart == true) {
+        Vector2 v = controller
+            .vertices[controller.vertices.indexWhere((a) => a.id == Provider.of<AppProvider>(context).animationId)]
+            .position;
+        context.read<AppProvider>().isEdgeActive = false;
+        context.read<AppProvider>().focusTitle =
+            controller.vertices.firstWhere((a) => a.id == Provider.of<AppProvider>(context).animationId).fullTitle;
+        runAnimation(Offset(v.x, v.y), 0.7);
+        Provider.of<AppProvider>(context).bottomSheetFlag = true;
+        context.read<AppProvider>().focusNode = controller.balloon
+            .three[controller.balloon.three.indexWhere((a) => a.id == Provider.of<AppProvider>(context).animationId)];
+      } else if (Provider.of<AppProvider>(context).bottomSheetFlag == null) {
+        context.read<AppProvider>().focusNode = Node(
+            "",
+            [],
+            "",
+            controller.vertices[controller.vertices.indexWhere((element) => element.id == controller.rootId.toString())]
+                .title);
 
-    final size = MediaQuery.of(context).size;
-    //d();
-    if (Provider.of<AppProvider>(context).animationStart == true) {
-      Vector2 v = controller
-          .vertices[controller.vertices.indexWhere((a) => a.id == Provider.of<AppProvider>(context).animationId)]
-          .position;
-      context.read<AppProvider>().isEdgeActive = false;
-      context.read<AppProvider>().focusTitle =
-          controller.vertices.firstWhere((a) => a.id == Provider.of<AppProvider>(context).animationId).fullTitle;
-      runAnimation(Offset(v.x, v.y), 0.7);
-      Provider.of<AppProvider>(context).bottomSheetFlag = true;
-      context.read<AppProvider>().focusNode = controller.balloon
-          .three[controller.balloon.three.indexWhere((a) => a.id == Provider.of<AppProvider>(context).animationId)];
-    } else if (Provider.of<AppProvider>(context).bottomSheetFlag == null) {
-      context.read<AppProvider>().focusNode = Node(
-          "",
-          [],
-          "",
-          controller
-              .vertices[controller.vertices.indexWhere((element) => element.id == controller.rootId.toString())].title);
+        Vector2 v = Vector2.copy(controller
+            .vertices[controller.vertices.indexWhere((element) => element.id == controller.rootId.toString())]
+            .position);
 
-      Vector2 v = Vector2.copy(controller
-          .vertices[controller.vertices.indexWhere((element) => element.id == controller.rootId.toString())].position);
-
-      transformationController.value = Matrix4(
-          0.2, 0, 0, 0, 0, 0.2, 0, 0, 0, 0, 0.2, 0, -v.x * 0.2 + size.width / 2, -v.y * 0.2 + size.height / 2, 0, 1);
+        transformationController.value = Matrix4(
+            0.2, 0, 0, 0, 0, 0.2, 0, 0, 0, 0, 0.2, 0, -v.x * 0.2 + size.width / 2, -v.y * 0.2 + size.height / 2, 0, 1);
+      }
+      print(ss.elapsedMilliseconds);
+    } catch (e) {
+      print(e.toString());
+      errorDetected = true;
     }
-    print(ss.elapsedMilliseconds);
     super.didChangeDependencies();
   }
 
@@ -311,36 +323,44 @@ class _ForceDirectedState extends State<ForceDirected> with TickerProviderStateM
     super.dispose();
   }
 
+  Widget get mapNotAvailableText => Center(child: MainText('Map for this Material is Not Available'));
+
   @override
   Widget build(BuildContext context) {
     final map = context.read<AppProvider>().currentMap;
 
     return Scaffold(
-        bottomSheet: BottomSheetPannel(),
-        appBar: SearchAppBar(barTitle: widget.title),
-        drawer: DrawerMenu(title: widget.title),
-        body: Container(
-          child: InteractiveViewer(
-            constrained: false,
-            boundaryMargin: const EdgeInsets.all(double.infinity),
-            minScale: 0.01,
-            maxScale: 5.6,
-            onInteractionUpdate: (a) {},
-            transformationController: transformationController,
-            child: Container(
-              width: frame.dx,
-              height: frame.dy,
-              child: CustomPaint(
-                painter: PaintGraph(controller.edges, controller.vertices, flag),
-                child: Stack(
-                  children: [
-                    ...controller.widgets,
-                    ...controller.titles,
-                  ],
+      bottomSheet: errorDetected ? null : BottomSheetPannel(),
+      appBar: SearchAppBar(
+        barTitle: widget.title,
+        isSearchAvailable: !errorDetected,
+      ),
+      drawer: errorDetected ? null : DrawerMenu(title: widget.title),
+      body: Container(
+        child: errorDetected
+            ? mapNotAvailableText
+            : InteractiveViewer(
+                constrained: false,
+                boundaryMargin: const EdgeInsets.all(double.infinity),
+                minScale: 0.01,
+                maxScale: 5.6,
+                onInteractionUpdate: (a) {},
+                transformationController: transformationController,
+                child: Container(
+                  width: frame.dx,
+                  height: frame.dy,
+                  child: CustomPaint(
+                    painter: PaintGraph(controller.edges, controller.vertices, flag),
+                    child: Stack(
+                      children: [
+                        ...controller.widgets,
+                        ...controller.titles,
+                      ],
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ),
-        ));
+      ),
+    );
   }
 }
