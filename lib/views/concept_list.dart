@@ -1,8 +1,10 @@
 import 'package:concept_maps/models/graph_entities/node.dart';
 import 'package:concept_maps/providers/app_provider.dart';
+import 'package:concept_maps/utils/app_colors.dart';
 import 'package:concept_maps/views/list_position.dart';
 import 'package:concept_maps/views/widgets/drawer_menu.dart';
 import 'package:flutter/material.dart';
+import 'package:new_gradient_app_bar/new_gradient_app_bar.dart';
 import 'package:provider/provider.dart';
 
 class ConceptList extends StatefulWidget {
@@ -28,7 +30,10 @@ class _ConceptListState extends State<ConceptList> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       drawer: DrawerMenu(),
-      appBar: AppBar(title: Text("Concept List")),
+      appBar: NewGradientAppBar(
+        title: Text("Concept List"),
+        gradient: LinearGradient(colors: [kPurpleColor, kBreezeColor]),
+      ),
       body: Container(
         margin: const EdgeInsets.only(bottom: 15),
         child: SingleChildScrollView(

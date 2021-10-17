@@ -1,6 +1,5 @@
 import 'package:concept_maps/utils/app_colors.dart';
 import 'package:concept_maps/views/concept_list.dart';
-import 'package:concept_maps/views/force_directed.dart';
 import 'package:flutter/material.dart';
 
 class DrawerMenu extends StatelessWidget {
@@ -32,13 +31,7 @@ class DrawerMenu extends StatelessWidget {
               color: mainColor,
             ),
             title: Text("Map"),
-            onTap: () => Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
-                builder: (BuildContext context) => ForceDirected(),
-              ),
-              (_) => false,
-            ),
+            onTap: () => Navigator.pop(context),
           ),
           ListTile(
             leading: Icon(
