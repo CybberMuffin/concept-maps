@@ -1,4 +1,4 @@
-import 'package:concept_maps/controllers/balloon_tree_controller.dart';
+import 'package:concept_maps/graph_controllers/balloon_tree_controller.dart';
 import 'package:concept_maps/models/graph_entities/edge.dart';
 import 'package:concept_maps/models/graph_entities/map_model.dart';
 import 'package:concept_maps/models/graph_entities/vertice.dart';

@@ -1,4 +1,4 @@
-import 'package:concept_maps/controllers/force_directed_controller.dart';
+import 'package:concept_maps/graph_controllers/force_directed_controller.dart';
 import 'package:concept_maps/models/graph_entities/map_model.dart';
 import 'package:concept_maps/models/graph_entities/node.dart';
 import 'package:concept_maps/providers/app_provider.dart';
