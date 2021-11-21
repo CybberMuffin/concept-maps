@@ -37,8 +37,8 @@ class GradientDecorations {
     borderRadius: BorderRadius.circular(10.0),
   );
 
-  static BoxDecoration getGradientByIndex(int level) {
-    level = 1; //for one color gradient
+  static BoxDecoration getGradientByIndex({int level = 1}) {
+    //for one color gradient
     final gradient = LinearGradient(
       begin: Alignment.bottomLeft,
       end: Alignment.topRight,

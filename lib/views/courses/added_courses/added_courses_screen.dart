@@ -41,8 +41,7 @@ class AddedCoursesScreen extends StatelessWidget {
                   .map<Widget>(
                     (course) => CourseCard(
                       title: course.caption.toUpperCase(),
-                      decoration: GradientDecorations.getGradientByIndex(courses.indexOf(course))
-                          .copyWith(boxShadow: [kShadow]),
+                      decoration: GradientDecorations.getGradientByIndex().copyWith(boxShadow: [kShadow]),
                       onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(builder: (_) => CourseTree(course: course)),
