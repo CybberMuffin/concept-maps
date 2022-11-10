@@ -122,12 +122,15 @@ class ForceDirectedController {
     });
 
     edges.forEach((a) {
+      bool wasViewed = wasConceptViewed(viewedConceptIds, a.u.id);
       if (a.v.mainColor == NodeValueList.color[0][0] ||
           a.u.mainColor == NodeValueList.color[0][0]) {
-        a.edgeColor = NodeValueList.color[0][1];
-      } else {
         a.edgeColor =
-            tree.firstWhere((element) => element.id == a.u.id).sideColor;
+            wasViewed ? kWasViewedConceptColor : NodeValueList.color[0][1];
+      } else {
+        a.edgeColor = wasViewed
+            ? kWasViewedConceptColor
+            : tree.firstWhere((element) => element.id == a.u.id).sideColor;
       }
     });
   }
