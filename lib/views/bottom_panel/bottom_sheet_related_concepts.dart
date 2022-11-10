@@ -32,7 +32,6 @@ class _RelatedConceptsState extends State<RelatedConcepts> {
         dots.add(false);
       }
     }
-    ;
   }
 
   Future<ConceptInTheses> fillCurrentCinT() async {

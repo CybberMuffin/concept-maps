@@ -111,58 +111,106 @@ class _BottomPannelLinearState extends State<BottomPannelLinear> {
                     margin: EdgeInsets.only(top: 20),
                     child: SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
-                      child: Row(children: [
-                        Container(
-                          child: FlatButton(
-                              color: Colors.lightBlueAccent.withOpacity(0.2),
-                              padding: EdgeInsets.only(right: 32, left: 32),
-                              //highlightColor: Colors.deepPurpleAccent,
-                              onPressed: () {},
-                              textColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(18.0),
-                              ),
-                              child: Text("TAG_01",
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold))),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(left: 10),
-                          child: FlatButton(
-                              color: Colors.lightBlueAccent.withOpacity(0.2),
-                              padding: EdgeInsets.only(right: 32, left: 32),
-                              //highlightColor: Colors.deepPurpleAccent,
-                              onPressed: () {},
-                              textColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(18.0),
-                              ),
-                              child: Text("TAG_01",
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold))),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(left: 10),
-                          child: FlatButton(
-                              color: Colors.lightBlueAccent.withOpacity(0.2),
-                              padding: EdgeInsets.only(right: 32, left: 32),
-                              //highlightColor: Colors.deepPurpleAccent,
-                              onPressed: () {},
-                              textColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(18.0),
-                              ),
-                              child: Text("TAG_01",
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold))),
-                        ),
-                      ]),
+                      child: Row(
+                        children: [
+                          Container(
+                            child: TextButton(
+                                style: ButtonStyle(
+                                  backgroundColor:
+                                      MaterialStateProperty.resolveWith<Color>(
+                                          (_) {
+                                    return Colors.lightBlueAccent
+                                        .withOpacity(0.2);
+                                  }),
+                                  padding: MaterialStateProperty.resolveWith<
+                                      EdgeInsetsGeometry>((_) {
+                                    return EdgeInsets.only(right: 32, left: 32);
+                                  }),
+                                  textStyle: MaterialStateProperty.resolveWith<
+                                      TextStyle>((_) {
+                                    return TextStyle(color: Colors.white);
+                                  }),
+                                  shape: MaterialStateProperty.resolveWith<
+                                      OutlinedBorder>((_) {
+                                    return RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(18),
+                                    );
+                                  }),
+                                ),
+                                //highlightColor: Colors.deepPurpleAccent,
+                                onPressed: () {},
+                                child: Text("TAG_01",
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold))),
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(left: 10),
+                            child: TextButton(
+                                onPressed: () {},
+                                style: ButtonStyle(
+                                  backgroundColor:
+                                      MaterialStateProperty.resolveWith<Color>(
+                                          (_) {
+                                    return Colors.lightBlueAccent
+                                        .withOpacity(0.2);
+                                  }),
+                                  padding: MaterialStateProperty.resolveWith<
+                                      EdgeInsetsGeometry>((_) {
+                                    return EdgeInsets.only(right: 32, left: 32);
+                                  }),
+                                  textStyle: MaterialStateProperty.resolveWith<
+                                      TextStyle>((_) {
+                                    return TextStyle(color: Colors.white);
+                                  }),
+                                  shape: MaterialStateProperty.resolveWith<
+                                      OutlinedBorder>((_) {
+                                    return RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(18),
+                                    );
+                                  }),
+                                ),
+                                child: Text("TAG_01",
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold))),
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(left: 10),
+                            child: TextButton(
+                                style: ButtonStyle(
+                                  backgroundColor:
+                                      MaterialStateProperty.resolveWith<Color>(
+                                          (_) {
+                                    return Colors.lightBlueAccent
+                                        .withOpacity(0.2);
+                                  }),
+                                  padding: MaterialStateProperty.resolveWith<
+                                      EdgeInsetsGeometry>((_) {
+                                    return EdgeInsets.only(right: 32, left: 32);
+                                  }),
+                                  textStyle: MaterialStateProperty.resolveWith<
+                                      TextStyle>((_) {
+                                    return TextStyle(color: Colors.white);
+                                  }),
+                                  shape: MaterialStateProperty.resolveWith<
+                                      OutlinedBorder>((_) {
+                                    return RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(18),
+                                    );
+                                  }),
+                                ),
+                                onPressed: () {},
+                                child: Text("TAG_01",
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold))),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],

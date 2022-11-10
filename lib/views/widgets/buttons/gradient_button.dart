@@ -26,10 +26,15 @@ class GradientButton extends StatelessWidget {
     return Container(
       height: height ?? 56,
       width: width,
-      child: RaisedButton(
-        padding: EdgeInsets.all(0.0),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30.0),
+      child: ElevatedButton(
+        style: ButtonStyle(
+          shape: MaterialStateProperty.resolveWith<OutlinedBorder>((_) {
+            return RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30));
+          }),
+          padding: MaterialStateProperty.resolveWith<EdgeInsetsGeometry>((_) {
+            return EdgeInsets.zero;
+          }),
         ),
         child: Ink(
           decoration: gradientDecorations,

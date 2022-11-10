@@ -9,15 +9,25 @@ class Tag extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(right: 10),
-      child: FlatButton(
-          color: Colors.lightBlueAccent.withOpacity(0.2),
-          padding: EdgeInsets.only(right: 32, left: 32),
+      child: TextButton(
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.resolveWith<Color>((_) {
+              return Colors.lightBlueAccent.withOpacity(0.2);
+            }),
+            padding: MaterialStateProperty.resolveWith<EdgeInsetsGeometry>((_) {
+              return EdgeInsets.only(right: 32, left: 32);
+            }),
+            textStyle: MaterialStateProperty.resolveWith<TextStyle>((_) {
+              return TextStyle(color: Colors.white);
+            }),
+            shape: MaterialStateProperty.resolveWith<OutlinedBorder>((_) {
+              return RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(18),
+              );
+            }),
+          ),
           //highlightColor: Colors.deepPurpleAccent,
           onPressed: () {},
-          textColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(18.0),
-          ),
           child: Text(tag,
               style: TextStyle(
                   color: Colors.black,
