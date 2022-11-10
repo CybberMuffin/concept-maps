@@ -6,6 +6,7 @@ import 'package:concept_maps/models/dedactic_relations_entities/concept_in_these
 import 'package:concept_maps/models/general_entities/concept.dart';
 import 'package:concept_maps/models/general_entities/thesis.dart';
 import 'package:concept_maps/models/graph_entities/map_model.dart';
+import 'package:concept_maps/models/logs/user_log.dart';
 import 'package:concept_maps/utils/course_key_list.dart';
 import 'package:http/http.dart' as http;
 
@@ -30,12 +31,14 @@ abstract class ApiService {
     final conceptsResponse = response[1];
     final headerResponse = response[2];
 
-    if (relationsResponse.statusCode == 200 && conceptsResponse.statusCode == 200) {
+    if (relationsResponse.statusCode == 200 &&
+        conceptsResponse.statusCode == 200) {
       final List relationsResult = jsonDecode(relationsResponse.body);
       final List conceptsResult = jsonDecode(conceptsResponse.body);
       final List headerResult = jsonDecode(headerResponse.body);
 
-      return MapModel.fromMap(field, relationsResult, conceptsResult, headerResult);
+      return MapModel.fromMap(
+          field, relationsResult, conceptsResult, headerResult);
     }
 
     throw Exception("Error occurred during fetch of map model");
@@ -66,7 +69,8 @@ abstract class ApiService {
     throw Exception("Error occurred during fetch of concepts in theses");
   }
 
-  static Future<List<Concept>> fetchConceptsDidacticBefore(int conceptId) async {
+  static Future<List<Concept>> fetchConceptsDidacticBefore(
+      int conceptId) async {
     assert(conceptId != null);
     final url = Uri.parse('$hostUrl/api/concept/$conceptId/didactic/before');
 
@@ -79,7 +83,8 @@ abstract class ApiService {
       );
     }
 
-    throw Exception("Error occurred during fetch of concepts in didactic before");
+    throw Exception(
+        "Error occurred during fetch of concepts in didactic before");
   }
 
   static Future<List<Concept>> fetchConceptsDidacticAfter(int conceptId) async {
@@ -95,7 +100,8 @@ abstract class ApiService {
       );
     }
 
-    throw Exception("Error occurred during fetch of concepts in didactic after");
+    throw Exception(
+        "Error occurred during fetch of concepts in didactic after");
   }
 
   static Future<List<Thesis>> fetchThesesByConceptId(int conceptId) async {
@@ -140,8 +146,9 @@ abstract class ApiService {
     final response = await http.get(url);
     if (response.statusCode == 200) {
       final result = jsonDecode(response.body);
-      final courseQueries =
-          result[kCourses].map<Future<Course>>((course) => _fetchCourseDetails(course[kCourse])).toList();
+      final courseQueries = result[kCourses]
+          .map<Future<Course>>((course) => _fetchCourseDetails(course[kCourse]))
+          .toList();
 
       return await Future.wait(courseQueries);
     }
@@ -159,8 +166,10 @@ abstract class ApiService {
       final branch = await fetchBranchInfo(branchName);
 
       if (chlildrenResult.isNotEmpty) {
-        final childrenBranches = await Future.wait(
-            chlildrenResult.map<Future<Branch>>((branchInfo) => fetchBranchChildren(branchInfo['view'])).toList());
+        final childrenBranches = await Future.wait(chlildrenResult
+            .map<Future<Branch>>(
+                (branchInfo) => fetchBranchChildren(branchInfo['view']))
+            .toList());
         return branch.copyWith(children: childrenBranches);
       }
 
@@ -193,9 +202,26 @@ abstract class ApiService {
       return Course(
         name: result[kCourse][kCourse] as String,
         caption: result[kCourse][kCaption] as String,
-        nameBranches: List<String>.from(result[kBranches]?.map((x) => x as String)),
+        nameBranches:
+            List<String>.from(result[kBranches]?.map((x) => x as String)),
       );
     }
     throw Exception("Error occurred during fetch of $course Course Details");
+  }
+
+  static Future<List<UserLog>> fetchUserLogsById(String id) async {
+    assert(id?.isNotEmpty ?? false);
+    final url = Uri.parse('$_logApi/user/$id');
+
+    final response = await http.get(url);
+    if (response.statusCode == 200) {
+      final result = jsonDecode(response.body);
+      List<UserLog> userLogs = [];
+      result.forEach((element) {
+        userLogs.add(UserLog.fromJson(element));
+      });
+      return userLogs;
+    }
+    throw Exception("Error occurred during fetch of user logs: id $id");
   }
 }

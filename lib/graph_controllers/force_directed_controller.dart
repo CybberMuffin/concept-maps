@@ -2,6 +2,7 @@ import 'package:concept_maps/graph_controllers/balloon_tree_controller.dart';
 import 'package:concept_maps/models/graph_entities/edge.dart';
 import 'package:concept_maps/models/graph_entities/map_model.dart';
 import 'package:concept_maps/models/graph_entities/vertice.dart';
+import 'package:concept_maps/utils/app_colors.dart';
 import 'package:concept_maps/utils/node_value_list.dart';
 import 'package:flutter/material.dart';
 import 'package:vector_math/vector_math_64.dart';
@@ -34,11 +35,14 @@ class ForceDirectedController {
     map.concepts.forEach((a) {
       if (a.isAspect == "1") {
         vertices.firstWhere((element) => element.id == a.id).fullTitle =
-            vertices.firstWhere((element) => element.id == a.aspectOf).title + ": " + a.concept;
+            vertices.firstWhere((element) => element.id == a.aspectOf).title +
+                ": " +
+                a.concept;
         edges.add(Edge(vertices[vertices.indexWhere((b) => b.id == a.id)],
             vertices[vertices.indexWhere((b) => b.id == a.aspectOf)]));
       } else {
-        vertices.firstWhere((element) => element.id == a.id).fullTitle = a.concept;
+        vertices.firstWhere((element) => element.id == a.id).fullTitle =
+            a.concept;
       }
     });
   }
@@ -48,15 +52,23 @@ class ForceDirectedController {
       for (var j = 0; j < node.child.length; j++) {
         for (var i = 0; i < node.child.length - 1; i++) {
           if (i < node.child.length / 2.floor()) {
-            if (three[three.indexWhere((a) => a.id == node.child[i])].child.length >
-                three[three.indexWhere((a) => a.id == node.child[i + 1])].child.length) {
+            if (three[three.indexWhere((a) => a.id == node.child[i])]
+                    .child
+                    .length >
+                three[three.indexWhere((a) => a.id == node.child[i + 1])]
+                    .child
+                    .length) {
               String temp = node.child[i];
               node.child[i] = node.child[i + 1];
               node.child[i + 1] = temp;
             }
           } else {
-            if (three[three.indexWhere((a) => a.id == node.child[i])].child.length <
-                three[three.indexWhere((a) => a.id == node.child[i + 1])].child.length) {
+            if (three[three.indexWhere((a) => a.id == node.child[i])]
+                    .child
+                    .length <
+                three[three.indexWhere((a) => a.id == node.child[i + 1])]
+                    .child
+                    .length) {
               var temp = node.child[i];
               node.child[i] = node.child[i + 1];
               node.child[i + 1] = temp;
@@ -81,25 +93,41 @@ class ForceDirectedController {
         three[three.indexWhere((a) => a.id == element)].x = x;
         three[three.indexWhere((a) => a.id == element)].y = y;
         //print([x, y]);
-        nodeRecursion(three[three.indexWhere((a) => a.id == element)], deg, three);
+        nodeRecursion(
+            three[three.indexWhere((a) => a.id == element)], deg, three);
         deg = deg + deltaDeg;
       });
     } else {}
   }
 
-  void setVerticesEdgesColors(List<Node> tree) {
+  bool wasConceptViewed(List<String> viewedConceptIds, String conceptId) {
+    bool wasViewed = false;
+    for (int i = 0; i < viewedConceptIds.length; i++) {
+      if (viewedConceptIds[i] == conceptId && !wasViewed) {
+        wasViewed = true;
+      }
+    }
+    return wasViewed;
+  }
+
+  void setVerticesEdgesColors(List<Node> tree, List<String> viewedConceptIds) {
     vertices.forEach((a) {
+      bool wasViewed = wasConceptViewed(viewedConceptIds, a.id);
       int treeIndex = tree.indexWhere((element) => element.id == a.id);
-      a.mainColor = tree[treeIndex].mainColor;
-      a.sideColor = tree[treeIndex].sideColor;
+      a.mainColor =
+          wasViewed ? kWasViewedConceptColor : tree[treeIndex].mainColor;
+      a.sideColor =
+          wasViewed ? kWasViewedConceptSideColor : tree[treeIndex].sideColor;
       a.size = tree[treeIndex].d;
     });
 
     edges.forEach((a) {
-      if (a.v.mainColor == NodeValueList.color[0][0] || a.u.mainColor == NodeValueList.color[0][0]) {
+      if (a.v.mainColor == NodeValueList.color[0][0] ||
+          a.u.mainColor == NodeValueList.color[0][0]) {
         a.edgeColor = NodeValueList.color[0][1];
       } else {
-        a.edgeColor = tree.firstWhere((element) => element.id == a.u.id).sideColor;
+        a.edgeColor =
+            tree.firstWhere((element) => element.id == a.u.id).sideColor;
       }
     });
   }
@@ -108,11 +136,17 @@ class ForceDirectedController {
     int x;
     int y;
     Random rand = new Random();
-    balloon.three[balloon.three.indexWhere((element) => element.parent == "-1")].x = size.dx / 2;
-    balloon.three[balloon.three.indexWhere((element) => element.parent == "-1")].y = size.dy / 2;
+    balloon.three[balloon.three.indexWhere((element) => element.parent == "-1")]
+        .x = size.dx / 2;
+    balloon.three[balloon.three.indexWhere((element) => element.parent == "-1")]
+        .y = size.dy / 2;
     List<Node> branch = balloon.three
         .where((element) =>
-            element.parent == balloon.three[balloon.three.indexWhere((element) => element.parent == "-1")].id)
+            element.parent ==
+            balloon
+                .three[balloon.three
+                    .indexWhere((element) => element.parent == "-1")]
+                .id)
         .toList();
     double startDeg = 45.0;
     branch.forEach((element) {
@@ -123,7 +157,10 @@ class ForceDirectedController {
       balloon.three[balloon.three.indexWhere((a) => a.id == element.id)].x = x;
       balloon.three[balloon.three.indexWhere((a) => a.id == element.id)].y = y;
 
-      nodeRecursion(balloon.three[balloon.three.indexWhere((a) => a.id == element.id)], startDeg, balloon.three);
+      nodeRecursion(
+          balloon.three[balloon.three.indexWhere((a) => a.id == element.id)],
+          startDeg,
+          balloon.three);
       startDeg = startDeg + 360.0 / branch.length.toDouble();
     });
     balloon.three.forEach((element) {
@@ -134,7 +171,8 @@ class ForceDirectedController {
       // print(element.y);
       // print(element.y.runtimeType);
       // print("_________________________");
-      vertices[vertices.indexWhere((a) => a.id == element.id)].position = Vector2(element.x, element.y);
+      vertices[vertices.indexWhere((a) => a.id == element.id)].position =
+          Vector2(element.x, element.y);
     });
 
     /*
@@ -192,8 +230,10 @@ class ForceDirectedController {
                 v.position.x++;
               }
 
-              dis = sqrt((v.position.x - u.position.x) * (v.position.x - u.position.x) +
-                  (v.position.y - u.position.y) * (v.position.y - u.position.y));
+              dis = sqrt((v.position.x - u.position.x) *
+                      (v.position.x - u.position.x) +
+                  (v.position.y - u.position.y) *
+                      (v.position.y - u.position.y));
               if (dis <= forceRadius) {
                 if (dis < hotDisp) {
                   v.isHot = true;
@@ -216,8 +256,8 @@ class ForceDirectedController {
             if (element.u.id != v.id && element.v.id != v.id) {
               double halfX = (element.u.position.x + element.v.position.x) / 2;
               double halfY = (element.u.position.y + element.v.position.y) / 2;
-              dis = sqrt(
-                  (v.position.x - halfX) * (v.position.x - halfX) + (v.position.y - halfY) * (v.position.y - halfY));
+              dis = sqrt((v.position.x - halfX) * (v.position.x - halfX) +
+                  (v.position.y - halfY) * (v.position.y - halfY));
               //double a = (element.v.position.y - element.u.position.y);
               //double b = - (element.v.position.x - element.u.position.x);
               //double c = element.u.position.y*(element.v.position.x - element.u.position.x) - element.u.position.x*(element.v.position.y - element.u.position.y);
@@ -272,16 +312,19 @@ class ForceDirectedController {
 
       vertices.forEach((v) {
         if (v.isOn == false) {
-          double d = test3(iter, i, forceRadius, l, v.isHot, v.hotDistance, force);
+          double d =
+              test3(iter, i, forceRadius, l, v.isHot, v.hotDistance, force);
           v.isHot = false;
           v.hotDistance -= forceRadius / ((iter - i) / 100);
           v.position.x = v.position.x +
               v.displacement.x *
-                  test3(iter, i, forceRadius, l, v.isHot, v.hotDistance, v.displacement.x) /
+                  test3(iter, i, forceRadius, l, v.isHot, v.hotDistance,
+                      v.displacement.x) /
                   v.displacement.length;
           v.position.y = v.position.y +
               v.displacement.y *
-                  test3(iter, i, forceRadius, l, v.isHot, v.hotDistance, v.displacement.y) /
+                  test3(iter, i, forceRadius, l, v.isHot, v.hotDistance,
+                      v.displacement.y) /
                   v.displacement.length;
 
           v.displacementPrev = v.displacement.length;
@@ -292,7 +335,8 @@ class ForceDirectedController {
 
           avX = v.displacement.x;
           avY = v.displacement.y;
-          if ((avX <= maxDisp && avX >= -maxDisp) && (avY <= maxDisp && avY >= -maxDisp)) {
+          if ((avX <= maxDisp && avX >= -maxDisp) &&
+              (avY <= maxDisp && avY >= -maxDisp)) {
             satCount++;
           }
         }
@@ -331,7 +375,8 @@ class ForceDirectedController {
     }
   }
 
-  double test3(int iter, int i, double rad, double l, bool isHot, double hotDistance, double force) {
+  double test3(int iter, int i, double rad, double l, bool isHot,
+      double hotDistance, double force) {
     Random rand = Random();
     int r = rand.nextInt(i + 1);
     if (iter == 1) {
@@ -356,7 +401,8 @@ class ForceDirectedController {
     }
   }
 
-  double test2(Offset size, double displacement, double displacementPrev, int iMax, int i, double t) {
+  double test2(Offset size, double displacement, double displacementPrev,
+      int iMax, int i, double t) {
     if (displacement > displacementPrev) {
       double e = exp(-displacement / t);
       Random rand = Random();
@@ -375,7 +421,8 @@ class ForceDirectedController {
     return size.dx / 2 - (size.dx * (i + 1)) / (2 * iMax) + 1;
   }
 
-  double temperature(double displacement, double i, int iMax, double frameWidth) {
+  double temperature(
+      double displacement, double i, int iMax, double frameWidth) {
     double value = frameWidth / 2;
     if (displacement < value) {
       value = displacement;

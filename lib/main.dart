@@ -27,18 +27,21 @@ class MyApp extends StatelessWidget {
             selectedItemColor: kBreezeColor,
             unselectedItemColor: kDeepSeaGreyColor,
           ),
-          bottomSheetTheme: BottomSheetThemeData(backgroundColor: Colors.black54.withOpacity(0)),
+          bottomSheetTheme: BottomSheetThemeData(
+              backgroundColor: Colors.black54.withOpacity(0)),
           textTheme: GoogleFonts.montserratTextTheme(
             Theme.of(context).textTheme,
           ),
         ),
-        home: NavigateWhenReadyLoadScreen(callWhenReady: navigateAfterSilentAuthorization),
+        home: NavigateWhenReadyLoadScreen(
+            callWhenReady: navigateAfterSilentAuthorization),
       ),
     );
   }
 
   Future<void> navigateAfterSilentAuthorization(BuildContext context) async {
     final result = await context.read<UserProvider>().authorizeSilently();
+    await context.read<UserProvider>().fetchUserLogs();
 
     Navigator.pushReplacement(
       context,

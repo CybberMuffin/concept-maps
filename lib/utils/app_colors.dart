@@ -7,6 +7,9 @@ const kGreyBlueColor = Color(0XFF41809C);
 const kText = Color(0XFF5F6D80);
 const kSecondaryText = Color(0XFFA8B1BB);
 
+const kWasViewedConceptColor = Color(0xFF275b36);
+const kWasViewedConceptSideColor = Color(0xFF2e8246);
+
 const Map<int, Color> levelColors = {
   0: kPurpleColor,
   1: kGreyBlueColor,

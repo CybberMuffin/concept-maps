@@ -1,5 +1,6 @@
 import 'package:concept_maps/models/courses/branch.dart';
 import 'package:concept_maps/models/courses/course.dart';
+import 'package:concept_maps/models/logs/user_log.dart';
 import 'package:concept_maps/services/api_service.dart';
 import 'package:concept_maps/services/auth_service.dart';
 import 'package:concept_maps/services/preferences.dart';
@@ -8,6 +9,8 @@ import 'package:flutter/material.dart';
 class UserProvider with ChangeNotifier {
   String _userId;
   List<Course> myCourses;
+  List<UserLog> userLogs;
+  List<String> viewedConceptIds = [];
 
   Future<bool> authorizeUser(String login, String password) async {
     final result = await AuthService.authorize(login, password);
@@ -46,5 +49,21 @@ class UserProvider with ChangeNotifier {
     }
   }
 
-  Course getCourseByName(String name) => myCourses.singleWhere((element) => element.name == name, orElse: () => null);
+  Future<void> fetchUserLogs() async {
+    userLogs = await ApiService.fetchUserLogsById(_userId);
+    saveViewedConceptIds();
+  }
+
+  void saveViewedConceptIds() {
+    userLogs.forEach((log) {
+      if (log.contentType == 'concept') {
+        viewedConceptIds.add(log.contentId);
+      }
+    });
+  }
+
+  void markConceptAsViewed() {}
+
+  Course getCourseByName(String name) => myCourses
+      .singleWhere((element) => element.name == name, orElse: () => null);
 }
