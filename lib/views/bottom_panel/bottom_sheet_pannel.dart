@@ -12,7 +12,8 @@ class BottomSheetPannel extends StatefulWidget {
   _BottomSheetPannelState createState() => _BottomSheetPannelState();
 }
 
-class _BottomSheetPannelState extends State<BottomSheetPannel> with SingleTickerProviderStateMixin {
+class _BottomSheetPannelState extends State<BottomSheetPannel>
+    with SingleTickerProviderStateMixin {
   Widget panel;
   bool isPannelAdded;
   bool isPannelAddedUpper;
@@ -37,7 +38,8 @@ class _BottomSheetPannelState extends State<BottomSheetPannel> with SingleTicker
         pageIndex = 0;
         runAnimation(size.height * bottomSheetCof);
       });
-    } else if (height == size.height * bottomSheetCof && purpleSticker != true) {
+    } else if (height == size.height * bottomSheetCof &&
+        purpleSticker != true) {
       setState(() {
         runAnimation(size.height - 115);
       });
@@ -70,8 +72,9 @@ class _BottomSheetPannelState extends State<BottomSheetPannel> with SingleTicker
   void runAnimation(double newHeight) {
     curve = CurvedAnimation(parent: controller, curve: Curves.easeIn);
 
-    panelAnimation =
-        controller.drive(CurveTween(curve: Curves.easeInOut)).drive(Tween<double>(begin: height, end: newHeight));
+    panelAnimation = controller
+        .drive(CurveTween(curve: Curves.easeInOut))
+        .drive(Tween<double>(begin: height, end: newHeight));
     controller.forward(from: 0.0);
   }
 
@@ -83,12 +86,13 @@ class _BottomSheetPannelState extends State<BottomSheetPannel> with SingleTicker
     yellowSticker = false;
     purpleSticker = false;
     greenSticker = false;
-    controller = AnimationController(duration: Duration(milliseconds: 500), vsync: this)
-      ..addListener(() {
-        setState(() {
-          height = panelAnimation.value;
-        });
-      });
+    controller =
+        AnimationController(duration: Duration(milliseconds: 500), vsync: this)
+          ..addListener(() {
+            setState(() {
+              height = panelAnimation.value;
+            });
+          });
     isPannelAdded = false;
     isPannelAddedUpper = false;
     panel = Container();
@@ -139,24 +143,28 @@ class _BottomSheetPannelState extends State<BottomSheetPannel> with SingleTicker
                 top: (purpleSticker == false) ? 15 : 0,
                 child: InkWell(
                   onTap: () {
-                    setState(() {
-                      purpleSticker = !purpleSticker;
-                      if (height == size.height - 115) {
-                        runAnimation(size.height * bottomSheetCof);
-                      }
-                      if (greenSticker == true) {
-                        greenSticker = false;
-                      } else if (yellowSticker == true) {
-                        yellowSticker = false;
-                      }
-                      pageIndex = 1;
-                      if (greenSticker == false && purpleSticker == false && yellowSticker == false) {
-                        setState(() {
-                          runAnimation(40);
-                          pageIndex = 0;
-                        });
-                      }
-                    });
+                    if (height != 40) {
+                      setState(() {
+                        purpleSticker = !purpleSticker;
+                        if (height == size.height - 115) {
+                          runAnimation(size.height * bottomSheetCof);
+                        }
+                        if (greenSticker == true) {
+                          greenSticker = false;
+                        } else if (yellowSticker == true) {
+                          yellowSticker = false;
+                        }
+                        pageIndex = 1;
+                        if (greenSticker == false &&
+                            purpleSticker == false &&
+                            yellowSticker == false) {
+                          setState(() {
+                            runAnimation(40);
+                            pageIndex = 0;
+                          });
+                        }
+                      });
+                    }
                   },
                   child: Container(
                     width: 30,
@@ -179,22 +187,26 @@ class _BottomSheetPannelState extends State<BottomSheetPannel> with SingleTicker
                 top: (greenSticker == false) ? 15 : 0,
                 child: InkWell(
                   onTap: () {
-                    setState(() {
-                      greenSticker = !greenSticker;
-                      if (purpleSticker == true) {
-                        purpleSticker = false;
-                      } else if (yellowSticker == true) {
-                        yellowSticker = false;
-                      }
-                      pageIndex = 0;
+                    if (height != 40) {
+                      setState(() {
+                        greenSticker = !greenSticker;
+                        if (purpleSticker == true) {
+                          purpleSticker = false;
+                        } else if (yellowSticker == true) {
+                          yellowSticker = false;
+                        }
+                        pageIndex = 0;
 
-                      if (greenSticker == false && purpleSticker == false && yellowSticker == false) {
-                        setState(() {
-                          runAnimation(40);
-                          pageIndex = 0;
-                        });
-                      }
-                    });
+                        if (greenSticker == false &&
+                            purpleSticker == false &&
+                            yellowSticker == false) {
+                          setState(() {
+                            runAnimation(40);
+                            pageIndex = 0;
+                          });
+                        }
+                      });
+                    }
                   },
                   child: Container(
                     width: 30,
@@ -217,25 +229,29 @@ class _BottomSheetPannelState extends State<BottomSheetPannel> with SingleTicker
                 top: (yellowSticker == false) ? 15 : 0,
                 child: InkWell(
                   onTap: () {
-                    setState(() {
-                      yellowSticker = !yellowSticker;
-                      if (height == size.height * bottomSheetCof) {
-                        runAnimation(size.height - 115);
-                      }
-                      if (purpleSticker == true) {
-                        purpleSticker = false;
-                      } else if (greenSticker == true) {
-                        greenSticker = false;
-                      }
-                      pageIndex = 2;
+                    if (height != 40) {
+                      setState(() {
+                        yellowSticker = !yellowSticker;
+                        if (height == size.height * bottomSheetCof) {
+                          runAnimation(size.height - 115);
+                        }
+                        if (purpleSticker == true) {
+                          purpleSticker = false;
+                        } else if (greenSticker == true) {
+                          greenSticker = false;
+                        }
+                        pageIndex = 2;
 
-                      if (greenSticker == false && purpleSticker == false && yellowSticker == false) {
-                        setState(() {
-                          runAnimation(40);
-                          pageIndex = 0;
-                        });
-                      }
-                    });
+                        if (greenSticker == false &&
+                            purpleSticker == false &&
+                            yellowSticker == false) {
+                          setState(() {
+                            runAnimation(40);
+                            pageIndex = 0;
+                          });
+                        }
+                      });
+                    }
                   },
                   child: Container(
                     width: 30,
@@ -258,7 +274,9 @@ class _BottomSheetPannelState extends State<BottomSheetPannel> with SingleTicker
             height: height,
             decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: const BorderRadius.only(topLeft: Radius.circular(25), topRight: Radius.circular(25)),
+                borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(25),
+                    topRight: Radius.circular(25)),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.grey.withOpacity(bottomSheetCof),
@@ -281,7 +299,8 @@ class _BottomSheetPannelState extends State<BottomSheetPannel> with SingleTicker
                   },
                   onSwipeDown: () {
                     dragPanelDown();
-                    if (height == MediaQuery.of(context).size.height * bottomSheetCof) {
+                    if (height ==
+                        MediaQuery.of(context).size.height * bottomSheetCof) {
                       if (greenSticker == true || purpleSticker == true) {
                         greenSticker = false;
                         purpleSticker = false;
@@ -362,7 +381,9 @@ class _BottomSheetPannelState extends State<BottomSheetPannel> with SingleTicker
                       }
                       pageIndex = 1;
 
-                      if (greenSticker == false && purpleSticker == false && yellowSticker == false) {
+                      if (greenSticker == false &&
+                          purpleSticker == false &&
+                          yellowSticker == false) {
                         setState(() {
                           runAnimation(40);
                           pageIndex = 0;
@@ -400,7 +421,9 @@ class _BottomSheetPannelState extends State<BottomSheetPannel> with SingleTicker
                       }
                       pageIndex = 0;
 
-                      if (greenSticker == false && purpleSticker == false && yellowSticker == false) {
+                      if (greenSticker == false &&
+                          purpleSticker == false &&
+                          yellowSticker == false) {
                         setState(() {
                           runAnimation(40);
                           pageIndex = 0;
@@ -438,7 +461,9 @@ class _BottomSheetPannelState extends State<BottomSheetPannel> with SingleTicker
                       }
                       pageIndex = 2;
 
-                      if (greenSticker == false && purpleSticker == false && yellowSticker == false) {
+                      if (greenSticker == false &&
+                          purpleSticker == false &&
+                          yellowSticker == false) {
                         setState(() {
                           runAnimation(40);
                           pageIndex = 0;

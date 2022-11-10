@@ -154,194 +154,232 @@ class _RelatedConceptsState extends State<RelatedConcepts> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final provider = context.read<AppProvider>();
-    return Container(
-      margin:
-          EdgeInsets.only(left: 0, right: 0),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: Column(
-          children: [
-            Container(
-              padding: EdgeInsets.only(top: 10),
-              child: SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  child: FutureBuilder <List<Thesis>>(
-                      future: provider.fetchEdgeTheses(int.parse(provider.focusNode.id), concepts[conceptIndex].iid),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-
-                          final theses = snapshot.data;
-                            int k = -1;
-                            int difId = theses[0].conceptId;
-                            theses.asMap().forEach((key, value) {
-                              if(value.conceptId != difId)
-                              {
-                                k = key;
-                                difId = value.conceptId;
+    return concepts.isNotEmpty
+        ? Container(
+            margin: EdgeInsets.only(left: 0, right: 0),
+            child: SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: Column(
+                children: [
+                  Container(
+                    padding: EdgeInsets.only(top: 10),
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.vertical,
+                      child: FutureBuilder<List<Thesis>>(
+                          future: provider.fetchEdgeTheses(
+                              int.parse(provider.focusNode.id),
+                              concepts[conceptIndex].iid),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              final theses = snapshot.data;
+                              int k = -1;
+                              int difId = theses[0].conceptId;
+                              theses.asMap().forEach((key, value) {
+                                if (value.conceptId != difId) {
+                                  k = key;
+                                  difId = value.conceptId;
+                                }
+                              });
+                              final concept1 = provider.currentMap.concepts
+                                  .firstWhere(
+                                      (a) => a.id == provider.focusNode.id);
+                              final concept2 = provider.currentMap.concepts
+                                  .firstWhere(
+                                      (a) => a.id == concepts[conceptIndex].id);
+                              List<Thesis> thesesU = [];
+                              List<Thesis> thesesV = [];
+                              if (k == -1) {
+                                if (difId.toString() == concept1.id) {
+                                  thesesV = theses;
+                                } else if (difId.toString() == concept2.id) {
+                                  thesesU = theses;
+                                }
+                              } else {
+                                thesesV = List.from(theses.sublist(0, k));
+                                thesesU =
+                                    List.from(theses.sublist(k, theses.length));
                               }
-                            });
-                            final concept1 = provider.currentMap.concepts.firstWhere((a) => a.id == provider.focusNode.id);
-                            final concept2 = provider.currentMap.concepts.firstWhere((a) => a.id == concepts[conceptIndex].id);
-                            List<Thesis> thesesU = [];
-                            List<Thesis> thesesV = [];
-                            if(k == -1){
-                              if(difId.toString() == concept1.id){
-                                thesesV = theses;
-                              }else if(difId.toString() == concept2.id){
-                                thesesU = theses;
-                              }
-                            }else{
-                              thesesV = List.from(theses.sublist(0, k));
-                              thesesU = List.from(theses.sublist(k, theses.length));
-                            }
-                            final uTitle = concept1.concept;
-                            final vTitle = concept2.concept;
-                            return Column(
-                                children: [
-                                  Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Container(
-                                      padding: const EdgeInsets.only(left: 15, right: 15),
-                                      margin: EdgeInsets.only(bottom: 5),
-                                      child: Text(
-                                        thesesU.isEmpty? "" : uTitle+" in "+vTitle+" theses",
-                                        style: GoogleFonts.montserrat(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w800,
-                                        ),
+                              final uTitle = concept1.concept;
+                              final vTitle = concept2.concept;
+                              return Column(children: [
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Container(
+                                    padding: const EdgeInsets.only(
+                                        left: 15, right: 15),
+                                    margin: EdgeInsets.only(bottom: 5),
+                                    child: Text(
+                                      thesesU.isEmpty
+                                          ? ""
+                                          : uTitle +
+                                              " in " +
+                                              vTitle +
+                                              " theses",
+                                      style: GoogleFonts.montserrat(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w800,
                                       ),
                                     ),
                                   ),
-                                  ...thesesU.map<Widget>(
-                                        (thesis) => ThesisViewBuilder(
-                                      thesis: thesis, conceptU: concept1, conceptV: concept2,
-                                    ),
-                                  ).toList(),
-                                  Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Container(
-                                      padding: const EdgeInsets.only(left: 15, right: 15),
-                                      margin: EdgeInsets.only(bottom: 5),
-                                      child: Text(
-                                        thesesV.isEmpty? "" : vTitle+" in "+uTitle+" theses",
-                                        style: GoogleFonts.montserrat(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w800,
-                                        ),),
+                                ),
+                                ...thesesU
+                                    .map<Widget>(
+                                      (thesis) => ThesisViewBuilder(
+                                        thesis: thesis,
+                                        conceptU: concept1,
+                                        conceptV: concept2,
+                                      ),
+                                    )
+                                    .toList(),
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Container(
+                                    padding: const EdgeInsets.only(
+                                        left: 15, right: 15),
+                                    margin: EdgeInsets.only(bottom: 5),
+                                    child: Text(
+                                      thesesV.isEmpty
+                                          ? ""
+                                          : vTitle +
+                                              " in " +
+                                              uTitle +
+                                              " theses",
+                                      style: GoogleFonts.montserrat(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w800,
+                                      ),
                                     ),
                                   ),
-                                  ...thesesV.map<Widget>(
-                                        (thesis) => ThesisViewBuilder(
-                                      thesis: thesis, conceptU: concept1, conceptV: concept2,
-                                    ),
-                                  ).toList()
+                                ),
+                                ...thesesV
+                                    .map<Widget>(
+                                      (thesis) => ThesisViewBuilder(
+                                        thesis: thesis,
+                                        conceptU: concept1,
+                                        conceptV: concept2,
+                                      ),
+                                    )
+                                    .toList()
+                              ]);
+                            }
 
-                                ]
-                            );
+                            if (snapshot.hasError) {
+                              return Container();
+                              // return Text(
+                              //   snapshot.error.toString(),
+                              //   style: TextStyle(color: Colors.red),
+                              // );
+                            }
 
-                        }
-
-                        if (snapshot.hasError) {
-                          return Container();
-                          // return Text(
-                          //   snapshot.error.toString(),
-                          //   style: TextStyle(color: Colors.red),
-                          // );
-                        }
-
-                        return CircularProgressIndicator();
-                      }),
+                            return CircularProgressIndicator();
+                          }),
+                    ),
+                    height: (size.height - 115) * 0.47,
                   ),
-              height: (size.height - 115) * 0.47,
-            ),
-            Container(
-              child: RadiantGradientMask(
-                color1: provider.tree.firstWhere((a) => a.id == concepts[conceptIndex].id).sideColor,
-                color2: provider.tree.firstWhere((a) => a.id == provider.focusNode.id).sideColor,
-                child: Icon(
-                  Icons.keyboard_arrow_down_rounded,
-                  size: 45,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-            Container(
-              //constraints: BoxConstraints(maxHeight: (size.height - 115) / 2),
-              child: Row(
-                children: [
                   Container(
-                      margin: EdgeInsets.only(left: 15, right: 15),
-                      constraints: BoxConstraints(maxWidth: size.width * 0.4),
-                      padding: EdgeInsets.only(right: size.width * 0.02),
-                      //margin: EdgeInsets.only(top: size.height * 0.063),
-                      //color: Colors.red,
-                      child: AutoSizeText(
-                        context.read<AppProvider>().focusNode.title,
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
-                        maxLines: 3,
-                      )),
-
-                  Expanded(
-                    child: Container(
-                      height: 4,
-                      decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                        begin: Alignment.topRight,
-                        end: Alignment.bottomLeft,
-                        colors: [
-                          provider.tree.firstWhere((a) => a.id == concepts[conceptIndex].id).sideColor,
-                          provider.tree.firstWhere((a) => a.id == provider.focusNode.id).sideColor,
-                        ],
-                      )),
+                    child: RadiantGradientMask(
+                      color1: provider.tree
+                          .firstWhere((a) => a.id == concepts[conceptIndex].id)
+                          .sideColor,
+                      color2: provider.tree
+                          .firstWhere((a) => a.id == provider.focusNode.id)
+                          .sideColor,
+                      child: Icon(
+                        Icons.keyboard_arrow_down_rounded,
+                        size: 45,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                   Container(
-                    constraints: BoxConstraints(
-                        maxWidth: size.width * 0.4,
-                        maxHeight: (size.height - 115) * 0.31),
-                    padding: EdgeInsets.only(left: size.width * 0.02),
-                    child: PageView.builder(
-                      scrollDirection: Axis.vertical,
-                      itemCount: concepts.length,
-                      controller: PageController(viewportFraction: 0.4),
-                      onPageChanged: (int index) => setState(() {
-                        conceptIndex = index;
-                        thesisData = "";
-                        compareCinT.clear();
-                        parseFuture();
-                        if (dots.isNotEmpty) {
-                          dots.clear();
-                          calculateDots();
-                        }
-                      }),
-                      itemBuilder: (_, i) {
-                        return Align(
-                          alignment: Alignment.centerLeft,
+                    //constraints: BoxConstraints(maxHeight: (size.height - 115) / 2),
+                    child: Row(
+                      children: [
+                        Container(
+                            margin: EdgeInsets.only(left: 15, right: 15),
+                            constraints:
+                                BoxConstraints(maxWidth: size.width * 0.4),
+                            padding: EdgeInsets.only(right: size.width * 0.02),
+                            //margin: EdgeInsets.only(top: size.height * 0.063),
+                            //color: Colors.red,
+                            child: AutoSizeText(
+                              context.read<AppProvider>().focusNode.title,
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold),
+                              maxLines: 3,
+                            )),
+                        Expanded(
                           child: Container(
-                              child: AutoSizeText(
-                            concepts[i].concept,
-                            style: TextStyle(
-                                fontSize: 17,
-                                fontWeight: (i == conceptIndex)
-                                    ? FontWeight.bold
-                                    : FontWeight.normal),
-                            maxLines: 3,
-                          )),
-                        );
-                      },
+                            height: 4,
+                            decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                              begin: Alignment.topRight,
+                              end: Alignment.bottomLeft,
+                              colors: [
+                                provider.tree
+                                    .firstWhere((a) =>
+                                        a.id == concepts[conceptIndex].id)
+                                    .sideColor,
+                                provider.tree
+                                    .firstWhere(
+                                        (a) => a.id == provider.focusNode.id)
+                                    .sideColor,
+                              ],
+                            )),
+                          ),
+                        ),
+                        Container(
+                          constraints: BoxConstraints(
+                              maxWidth: size.width * 0.4,
+                              maxHeight: (size.height - 115) * 0.31),
+                          padding: EdgeInsets.only(left: size.width * 0.02),
+                          child: PageView.builder(
+                            scrollDirection: Axis.vertical,
+                            itemCount: concepts.length,
+                            controller: PageController(viewportFraction: 0.4),
+                            onPageChanged: (int index) => setState(() {
+                              conceptIndex = index;
+                              thesisData = "";
+                              compareCinT.clear();
+                              parseFuture();
+                              if (dots.isNotEmpty) {
+                                dots.clear();
+                                calculateDots();
+                              }
+                            }),
+                            itemBuilder: (_, i) {
+                              return Align(
+                                alignment: Alignment.centerLeft,
+                                child: Container(
+                                    child: AutoSizeText(
+                                  concepts[i].concept,
+                                  style: TextStyle(
+                                      fontSize: 17,
+                                      fontWeight: (i == conceptIndex)
+                                          ? FontWeight.bold
+                                          : FontWeight.normal),
+                                  maxLines: 3,
+                                )),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
                     ),
                   ),
+                  Container(
+                      margin: EdgeInsets.only(top: size.height * 0.03),
+                      child: DotsIndicator(dots)),
                 ],
               ),
             ),
-            Container(
-                margin: EdgeInsets.only(top: size.height * 0.03),
-                child: DotsIndicator(dots)),
-          ],
-        ),
-      ),
-    );
+          )
+        : Center(
+            child: Text(
+              'There are no related concepts',
+              style: TextStyle(fontSize: 18),
+            ),
+          );
   }
 }
 

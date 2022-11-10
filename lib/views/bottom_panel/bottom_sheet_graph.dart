@@ -15,7 +15,8 @@ class BottomSheetGraph extends StatefulWidget {
   _BottomSheetGraphState createState() => _BottomSheetGraphState();
 }
 
-class _BottomSheetGraphState extends State<BottomSheetGraph> with SingleTickerProviderStateMixin {
+class _BottomSheetGraphState extends State<BottomSheetGraph>
+    with SingleTickerProviderStateMixin {
   Node node;
   List<Node> tree;
   List<Node> newNodes = [];
@@ -27,17 +28,21 @@ class _BottomSheetGraphState extends State<BottomSheetGraph> with SingleTickerPr
   double bottomSheetCof = 0.5;
 
   void runAnimation(double velocity) {
-    curve = CurvedAnimation(parent: animationController, curve: Curves.easeInOut);
+    curve =
+        CurvedAnimation(parent: animationController, curve: Curves.easeInOut);
 
-    animation =
-        animationController.drive(CurveTween(curve: Curves.easeInOut)).drive(Tween<double>(begin: velocity, end: 0));
+    animation = animationController
+        .drive(CurveTween(curve: Curves.easeInOut))
+        .drive(Tween<double>(begin: velocity, end: 0));
     animationController.forward(from: 0.0);
   }
 
   void addWidget(Node node) {
-    TextPainter textPainter =
-        TextPainter(text: TextSpan(text: node.title), maxLines: 1, textDirection: TextDirection.ltr)
-          ..layout(minWidth: 0, maxWidth: double.infinity);
+    TextPainter textPainter = TextPainter(
+        text: TextSpan(text: node.title),
+        maxLines: 1,
+        textDirection: TextDirection.ltr)
+      ..layout(minWidth: 0, maxWidth: double.infinity);
     double textWidth = textPainter.width;
 
     widgets.add(Positioned(
@@ -45,7 +50,8 @@ class _BottomSheetGraphState extends State<BottomSheetGraph> with SingleTickerPr
       left: node.x - node.r,
       child: GestureDetector(
         onTap: () {
-          Provider.of<AppProvider>(context, listen: false).setAnimationParam(node.id);
+          Provider.of<AppProvider>(context, listen: false)
+              .setAnimationParam(node.id);
         },
         child: Container(
           height: 2 * node.r,
@@ -78,7 +84,8 @@ class _BottomSheetGraphState extends State<BottomSheetGraph> with SingleTickerPr
       top: node.y,
       child: GestureDetector(
         onTap: () {
-          Provider.of<AppProvider>(context, listen: false).setAnimationParam(node.id);
+          Provider.of<AppProvider>(context, listen: false)
+              .setAnimationParam(node.id);
         },
         child: Container(
           height: 4 * node.r,
@@ -89,13 +96,18 @@ class _BottomSheetGraphState extends State<BottomSheetGraph> with SingleTickerPr
     ));
 
     List<bool> dots = [];
-    tree.firstWhere((a) => a.id == node.id).child.forEach((element) {
-      if (node.child.contains(element)) {
-        dots.insert(0, true);
-      } else {
-        dots.insert(0, false);
-      }
-    });
+    if (node.id.isNotEmpty) {
+      tree
+          .firstWhere((a) => a.id == node.id, orElse: () => tree[0])
+          .child
+          .forEach((element) {
+        if (node.child.contains(element)) {
+          dots.insert(0, true);
+        } else {
+          dots.insert(0, false);
+        }
+      });
+    }
 
     widgets.add(Positioned(
       top: 0,
@@ -131,7 +143,8 @@ class _BottomSheetGraphState extends State<BottomSheetGraph> with SingleTickerPr
               angle: 90 * pi / 180,
               child: IconButton(
                 onPressed: () {
-                  Provider.of<AppProvider>(context, listen: false).setAnimationParam(node.id);
+                  Provider.of<AppProvider>(context, listen: false)
+                      .setAnimationParam(node.id);
                 },
                 icon: Icon(
                   Icons.arrow_forward_ios_rounded,
@@ -143,12 +156,24 @@ class _BottomSheetGraphState extends State<BottomSheetGraph> with SingleTickerPr
     ));
   }
 
-  void addNode(Node removeNode, String nextId, int index, double startDeg, bool isFrontAdd) {
+  void addNode(Node removeNode, String nextId, int index, double startDeg,
+      bool isFrontAdd) {
     if (!isFrontAdd) {
       newNodes.insert(
-          index, Node(nextId, [], node.id, map.concepts[map.concepts.indexWhere((a) => a.id == nextId)].concept));
+          index,
+          Node(
+              nextId,
+              [],
+              node.id,
+              map.concepts[map.concepts.indexWhere((a) => a.id == nextId)]
+                  .concept));
     } else {
-      newNodes.add(Node(nextId, [], node.id, map.concepts[map.concepts.indexWhere((a) => a.id == nextId)].concept));
+      newNodes.add(Node(
+          nextId,
+          [],
+          node.id,
+          map.concepts[map.concepts.indexWhere((a) => a.id == nextId)]
+              .concept));
     }
 
     newNodes[0].child.add(nextId);
@@ -162,15 +187,27 @@ class _BottomSheetGraphState extends State<BottomSheetGraph> with SingleTickerPr
     newNodes[index].bigR = removeNode.bigR;
   }
 
-  void removeAndAddNode(Node removeNode, String nextId, int index, double startDeg) {
+  void removeAndAddNode(
+      Node removeNode, String nextId, int index, double startDeg) {
     newNodes.remove(removeNode);
     newNodes[0].child.remove(removeNode.id);
 
     if (startDeg == -180.0) {
       newNodes.insert(
-          index, Node(nextId, [], node.id, map.concepts[map.concepts.indexWhere((a) => a.id == nextId)].concept));
+          index,
+          Node(
+              nextId,
+              [],
+              node.id,
+              map.concepts[map.concepts.indexWhere((a) => a.id == nextId)]
+                  .concept));
     } else if (startDeg == 0.0) {
-      newNodes.add(Node(nextId, [], node.id, map.concepts[map.concepts.indexWhere((a) => a.id == nextId)].concept));
+      newNodes.add(Node(
+          nextId,
+          [],
+          node.id,
+          map.concepts[map.concepts.indexWhere((a) => a.id == nextId)]
+              .concept));
     }
 
     newNodes[0].child.add(nextId);
@@ -226,8 +263,10 @@ class _BottomSheetGraphState extends State<BottomSheetGraph> with SingleTickerPr
         } else if (key > 2) {
           currentDeg += 45.0;
         }
-        element.x = element.bigR * cos((currentDeg) * (pi / 180.0)) + newNodes[0].x;
-        element.y = element.bigR * sin((currentDeg) * (pi / 180.0)) + newNodes[0].y;
+        element.x =
+            element.bigR * cos((currentDeg) * (pi / 180.0)) + newNodes[0].x;
+        element.y =
+            element.bigR * sin((currentDeg) * (pi / 180.0)) + newNodes[0].y;
         element.deg = currentDeg;
         addWidget(element);
       }
@@ -272,8 +311,10 @@ class _BottomSheetGraphState extends State<BottomSheetGraph> with SingleTickerPr
           } else if (key > 2) {
             currentDeg += 45.0;
           }
-          element.x = element.bigR * cos((currentDeg) * (pi / 180.0)) + newNodes[0].x;
-          element.y = element.bigR * sin((currentDeg) * (pi / 180.0)) + newNodes[0].y;
+          element.x =
+              element.bigR * cos((currentDeg) * (pi / 180.0)) + newNodes[0].x;
+          element.y =
+              element.bigR * sin((currentDeg) * (pi / 180.0)) + newNodes[0].y;
           element.deg = currentDeg;
           addWidget(element);
         } else {
@@ -309,8 +350,10 @@ class _BottomSheetGraphState extends State<BottomSheetGraph> with SingleTickerPr
         } else if (i < childMax) {
           currentDeg -= 45.0;
         }
-        newNodes[i].x = newNodes[i].bigR * cos((currentDeg) * (pi / 180.0)) + newNodes[0].x;
-        newNodes[i].y = newNodes[i].bigR * sin((currentDeg) * (pi / 180.0)) + newNodes[0].y;
+        newNodes[i].x =
+            newNodes[i].bigR * cos((currentDeg) * (pi / 180.0)) + newNodes[0].x;
+        newNodes[i].y =
+            newNodes[i].bigR * sin((currentDeg) * (pi / 180.0)) + newNodes[0].y;
         newNodes[i].deg = currentDeg;
         addWidget(newNodes[i]);
       } else {
@@ -340,8 +383,10 @@ class _BottomSheetGraphState extends State<BottomSheetGraph> with SingleTickerPr
       } else if (i < childMax) {
         currentDeg -= 45.0;
       }
-      newNodes[i].x = newNodes[i].bigR * cos((currentDeg) * (pi / 180.0)) + newNodes[0].x;
-      newNodes[i].y = newNodes[i].bigR * sin((currentDeg) * (pi / 180.0)) + newNodes[0].y;
+      newNodes[i].x =
+          newNodes[i].bigR * cos((currentDeg) * (pi / 180.0)) + newNodes[0].x;
+      newNodes[i].y =
+          newNodes[i].bigR * sin((currentDeg) * (pi / 180.0)) + newNodes[0].y;
       newNodes[i].deg = currentDeg;
       addWidget(newNodes[i]);
 
@@ -405,16 +450,21 @@ class _BottomSheetGraphState extends State<BottomSheetGraph> with SingleTickerPr
       if (element.parent != "-1" && element.parent != "-2") {
         //if(i == 1 || i == 2){
         if (i >= 1) {
-          double displ = offset.dx.sign * sqrt(pow(offset.dx, 2) + pow(offset.dy, 2));
+          double displ =
+              offset.dx.sign * sqrt(pow(offset.dx, 2) + pow(offset.dy, 2));
           displ = (displ * 180.0) / (pi * element.bigR);
           currentDeg = element.deg + displ;
-          element.x = element.bigR * cos((currentDeg) * (pi / 180.0)) + newNodes[0].x;
-          element.y = element.bigR * sin((currentDeg) * (pi / 180.0)) + newNodes[0].y;
+          element.x =
+              element.bigR * cos((currentDeg) * (pi / 180.0)) + newNodes[0].x;
+          element.y =
+              element.bigR * sin((currentDeg) * (pi / 180.0)) + newNodes[0].y;
           element.deg = currentDeg;
         } else {
           currentDeg += 45.0;
-          element.x = element.bigR * cos((currentDeg) * (pi / 180.0)) + newNodes[0].x;
-          element.y = element.bigR * sin((currentDeg) * (pi / 180.0)) + newNodes[0].y;
+          element.x =
+              element.bigR * cos((currentDeg) * (pi / 180.0)) + newNodes[0].x;
+          element.y =
+              element.bigR * sin((currentDeg) * (pi / 180.0)) + newNodes[0].y;
           element.deg = currentDeg;
         }
 
@@ -468,7 +518,8 @@ class _BottomSheetGraphState extends State<BottomSheetGraph> with SingleTickerPr
     double deg = deltaDegNum * deltaDeg - 90;
     double circleR = (size.height * bottomSheetCof - 45) / 11;
     double r = circleR * 5.5;
-    newNodes.add(Node(node.id, [], "-1", node.title, node.mainColor, node.sideColor));
+    newNodes.add(
+        Node(node.id, [], "-1", node.title, node.mainColor, node.sideColor));
     newNodes[0].x = size.width / 2 - 15;
     newNodes[0].y = size.height * bottomSheetCof - 40 - circleR * 3.2;
     newNodes[0].r = circleR * 1.3;
@@ -522,23 +573,25 @@ class _BottomSheetGraphState extends State<BottomSheetGraph> with SingleTickerPr
 
   @override
   void initState() {
-    animationController = AnimationController(duration: Duration(seconds: 1), vsync: this)
-      ..addListener(() {
-        setState(() {
-          resetPosition(Offset(animation.value, 0));
-        });
-      });
+    animationController =
+        AnimationController(duration: Duration(seconds: 1), vsync: this)
+          ..addListener(() {
+            setState(() {
+              resetPosition(Offset(animation.value, 0));
+            });
+          });
 
     map = context.read<AppProvider>().currentMap;
-
     super.initState();
   }
 
   @override
   void didChangeDependencies() {
     node = Provider.of<AppProvider>(context, listen: true).focusNode;
-    tree = Provider.of<AppProvider>(context, listen: true).tree;
-    setPosition();
+    if (node.id.isNotEmpty) {
+      tree = Provider.of<AppProvider>(context, listen: true).tree;
+      setPosition();
+    }
     super.didChangeDependencies();
   }
 
@@ -552,26 +605,32 @@ class _BottomSheetGraphState extends State<BottomSheetGraph> with SingleTickerPr
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Consumer<AppProvider>(
-        builder: (context, value, _) => GestureDetector(
-            onPanDown: (details) {},
-            onPanUpdate: (details) {
-              setState(() {
-                resetPosition(details.delta);
-              });
-            },
-            onPanEnd: (details) {
-              setState(() {
-                runAnimation(details.velocity.pixelsPerSecond.dx / 50);
-              });
-            },
-            child: Container(
-                width: size.width - 30,
-                height: size.height * 0.4,
-                //color: Color(0xffd04fff),
-                child: CustomPaint(
-                    painter: PaintBottomGraph(newNodes, value.focusNode),
-                    child: Stack(
-                      children: widgets,
-                    )))));
+      builder: (context, value, _) => GestureDetector(
+        onPanDown: (details) {},
+        onPanUpdate: (details) {
+          setState(() {
+            resetPosition(details.delta);
+          });
+        },
+        onPanEnd: (details) {
+          setState(() {
+            runAnimation(details.velocity.pixelsPerSecond.dx / 50);
+          });
+        },
+        child: Container(
+          width: size.width - 30,
+          height: size.height * 0.4,
+          //color: Color(0xffd04fff),
+          child: node.id.isNotEmpty
+              ? CustomPaint(
+                  painter: PaintBottomGraph(newNodes, value.focusNode),
+                  child: Stack(
+                    children: widgets,
+                  ),
+                )
+              : const SizedBox(),
+        ),
+      ),
+    );
   }
 }

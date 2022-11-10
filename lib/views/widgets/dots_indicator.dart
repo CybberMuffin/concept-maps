@@ -17,8 +17,7 @@ class DotsIndicator extends StatelessWidget {
           width: circleSize,
           height: circleSize,
           decoration: BoxDecoration(
-              color: Colors.blue[700],
-              borderRadius: BorderRadius.circular(20)),
+              color: Colors.blue[700], borderRadius: BorderRadius.circular(20)),
         ));
       } else {
         widgets.add(Container(
@@ -45,7 +44,9 @@ class DotsIndicator extends StatelessWidget {
         child: Container(
           width: width,
           height: 6,
-          child: Row(
+          child: Wrap(
+            alignment: WrapAlignment.center,
+            runSpacing: 8,
             children: widgets,
           ),
         ));

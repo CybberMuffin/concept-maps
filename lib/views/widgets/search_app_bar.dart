@@ -10,7 +10,9 @@ class SearchAppBar extends StatefulWidget with PreferredSizeWidget {
   final String barTitle;
   final bool isSearchAvailable;
 
-  const SearchAppBar({Key key, @required this.barTitle, this.isSearchAvailable = true}) : super(key: key);
+  const SearchAppBar(
+      {Key key, @required this.barTitle, this.isSearchAvailable = true})
+      : super(key: key);
 
   @override
   _SearchAppBarState createState() => _SearchAppBarState();
@@ -43,12 +45,19 @@ class _SearchAppBarState extends State<SearchAppBar> {
   @override
   Widget build(BuildContext context) {
     return NewGradientAppBar(
+      leading: IconButton(
+        icon: Icon(Icons.arrow_back_ios_new_outlined),
+        onPressed: () {
+          Navigator.pop(context);
+        },
+      ),
       automaticallyImplyLeading: !widget.isSearchAvailable,
       gradient: LinearGradient(colors: [kPurpleColor, kBreezeColor]),
       actions: <Widget>[
         if (widget.isSearchAvailable)
           IconButton(
-            onPressed: () => showSearch(context: context, delegate: Search(nodeTitles, tree)),
+            onPressed: () => showSearch(
+                context: context, delegate: Search(nodeTitles, tree)),
             icon: Icon(Icons.search),
           )
       ],
