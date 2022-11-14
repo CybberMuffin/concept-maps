@@ -26,7 +26,8 @@ class CourseTree extends StatelessWidget {
         future: context.read<UserProvider>().fetchCourseBranches(course),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
-            final courseWithBranches = context.read<UserProvider>().getCourseByName(course.name);
+            final courseWithBranches =
+                context.read<UserProvider>().getCourseByName(course.name);
 
             return Container(
               padding: const EdgeInsets.symmetric(horizontal: 16),

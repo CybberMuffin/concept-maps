@@ -3,6 +3,7 @@ import 'package:concept_maps/models/graph_entities/map_model.dart';
 import 'package:concept_maps/models/graph_entities/node.dart';
 import 'package:concept_maps/providers/app_provider.dart';
 import 'package:concept_maps/providers/user_provider.dart';
+import 'package:concept_maps/utils/extensions/string_capitalize_extension.dart';
 import 'package:concept_maps/views/painter/paint_graph.dart';
 import 'package:concept_maps/views/widgets/drawer_menu.dart';
 import 'package:concept_maps/views/widgets/search_app_bar.dart';
@@ -395,7 +396,7 @@ class _ForceDirectedState extends State<ForceDirected>
     return Scaffold(
       bottomSheet: errorDetected ? null : BottomSheetPannel(),
       appBar: SearchAppBar(
-        barTitle: widget.title,
+        barTitle: map.field.capitalizeFirstLetter(),
         isSearchAvailable: !errorDetected,
       ),
       drawer: errorDetected ? null : DrawerMenu(title: widget.title),
