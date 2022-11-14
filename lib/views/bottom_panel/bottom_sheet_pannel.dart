@@ -5,7 +5,6 @@ import 'package:concept_maps/views/bottom_panel/bottom_sheet_related_concepts.da
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import "package:swipedetector/swipedetector.dart";
 
 class BottomSheetPannel extends StatefulWidget {
   @override
@@ -290,20 +289,23 @@ class _BottomSheetPannelState extends State<BottomSheetPannel>
             child: Container(
                 child: Column(
               children: [
-                SwipeDetector(
-                  onSwipeUp: () {
-                    dragPanelUp();
-                    if (greenSticker == false && purpleSticker == false) {
-                      greenSticker = true;
-                    }
-                  },
-                  onSwipeDown: () {
-                    dragPanelDown();
-                    if (height ==
-                        MediaQuery.of(context).size.height * bottomSheetCof) {
-                      if (greenSticker == true || purpleSticker == true) {
-                        greenSticker = false;
-                        purpleSticker = false;
+                GestureDetector(
+                  onVerticalDragUpdate: (details) {
+                    // Up Swipe
+                    if (details.delta.dy < 0) {
+                      dragPanelUp();
+                      if (greenSticker == false && purpleSticker == false) {
+                        greenSticker = true;
+                      }
+                    } else if (details.delta.dy > 0) {
+                      // Down swipe
+                      dragPanelDown();
+                      if (height ==
+                          MediaQuery.of(context).size.height * bottomSheetCof) {
+                        if (greenSticker == true || purpleSticker == true) {
+                          greenSticker = false;
+                          purpleSticker = false;
+                        }
                       }
                     }
                   },
