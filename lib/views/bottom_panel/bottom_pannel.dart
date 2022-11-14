@@ -57,6 +57,7 @@ class _BottomPannelState extends State<BottomPannel> {
                             .map<Widget>(
                               (thesis) => ThesisViewBuilder(
                                 thesis: thesis,
+                                languageName: provider.currentMap.field,
                               ),
                             )
                             .toList(),
@@ -111,6 +112,7 @@ class _BottomPannelState extends State<BottomPannel> {
                                 thesis: thesis,
                                 conceptU: concept1,
                                 conceptV: concept2,
+                                languageName: provider.currentMap.field,
                               ),
                             )
                             .toList(),
@@ -136,6 +138,7 @@ class _BottomPannelState extends State<BottomPannel> {
                                 thesis: thesis,
                                 conceptU: concept1,
                                 conceptV: concept2,
+                                languageName: provider.currentMap.field,
                               ),
                             )
                             .toList()

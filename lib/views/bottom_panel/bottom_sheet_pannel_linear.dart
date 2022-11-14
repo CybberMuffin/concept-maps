@@ -2,7 +2,6 @@ import 'package:concept_maps/providers/app_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import "package:swipedetector/swipedetector.dart";
 
 import 'bottom_pannel_linear.dart';
 

@@ -228,6 +228,7 @@ class _RelatedConceptsState extends State<RelatedConcepts> {
                                         thesis: thesis,
                                         conceptU: concept1,
                                         conceptV: concept2,
+                                        languageName: provider.currentMap.field,
                                       ),
                                     )
                                     .toList(),
@@ -257,6 +258,7 @@ class _RelatedConceptsState extends State<RelatedConcepts> {
                                         thesis: thesis,
                                         conceptU: concept1,
                                         conceptV: concept2,
+                                        languageName: provider.currentMap.field,
                                       ),
                                     )
                                     .toList()

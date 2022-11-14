@@ -1,47 +1,44 @@
 import 'package:flutter/material.dart';
-import 'package:syntax_highlighter/syntax_highlighter.dart';
+import 'package:flutter_highlight/flutter_highlight.dart';
+import 'package:flutter_highlight/themes/github.dart';
 
 class Democode extends StatefulWidget {
   final String democode;
-  Democode(this.democode);
+  final String languageName;
+  Democode(this.democode, this.languageName);
 
   @override
-  _DemocodeState createState() => _DemocodeState(this.democode);
+  _DemocodeState createState() => _DemocodeState();
 }
 
 class _DemocodeState extends State<Democode> {
-  _DemocodeState(this.democode);
-
-  String democode;
+  _DemocodeState();
 
   @override
   Widget build(BuildContext context) {
-    final SyntaxHighlighterStyle style =
-        Theme.of(context).brightness == Brightness.dark
-            ? SyntaxHighlighterStyle.darkThemeStyle()
-            : SyntaxHighlighterStyle.lightThemeStyle();
     return Container(
-        padding: const EdgeInsets.only(left: 15, right: 15),
-        margin: EdgeInsets.only(bottom: 10),
-        color: Colors.grey.shade50,
-        child: Column(
-          children: [
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Padding(
-                padding: const EdgeInsets.only(top: 15.0, bottom: 15.0),
-                child: RichText(
-                  text: TextSpan(
-                    style: const TextStyle(
-                        fontFamily: 'monospace', fontSize: 16.0),
-                    children: <TextSpan>[
-                      DartSyntaxHighlighter(style).format(democode),
-                    ],
-                  ),
-                ),
+      padding: const EdgeInsets.only(left: 15, right: 15),
+      margin: EdgeInsets.only(bottom: 10),
+      color: Colors.grey.shade50,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 15.0, bottom: 15.0),
+              child: HighlightView(
+                widget.democode,
+                language: widget.languageName,
+                theme: githubTheme,
+                padding: const EdgeInsets.all(8),
+                textStyle:
+                    const TextStyle(fontFamily: 'monospace', fontSize: 16.0),
               ),
             ),
-          ],
-        ));
+          ),
+        ],
+      ),
+    );
   }
 }

@@ -10,12 +10,20 @@ import 'package:concept_maps/views/text_templates/note.dart';
 import 'package:concept_maps/views/text_templates/tag.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:meta/meta.dart';
 
 class ThesisViewBuilder extends StatelessWidget {
   final Thesis thesis;
+  final String languageName;
   Concept conceptU;
   Concept conceptV;
-  ThesisViewBuilder({Key key, this.thesis, this.conceptU, this.conceptV}) : super(key: key);
+  ThesisViewBuilder(
+      {Key key,
+      @required this.thesis,
+      this.conceptU,
+      this.conceptV,
+      @required this.languageName})
+      : super(key: key);
 
   Widget formatingRichText(BuildContext context, TextStyle mainStyle) {
     final provider = context.read<AppProvider>();
@@ -62,10 +70,16 @@ class ThesisViewBuilder extends StatelessWidget {
             if (check.replaceAll(RegExp(r'[:;,.!?]'), "") == keys[j]) {
               if (mainMap[keys[j]] == "1") {
                 textStyle = TextStyle(
-                    backgroundColor: provider.tree.firstWhere((a) => a.id == conceptU.id).sideColor.withOpacity(0.85));
+                    backgroundColor: provider.tree
+                        .firstWhere((a) => a.id == conceptU.id)
+                        .sideColor
+                        .withOpacity(0.85));
               } else if (mainMap[keys[j]] == "2") {
                 textStyle = TextStyle(
-                    backgroundColor: provider.tree.firstWhere((a) => a.id == conceptV.id).sideColor.withOpacity(0.85));
+                    backgroundColor: provider.tree
+                        .firstWhere((a) => a.id == conceptV.id)
+                        .sideColor
+                        .withOpacity(0.85));
               }
               list.add(TextSpan(text: check + " ", style: textStyle));
               i = -1000;
@@ -73,13 +87,20 @@ class ThesisViewBuilder extends StatelessWidget {
             }
           }
         }
-        if (splitThesis[m].replaceAll(RegExp(r'[:;,.!?]'), "") == keys[j] && i > -1) {
+        if (splitThesis[m].replaceAll(RegExp(r'[:;,.!?]'), "") == keys[j] &&
+            i > -1) {
           if (mainMap[keys[j]] == "1") {
             textStyle = TextStyle(
-                backgroundColor: provider.tree.firstWhere((a) => a.id == conceptU.id).sideColor.withOpacity(0.85));
+                backgroundColor: provider.tree
+                    .firstWhere((a) => a.id == conceptU.id)
+                    .sideColor
+                    .withOpacity(0.85));
           } else if (mainMap[keys[j]] == "2") {
             textStyle = TextStyle(
-                backgroundColor: provider.tree.firstWhere((a) => a.id == conceptV.id).sideColor.withOpacity(0.85));
+                backgroundColor: provider.tree
+                    .firstWhere((a) => a.id == conceptV.id)
+                    .sideColor
+                    .withOpacity(0.85));
           }
           list.add(TextSpan(text: splitThesis[m] + " ", style: textStyle));
           i = -1000;
@@ -90,7 +111,9 @@ class ThesisViewBuilder extends StatelessWidget {
       }
     }
 
-    return RichText(text: TextSpan(text: "", style: mainStyle, children: <TextSpan>[...list]));
+    return RichText(
+        text: TextSpan(
+            text: "", style: mainStyle, children: <TextSpan>[...list]));
   }
 
   @override
@@ -104,7 +127,7 @@ class ThesisViewBuilder extends StatelessWidget {
       case ThesisType.definition:
         return Definition(formatingRichText);
       case ThesisType.democode:
-        return Democode(text);
+        return Democode(text, languageName);
       case ThesisType.denotation:
         return Denotation(formatingRichText);
       case ThesisType.note:
