@@ -65,14 +65,13 @@ class UserProvider with ChangeNotifier {
   }
 
   Future<void> logConceptView({
-    @required int id,
     @required String contentId,
-    @required int time,
+    @required String time,
     @required int seconds,
-    @required int lastTime,
+    @required String lastTime,
   }) async {
     await ApiService.logConceptView(
-      id: id,
+      id: int.tryParse(_userId),
       contentId: contentId,
       time: time,
       seconds: seconds,

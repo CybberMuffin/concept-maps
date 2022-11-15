@@ -3,6 +3,7 @@ import 'package:concept_maps/models/graph_entities/map_model.dart';
 import 'package:concept_maps/models/graph_entities/node.dart';
 import 'package:concept_maps/providers/app_provider.dart';
 import 'package:concept_maps/providers/user_provider.dart';
+import 'package:concept_maps/utils/date_time_formatter.dart';
 import 'package:concept_maps/utils/extensions/string_capitalize_extension.dart';
 import 'package:concept_maps/views/painter/paint_graph.dart';
 import 'package:concept_maps/views/widgets/drawer_menu.dart';
@@ -142,15 +143,15 @@ class _ForceDirectedState extends State<ForceDirected>
                     Offset((element.u.position.x + element.v.position.x) / 2,
                         (element.u.position.y + element.v.position.y) / 2),
                     0.5);
-                context.read<AppProvider>().setFocusNode(
-                    controller.balloon.three[controller.balloon.three
-                        .indexWhere((a) => a.id == element.u.id)]);
-                context.read<AppProvider>().animationStart = false;
-                context.read<AppProvider>().isEdgeActive = true;
-                context.read<AppProvider>().focusEdge = element;
-                context.read<AppProvider>().focusTitle =
+                _appProvider.setFocusNode(controller.balloon.three[controller
+                    .balloon.three
+                    .indexWhere((a) => a.id == element.u.id)]);
+                _appProvider.animationStart = false;
+                _appProvider.isEdgeActive = true;
+                _appProvider.focusEdge = element;
+                _appProvider.focusTitle =
                     element.u.fullTitle + " 一 " + element.v.fullTitle;
-                context.read<AppProvider>().setBottomSheetFlag(true);
+                _appProvider.setBottomSheetFlag(true);
               });
             },
             child: Container(
@@ -224,22 +225,29 @@ class _ForceDirectedState extends State<ForceDirected>
           onTap: () {
             setState(() {
               runAnimation(Offset(element.position.x, element.position.y), 0.7);
-              context.read<AppProvider>().setFocusNode(controller.balloon.three[
-                  controller.balloon.three
-                      .indexWhere((a) => a.id == element.id)]);
-              context.read<AppProvider>().isEdgeActive = false;
-              context.read<AppProvider>().focusTitle = element.fullTitle;
-              context.read<AppProvider>().animationStart = false;
-              context.read<AppProvider>().setBottomSheetFlag(true);
+              _appProvider.setFocusNode(controller.balloon.three[controller
+                  .balloon.three
+                  .indexWhere((a) => a.id == element.id)]);
+              /* context.read<UserProvider>().logConceptView(
+                    contentId: _appProvider.focusNode.id,
+                    time: DateTimeFormatter.getFormattedDate(DateTime.now()),
+                    seconds: 50,
+                    lastTime: DateTimeFormatter.getFormattedDate(
+                        DateTime(2022, 11, 15, 23)),
+                  );*/
+              _appProvider.isEdgeActive = false;
+              _appProvider.focusTitle = element.fullTitle;
+              _appProvider.animationStart = false;
+              _appProvider.setBottomSheetFlag(true);
             });
           },
           onDoubleTap: () {
             setState(() {
               runAnimation(Offset(element.position.x, element.position.y), 0.3);
-              context.read<AppProvider>().setFocusNode(controller.balloon.three[
-                  controller.balloon.three
-                      .indexWhere((a) => a.id == element.id)]);
-              context.read<AppProvider>().animationStart = false;
+              _appProvider.setFocusNode(controller.balloon.three[controller
+                  .balloon.three
+                  .indexWhere((a) => a.id == element.id)]);
+              _appProvider.animationStart = false;
             });
           },
           child: Container(
@@ -259,10 +267,11 @@ class _ForceDirectedState extends State<ForceDirected>
   @override
   void initState() {
     super.initState();
+    _appProvider = Provider.of<AppProvider>(context, listen: false);
     try {
       Stopwatch s = Stopwatch();
       s.start();
-      final map = context.read<AppProvider>().currentMap;
+      final map = _appProvider.currentMap;
       map.age++;
       animationController = AnimationController(
           duration: Duration(microseconds: 200), vsync: this);
@@ -282,8 +291,8 @@ class _ForceDirectedState extends State<ForceDirected>
 
       flag = false;
       graphFlag = true;
-      context.read<AppProvider>().bottomSheetFlag = null;
-      context.read<AppProvider>().animationStart = false;
+      _appProvider.bottomSheetFlag = null;
+      _appProvider.animationStart = false;
       count = 10;
       temp = Vector2(0, 0);
       controller = ForceDirectedController(map);
@@ -292,7 +301,7 @@ class _ForceDirectedState extends State<ForceDirected>
           controller.vertices.length.toDouble() * 800);
       controller.setVerticesPos(frame);
       controller.forceCalc(frame, 50, 50);
-      context.read<AppProvider>().setTree(controller.balloon.three);
+      _appProvider.setTree(controller.balloon.three);
       List<String> viewedConceptIds =
           context.read<UserProvider>().viewedConceptIds;
       controller.setVerticesEdgesColors(
@@ -329,18 +338,18 @@ class _ForceDirectedState extends State<ForceDirected>
             .vertices[controller.vertices.indexWhere(
                 (a) => a.id == Provider.of<AppProvider>(context).animationId)]
             .position;
-        context.read<AppProvider>().isEdgeActive = false;
-        context.read<AppProvider>().focusTitle = controller.vertices
+        _appProvider.isEdgeActive = false;
+        _appProvider.focusTitle = controller.vertices
             .firstWhere(
                 (a) => a.id == Provider.of<AppProvider>(context).animationId)
             .fullTitle;
         runAnimation(Offset(v.x, v.y), 0.7);
         Provider.of<AppProvider>(context).bottomSheetFlag = true;
-        context.read<AppProvider>().focusNode = controller.balloon.three[
+        _appProvider.focusNode = controller.balloon.three[
             controller.balloon.three.indexWhere(
                 (a) => a.id == Provider.of<AppProvider>(context).animationId)];
       } else if (Provider.of<AppProvider>(context).bottomSheetFlag == null) {
-        context.read<AppProvider>().focusNode = Node(
+        _appProvider.focusNode = Node(
             "",
             [],
             "",
@@ -377,7 +386,6 @@ class _ForceDirectedState extends State<ForceDirected>
       print(e.toString());
       errorDetected = true;
     }
-    _appProvider = Provider.of<AppProvider>(context, listen: false);
     super.didChangeDependencies();
   }
 
@@ -394,7 +402,7 @@ class _ForceDirectedState extends State<ForceDirected>
 
   @override
   Widget build(BuildContext context) {
-    final map = context.read<AppProvider>().currentMap;
+    final map = _appProvider.currentMap;
 
     return Scaffold(
       bottomSheet: errorDetected ? null : BottomSheetPannel(),

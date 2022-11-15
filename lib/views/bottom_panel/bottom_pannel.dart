@@ -1,6 +1,7 @@
 import 'package:concept_maps/models/general_entities/thesis.dart';
 import 'package:concept_maps/providers/app_provider.dart';
 import 'package:concept_maps/providers/user_provider.dart';
+import 'package:concept_maps/utils/date_time_formatter.dart';
 import 'package:concept_maps/views/text_templates/theses_builder.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -13,9 +14,15 @@ class BottomPannel extends StatefulWidget {
 }
 
 class _BottomPannelState extends State<BottomPannel> {
-  Widget build(BuildContext context) {
-    final provider = context.read<AppProvider>();
+  AppProvider provider;
 
+  @override
+  void didChangeDependencies() {
+    provider = context.read<AppProvider>();
+    super.didChangeDependencies();
+  }
+
+  Widget build(BuildContext context) {
     return provider.focusTitle.isNotEmpty
         ? Container(
             child: SingleChildScrollView(
@@ -71,7 +78,7 @@ class _BottomPannelState extends State<BottomPannel> {
                                                 BorderRadius.circular(4),
                                           ),
                                           child: Text(
-                                            'Time spent on concept: ${provider.currentConcept.timeSpent} seconds',
+                                            'Time spent on concept: ${DateTimeFormatter.getFormattedTime(provider.currentConcept.timeSpent)}',
                                             style: GoogleFonts.montserrat(
                                               fontSize: 16,
                                               fontWeight: FontWeight.w500,

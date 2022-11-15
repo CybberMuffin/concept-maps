@@ -7,7 +7,7 @@ abstract class Preferences {
     return prefs.getString(kId);
   }
 
-  static Future<String> saveUserId(String id) async {
+  static Future<void> saveUserId(String id) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString(kId, id);
   }

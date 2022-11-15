@@ -229,9 +229,9 @@ abstract class ApiService {
   static Future logConceptView({
     @required int id,
     @required String contentId,
-    @required int time,
+    @required String time,
     @required int seconds,
-    @required int lastTime,
+    @required String lastTime,
   }) async {
     assert(id != null ?? false);
     assert(contentId.isNotEmpty ?? false);
@@ -248,7 +248,7 @@ abstract class ApiService {
     });
     final response = await http.post(url, body: body);
     if (response.statusCode == 200) {
-      print('Action logged.');
+      return;
     }
     throw Exception("Error occurred during fetch of user logs: id $id");
   }
