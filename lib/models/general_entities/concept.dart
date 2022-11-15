@@ -4,11 +4,19 @@ class Concept {
   final String isAspect;
   final String aspectOf;
   final String forms;
+  int timeSpent;
   String type;
 
   int get iid => int.tryParse(id);
 
-  Concept({this.id, this.concept, this.isAspect, this.aspectOf, this.forms}): this.type = "normal";
+  Concept({
+    this.id,
+    this.concept,
+    this.isAspect,
+    this.aspectOf,
+    this.forms,
+    this.timeSpent,
+  }) : this.type = "normal";
 
   factory Concept.fromJson(Map<String, dynamic> parsedJson) {
     return Concept(

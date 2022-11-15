@@ -8,6 +8,7 @@ import 'package:concept_maps/models/general_entities/thesis.dart';
 import 'package:concept_maps/models/graph_entities/map_model.dart';
 import 'package:concept_maps/models/logs/user_log.dart';
 import 'package:concept_maps/utils/course_key_list.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 
 abstract class ApiService {
@@ -221,6 +222,33 @@ abstract class ApiService {
         userLogs.add(UserLog.fromJson(element));
       });
       return userLogs;
+    }
+    throw Exception("Error occurred during fetch of user logs: id $id");
+  }
+
+  static Future logConceptView({
+    @required int id,
+    @required String contentId,
+    @required int time,
+    @required int seconds,
+    @required int lastTime,
+  }) async {
+    assert(id != null ?? false);
+    assert(contentId.isNotEmpty ?? false);
+    assert(time != null ?? false);
+    assert(seconds != null ?? false);
+    assert(lastTime != null ?? false);
+    final url = Uri.parse('$_logApi/log/concept');
+    final body = jsonEncode(<String, dynamic>{
+      'userId': id,
+      'contentId': contentId,
+      'time': time,
+      'seconds': seconds,
+      'lastTime': lastTime,
+    });
+    final response = await http.post(url, body: body);
+    if (response.statusCode == 200) {
+      print('Action logged.');
     }
     throw Exception("Error occurred during fetch of user logs: id $id");
   }

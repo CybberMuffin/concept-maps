@@ -6,6 +6,7 @@ import 'package:concept_maps/models/graph_entities/concept_header.dart';
 import 'package:concept_maps/models/graph_entities/edge.dart';
 import 'package:concept_maps/models/graph_entities/map_model.dart';
 import 'package:concept_maps/models/graph_entities/node.dart';
+import 'package:concept_maps/models/logs/user_log.dart';
 import 'package:concept_maps/services/api_service.dart';
 import 'package:concept_maps/utils/course_key_list.dart';
 import 'package:flutter/material.dart';
@@ -31,7 +32,8 @@ class AppProvider with ChangeNotifier {
   }
 
   Future<void> fetchAllMaps() async {
-    if (!maps.any((element) => element.field == CourseListInfo.courseKeyList.first))
+    if (!maps
+        .any((element) => element.field == CourseListInfo.courseKeyList.first))
       maps = await ApiService.fetchBranches();
   }
 
@@ -39,15 +41,17 @@ class AppProvider with ChangeNotifier {
     if (!maps.any((map) => map.field == branchName)) {
       maps.add(await ApiService.fetchConceptRelations(branchName));
     }
-    currentMap = maps.firstWhere((map) => map.field == branchName, orElse: () => null);
+    currentMap =
+        maps.firstWhere((map) => map.field == branchName, orElse: () => null);
     return currentMap;
   }
 
   ///Use this to get all related theses to a selected concept
   Future<List<Thesis>> fetchThesesByConcept(int conceptId) async {
-    _conceptTheses[conceptId] ??= (await ApiService.fetchThesesByConceptId(conceptId))
-        .where((element) => element.type != ThesisType.other)
-        .toList();
+    _conceptTheses[conceptId] ??=
+        (await ApiService.fetchThesesByConceptId(conceptId))
+            .where((element) => element.type != ThesisType.other)
+            .toList();
     return _conceptTheses[conceptId];
   }
 
@@ -57,13 +61,15 @@ class AppProvider with ChangeNotifier {
       _conceptReferences.add(await ApiService.fecthConceptsInTheses(conceptId));
     }
 
-    return _conceptReferences.firstWhere((element) => element.id == conceptId, orElse: () => null);
+    return _conceptReferences.firstWhere((element) => element.id == conceptId,
+        orElse: () => null);
   }
 
   //Use this to get all ConceptsDidacticAfter references foa a selected concept id
   Future<List<Concept>> fetchConceptsDidacticAfter(int conceptId) async {
     if (!didacticConceptsAfter.keys.any((element) => element == conceptId)) {
-      didacticConceptsAfter[conceptId] = await ApiService.fetchConceptsDidacticAfter(conceptId);
+      didacticConceptsAfter[conceptId] =
+          await ApiService.fetchConceptsDidacticAfter(conceptId);
     }
     return didacticConceptsAfter[conceptId];
   }
@@ -73,8 +79,10 @@ class AppProvider with ChangeNotifier {
   }
 
   Future<List<Thesis>> fetchEdgeTheses(int conceptId1, int conceptId2) async {
-    ConceptInTheses conceptInTheses1 =
-        await fetchConceptInTheses(currentMap.concepts.firstWhere((a) => a.id == conceptId1.toString()).iid);
+    ConceptInTheses conceptInTheses1 = await fetchConceptInTheses(currentMap
+        .concepts
+        .firstWhere((a) => a.id == conceptId1.toString())
+        .iid);
     //ConceptInTheses conceptInTheses2 =
     //  await fetchConceptInTheses(
     //      currentMap.concepts.firstWhere((a) => a.id == focusEdge.v.id));
@@ -96,9 +104,14 @@ class AppProvider with ChangeNotifier {
     return fetchTheses(thesisIdsU);
   }
 
-  Future<List<Thesis>> fetchThesesByConceptFork(int conceptId) async {
+  Future<List<Thesis>> fetchThesesByConceptFork(
+      int conceptId, List<UserLog> conceptLogs) async {
+    setCurrentConcept(
+        currentMap.concepts.firstWhere((element) => element.iid == conceptId));
+    setTimeSpentOnConcept(conceptLogs);
     if (isEdgeActive) {
-      return fetchEdgeTheses(int.parse(focusEdge.u.id), int.parse(focusEdge.v.id));
+      return fetchEdgeTheses(
+          int.parse(focusEdge.u.id), int.parse(focusEdge.v.id));
     } else {
       return fetchThesesByConcept(conceptId ?? _currentMap.concepts.first.iid);
     }
@@ -109,6 +122,7 @@ class AppProvider with ChangeNotifier {
   }
 
   Node focusNode;
+  Concept currentConcept;
   String focusTitle = "";
   bool isEdgeActive = false;
   Edge focusEdge;
@@ -121,9 +135,27 @@ class AppProvider with ChangeNotifier {
 
   List<String> recentList = ["Dart", "String"];
 
+  void cleanFocusNodeTitle() {
+    focusTitle = '';
+  }
+
   void setFocusNode(Node node) {
     focusNode = node;
     notifyListeners();
+  }
+
+  void setCurrentConcept(Concept concept) {
+    currentConcept = concept;
+  }
+
+  void setTimeSpentOnConcept(List<UserLog> logs) {
+    int secondsSpent = 0;
+    logs.forEach((log) {
+      if (log.seconds != null) {
+        secondsSpent += int.tryParse(log.seconds);
+      }
+    });
+    currentConcept.timeSpent = secondsSpent;
   }
 
   void setBottomSheetFlag(bool flag) {

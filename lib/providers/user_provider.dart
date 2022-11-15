@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 class UserProvider with ChangeNotifier {
   String _userId;
   List<Course> myCourses;
-  List<UserLog> userLogs;
+  List<UserLog> userLogs = [];
   List<String> viewedConceptIds = [];
 
   Future<bool> authorizeUser(String login, String password) async {
@@ -52,6 +52,32 @@ class UserProvider with ChangeNotifier {
   Future<void> fetchUserLogs() async {
     userLogs = await ApiService.fetchUserLogsById(_userId);
     saveViewedConceptIds();
+  }
+
+  List<UserLog> getLogsByConceptId(String conceptId) {
+    List<UserLog> currentConceptLogs = [];
+    userLogs.forEach((log) {
+      if (log.contentId == conceptId) {
+        currentConceptLogs.add(log);
+      }
+    });
+    return currentConceptLogs;
+  }
+
+  Future<void> logConceptView({
+    @required int id,
+    @required String contentId,
+    @required int time,
+    @required int seconds,
+    @required int lastTime,
+  }) async {
+    await ApiService.logConceptView(
+      id: id,
+      contentId: contentId,
+      time: time,
+      seconds: seconds,
+      lastTime: lastTime,
+    );
   }
 
   void saveViewedConceptIds() {

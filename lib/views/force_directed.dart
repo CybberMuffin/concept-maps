@@ -28,6 +28,7 @@ class ForceDirected extends StatefulWidget {
 
 class _ForceDirectedState extends State<ForceDirected>
     with TickerProviderStateMixin {
+  AppProvider _appProvider;
   AnimationController animationController;
   Animation<Matrix4> animation;
 
@@ -376,11 +377,13 @@ class _ForceDirectedState extends State<ForceDirected>
       print(e.toString());
       errorDetected = true;
     }
+    _appProvider = Provider.of<AppProvider>(context, listen: false);
     super.didChangeDependencies();
   }
 
   @override
   void dispose() {
+    _appProvider.cleanFocusNodeTitle();
     animationController.dispose();
     graphAnimationController.dispose();
     super.dispose();
