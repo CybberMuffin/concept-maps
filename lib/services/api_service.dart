@@ -227,29 +227,28 @@ abstract class ApiService {
   }
 
   static Future logConceptView({
-    @required int id,
-    @required String contentId,
-    @required String time,
-    @required int seconds,
-    @required String lastTime,
+    @required UserLog log,
   }) async {
-    assert(id != null ?? false);
-    assert(contentId.isNotEmpty ?? false);
-    assert(time != null ?? false);
-    assert(seconds != null ?? false);
-    assert(lastTime != null ?? false);
+    assert(log.userId != null ?? false);
+    assert(log.contentId.isNotEmpty ?? false);
+    assert(log.time != null ?? false);
+    assert(log.seconds != null ?? false);
+    assert(log.lastTime != null ?? false);
     final url = Uri.parse('$_logApi/log/concept');
-    final body = jsonEncode(<String, dynamic>{
-      'userId': id,
-      'contentId': contentId,
-      'time': time,
-      'seconds': seconds,
-      'lastTime': lastTime,
-    });
+    final body = {
+      "log": jsonEncode({
+        'userId': log.userId,
+        'contentId': log.contentId,
+        'time': log.time,
+        'seconds': log.seconds,
+        'lastTime': log.lastTime,
+      })
+    };
     final response = await http.post(url, body: body);
     if (response.statusCode == 200) {
+      print('logged');
       return;
     }
-    throw Exception("Error occurred during fetch of user logs: id $id");
+    throw Exception("Error occurred during logging");
   }
 }

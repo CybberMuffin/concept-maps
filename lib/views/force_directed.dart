@@ -30,6 +30,7 @@ class ForceDirected extends StatefulWidget {
 class _ForceDirectedState extends State<ForceDirected>
     with TickerProviderStateMixin {
   AppProvider _appProvider;
+  UserProvider _userProvider;
   AnimationController animationController;
   Animation<Matrix4> animation;
 
@@ -146,6 +147,9 @@ class _ForceDirectedState extends State<ForceDirected>
                 _appProvider.setFocusNode(controller.balloon.three[controller
                     .balloon.three
                     .indexWhere((a) => a.id == element.u.id)]);
+                _userProvider.startLoggingConcept(
+                    time: DateTimeFormatter.getFormattedDate(DateTime.now()),
+                    contentId: _appProvider.focusNode.id);
                 _appProvider.animationStart = false;
                 _appProvider.isEdgeActive = true;
                 _appProvider.focusEdge = element;
@@ -228,13 +232,9 @@ class _ForceDirectedState extends State<ForceDirected>
               _appProvider.setFocusNode(controller.balloon.three[controller
                   .balloon.three
                   .indexWhere((a) => a.id == element.id)]);
-              /* context.read<UserProvider>().logConceptView(
-                    contentId: _appProvider.focusNode.id,
-                    time: DateTimeFormatter.getFormattedDate(DateTime.now()),
-                    seconds: 50,
-                    lastTime: DateTimeFormatter.getFormattedDate(
-                        DateTime(2022, 11, 15, 23)),
-                  );*/
+              _userProvider.startLoggingConcept(
+                  time: DateTimeFormatter.getFormattedDate(DateTime.now()),
+                  contentId: _appProvider.focusNode.id);
               _appProvider.isEdgeActive = false;
               _appProvider.focusTitle = element.fullTitle;
               _appProvider.animationStart = false;
@@ -248,6 +248,9 @@ class _ForceDirectedState extends State<ForceDirected>
                   .balloon.three
                   .indexWhere((a) => a.id == element.id)]);
               _appProvider.animationStart = false;
+              _userProvider.startLoggingConcept(
+                  time: DateTimeFormatter.getFormattedDate(DateTime.now()),
+                  contentId: _appProvider.focusNode.id);
             });
           },
           child: Container(
@@ -268,6 +271,7 @@ class _ForceDirectedState extends State<ForceDirected>
   void initState() {
     super.initState();
     _appProvider = Provider.of<AppProvider>(context, listen: false);
+    _userProvider = Provider.of<UserProvider>(context, listen: false);
     try {
       Stopwatch s = Stopwatch();
       s.start();
@@ -303,13 +307,13 @@ class _ForceDirectedState extends State<ForceDirected>
       controller.forceCalc(frame, 50, 50);
       _appProvider.setTree(controller.balloon.three);
       List<String> viewedConceptIds =
-          context.read<UserProvider>().viewedConceptIds;
+          context.read<UserProvider>().viewedConceptIds.toList();
       controller.setVerticesEdgesColors(
           controller.balloon.three, viewedConceptIds);
       fillWidg();
       flag = true;
       force = 50;
-      print(s.elapsedMilliseconds);
+      //print(s.elapsedMilliseconds);
     } catch (e) {
       print(e.toString());
       errorDetected = true;
@@ -345,9 +349,12 @@ class _ForceDirectedState extends State<ForceDirected>
             .fullTitle;
         runAnimation(Offset(v.x, v.y), 0.7);
         Provider.of<AppProvider>(context).bottomSheetFlag = true;
-        _appProvider.focusNode = controller.balloon.three[
-            controller.balloon.three.indexWhere(
-                (a) => a.id == Provider.of<AppProvider>(context).animationId)];
+        _appProvider.setFocusNode(controller.balloon.three[controller
+            .balloon.three
+            .indexWhere((a) => a.id == _appProvider.animationId)]);
+        _userProvider.startLoggingConcept(
+            time: DateTimeFormatter.getFormattedDate(DateTime.now()),
+            contentId: Provider.of<AppProvider>(context).animationId);
       } else if (Provider.of<AppProvider>(context).bottomSheetFlag == null) {
         _appProvider.focusNode = Node(
             "",
@@ -381,7 +388,7 @@ class _ForceDirectedState extends State<ForceDirected>
             0,
             1);
       }
-      print(ss.elapsedMilliseconds);
+      // print(ss.elapsedMilliseconds);
     } catch (e) {
       print(e.toString());
       errorDetected = true;
@@ -391,6 +398,8 @@ class _ForceDirectedState extends State<ForceDirected>
 
   @override
   void dispose() {
+    _userProvider.logConceptView(
+        lastTime: DateTimeFormatter.getFormattedDate(DateTime.now()));
     _appProvider.cleanFocusNodeTitle();
     animationController.dispose();
     graphAnimationController.dispose();

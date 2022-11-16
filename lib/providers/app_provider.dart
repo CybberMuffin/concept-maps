@@ -141,7 +141,7 @@ class AppProvider with ChangeNotifier {
 
   void setFocusNode(Node node) {
     focusNode = node;
-    notifyListeners();
+    //notifyListeners();
   }
 
   void setCurrentConcept(Concept concept) {

@@ -1,16 +1,21 @@
 import 'package:concept_maps/models/courses/branch.dart';
 import 'package:concept_maps/models/courses/course.dart';
+import 'package:concept_maps/models/graph_entities/node.dart';
 import 'package:concept_maps/models/logs/user_log.dart';
 import 'package:concept_maps/services/api_service.dart';
 import 'package:concept_maps/services/auth_service.dart';
 import 'package:concept_maps/services/preferences.dart';
+import 'package:concept_maps/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class UserProvider with ChangeNotifier {
   String _userId;
   List<Course> myCourses;
   List<UserLog> userLogs = [];
-  List<String> viewedConceptIds = [];
+  UserLog currentLog; // log that is currently being logged
+  Set<String> viewedConceptIds = <String>{};
+
+  final stopwatch = Stopwatch(); // stopwatch for logging
 
   Future<bool> authorizeUser(String login, String password) async {
     final result = await AuthService.authorize(login, password);
@@ -50,8 +55,10 @@ class UserProvider with ChangeNotifier {
   }
 
   Future<void> fetchUserLogs() async {
-    userLogs = await ApiService.fetchUserLogsById(_userId);
-    saveViewedConceptIds();
+    if (_userId.isNotEmpty) {
+      userLogs = await ApiService.fetchUserLogsById(_userId);
+      saveViewedConceptIds();
+    }
   }
 
   List<UserLog> getLogsByConceptId(String conceptId) {
@@ -64,19 +71,27 @@ class UserProvider with ChangeNotifier {
     return currentConceptLogs;
   }
 
-  Future<void> logConceptView({
-    @required String contentId,
-    @required String time,
-    @required int seconds,
-    @required String lastTime,
-  }) async {
-    await ApiService.logConceptView(
-      id: int.tryParse(_userId),
-      contentId: contentId,
-      time: time,
-      seconds: seconds,
-      lastTime: lastTime,
-    );
+  Future<void> logConceptView({@required String lastTime}) async {
+    if (currentLog != null) {
+      stopwatch.stop();
+      currentLog.lastTime = lastTime;
+      currentLog.seconds =
+          (stopwatch.elapsedMilliseconds / 1000).ceil().toString();
+      await ApiService.logConceptView(log: currentLog);
+      stopwatch.reset();
+      saveLogLocally();
+      currentLog = null;
+    }
+  }
+
+  void startLoggingConcept(
+      {@required String time, @required String contentId}) async {
+    await logConceptView(lastTime: time);
+    stopwatch.start();
+    currentLog = UserLog();
+    currentLog.userId = _userId;
+    currentLog.contentId = contentId;
+    currentLog.time = time;
   }
 
   void saveViewedConceptIds() {
@@ -87,7 +102,15 @@ class UserProvider with ChangeNotifier {
     });
   }
 
-  void markConceptAsViewed() {}
+  void saveLogLocally() {
+    userLogs.add(currentLog);
+    saveViewedConceptIds();
+  }
+
+  void markConceptAsViewed(Node node) {
+    node.mainColor = kWasViewedConceptColor;
+    node.sideColor = kWasViewedConceptSideColor;
+  }
 
   Course getCourseByName(String name) => myCourses
       .singleWhere((element) => element.name == name, orElse: () => null);
