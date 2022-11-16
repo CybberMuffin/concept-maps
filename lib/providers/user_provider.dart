@@ -1,6 +1,7 @@
 import 'package:concept_maps/models/courses/branch.dart';
 import 'package:concept_maps/models/courses/course.dart';
 import 'package:concept_maps/models/graph_entities/node.dart';
+import 'package:concept_maps/models/graph_entities/vertice.dart';
 import 'package:concept_maps/models/logs/user_log.dart';
 import 'package:concept_maps/services/api_service.dart';
 import 'package:concept_maps/services/auth_service.dart';
@@ -92,6 +93,7 @@ class UserProvider with ChangeNotifier {
     currentLog.userId = _userId;
     currentLog.contentId = contentId;
     currentLog.time = time;
+    currentLog.contentType = 'concept';
   }
 
   void saveViewedConceptIds() {
@@ -107,9 +109,17 @@ class UserProvider with ChangeNotifier {
     saveViewedConceptIds();
   }
 
-  void markConceptAsViewed(Node node) {
-    node.mainColor = kWasViewedConceptColor;
-    node.sideColor = kWasViewedConceptSideColor;
+  Map<String, int> getStatistics() {
+    Map<String, int> statictics = {};
+    viewedConceptIds.forEach((id) {
+      int secondsSpentOnConcept = 0;
+      List<UserLog> logsByConcept = getLogsByConceptId(id);
+      logsByConcept.forEach((log) {
+        secondsSpentOnConcept += int.tryParse(log.seconds);
+      });
+      statictics["$id"] = secondsSpentOnConcept;
+    });
+    return statictics;
   }
 
   Course getCourseByName(String name) => myCourses

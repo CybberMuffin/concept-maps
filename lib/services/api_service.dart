@@ -246,9 +246,21 @@ abstract class ApiService {
     };
     final response = await http.post(url, body: body);
     if (response.statusCode == 200) {
-      print('logged');
       return;
     }
     throw Exception("Error occurred during logging");
+  }
+
+  static Future<Concept> fetchConceptById(String id) async {
+    assert(id?.isNotEmpty ?? false);
+    final url = Uri.parse('$_api/concept/$id');
+
+    final response = await http.get(url);
+    if (response.statusCode == 200) {
+      final result = jsonDecode(response.body);
+      Concept concept = Concept.fromJson(result);
+      return concept;
+    }
+    throw Exception("Error occurred during fetch of user logs: id $id");
   }
 }

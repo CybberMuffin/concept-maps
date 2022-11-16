@@ -1,5 +1,6 @@
 import 'package:concept_maps/views/courses/all_courses_screen.dart';
 import 'package:concept_maps/views/courses/added_courses/added_courses_screen.dart';
+import 'package:concept_maps/views/statistics/statistics_screen.dart';
 import 'package:flutter/material.dart';
 
 class CourseMain extends StatefulWidget {
@@ -11,8 +12,12 @@ class _CourseMainState extends State<CourseMain> {
   int _currentTabIndex = 0;
 
   final _menuItems = [
-    BottomNavigationBarItem(icon: Icon(Icons.my_library_books_outlined), label: 'My Courses'),
-    BottomNavigationBarItem(icon: Icon(Icons.list_alt_outlined), label: 'All Courses'),
+    BottomNavigationBarItem(
+        icon: Icon(Icons.my_library_books_outlined), label: 'My Courses'),
+    BottomNavigationBarItem(
+        icon: Icon(Icons.list_alt_outlined), label: 'All Courses'),
+    BottomNavigationBarItem(
+        icon: Icon(Icons.star_border_sharp), label: 'Statistics'),
   ];
 
   Widget get _currentTab {
@@ -21,6 +26,8 @@ class _CourseMainState extends State<CourseMain> {
         return AddedCoursesScreen();
       case 1:
         return AllCoursesScreen();
+      case 2:
+        return StatisticsScreen();
       default:
         return AddedCoursesScreen();
     }

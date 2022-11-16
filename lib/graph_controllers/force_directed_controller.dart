@@ -114,10 +114,12 @@ class ForceDirectedController {
     vertices.forEach((a) {
       bool wasViewed = wasConceptViewed(viewedConceptIds, a.id);
       int treeIndex = tree.indexWhere((element) => element.id == a.id);
-      a.mainColor =
-          wasViewed ? kWasViewedConceptColor : tree[treeIndex].mainColor;
-      a.sideColor =
-          wasViewed ? kWasViewedConceptSideColor : tree[treeIndex].sideColor;
+      if (wasViewed) {
+        tree[treeIndex].mainColor = kWasViewedConceptColor;
+        tree[treeIndex].sideColor = kWasViewedConceptSideColor;
+      }
+      a.mainColor = tree[treeIndex].mainColor;
+      a.sideColor = tree[treeIndex].sideColor;
       a.size = tree[treeIndex].d;
     });
 
@@ -133,6 +135,28 @@ class ForceDirectedController {
             : tree.firstWhere((element) => element.id == a.u.id).sideColor;
       }
     });
+  }
+
+  void markCurrentConceptAsViewed(String conceptId) {
+    Vertice currentVertice =
+        vertices.firstWhere((vertice) => vertice.id == conceptId);
+    int treeIndex =
+        balloon.three.indexWhere((element) => element.id == conceptId);
+    Node currentNode = balloon.three[treeIndex];
+    if (currentVertice.mainColor != kWasViewedConceptColor) {
+      //change vertices color
+      currentVertice.mainColor = kWasViewedConceptColor;
+      currentVertice.sideColor = kWasViewedConceptSideColor;
+      //change edges color
+      edges.forEach((edge) {
+        if (edge.u.id == conceptId) {
+          edge.edgeColor = kWasViewedConceptColor;
+        }
+      });
+      //change node color (fot bottom panel graph)
+      currentNode.mainColor = kWasViewedConceptColor;
+      currentNode.sideColor = kWasViewedConceptSideColor;
+    }
   }
 
   void setVerticesPos(Offset size) {

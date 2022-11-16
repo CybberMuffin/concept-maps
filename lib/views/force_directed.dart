@@ -147,6 +147,7 @@ class _ForceDirectedState extends State<ForceDirected>
                 _appProvider.setFocusNode(controller.balloon.three[controller
                     .balloon.three
                     .indexWhere((a) => a.id == element.u.id)]);
+                markConceptAsViewedAndRedraw();
                 _userProvider.startLoggingConcept(
                     time: DateTimeFormatter.getFormattedDate(DateTime.now()),
                     contentId: _appProvider.focusNode.id);
@@ -232,6 +233,7 @@ class _ForceDirectedState extends State<ForceDirected>
               _appProvider.setFocusNode(controller.balloon.three[controller
                   .balloon.three
                   .indexWhere((a) => a.id == element.id)]);
+              markConceptAsViewedAndRedraw();
               _userProvider.startLoggingConcept(
                   time: DateTimeFormatter.getFormattedDate(DateTime.now()),
                   contentId: _appProvider.focusNode.id);
@@ -248,6 +250,7 @@ class _ForceDirectedState extends State<ForceDirected>
                   .balloon.three
                   .indexWhere((a) => a.id == element.id)]);
               _appProvider.animationStart = false;
+              markConceptAsViewedAndRedraw();
               _userProvider.startLoggingConcept(
                   time: DateTimeFormatter.getFormattedDate(DateTime.now()),
                   contentId: _appProvider.focusNode.id);
@@ -265,6 +268,11 @@ class _ForceDirectedState extends State<ForceDirected>
       ));
     });
     graphFlag = true;
+  }
+
+  void markConceptAsViewedAndRedraw() {
+    controller.markCurrentConceptAsViewed(_appProvider.focusNode.id);
+    fillWidg();
   }
 
   @override
@@ -352,6 +360,7 @@ class _ForceDirectedState extends State<ForceDirected>
         _appProvider.setFocusNode(controller.balloon.three[controller
             .balloon.three
             .indexWhere((a) => a.id == _appProvider.animationId)]);
+        markConceptAsViewedAndRedraw();
         _userProvider.startLoggingConcept(
             time: DateTimeFormatter.getFormattedDate(DateTime.now()),
             contentId: Provider.of<AppProvider>(context).animationId);

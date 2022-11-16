@@ -148,6 +148,20 @@ class AppProvider with ChangeNotifier {
     currentConcept = concept;
   }
 
+  Future<String> getConceptNameById(String id) async {
+    Concept concept = await ApiService.fetchConceptById(id);
+    return concept.concept;
+  }
+
+  Future<List<String>> getConceptNamesByIds(List<String> ids) async {
+    List<String> names = [];
+    await Future.forEach(ids, (id) async {
+      String conceptName = await getConceptNameById(id);
+      names.add(conceptName);
+    });
+    return names;
+  }
+
   void setTimeSpentOnConcept(List<UserLog> logs) {
     int secondsSpent = 0;
     logs.forEach((log) {
