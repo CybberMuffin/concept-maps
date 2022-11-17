@@ -16,8 +16,6 @@ class _CourseMainState extends State<CourseMain> {
         icon: Icon(Icons.my_library_books_outlined), label: 'My Courses'),
     BottomNavigationBarItem(
         icon: Icon(Icons.list_alt_outlined), label: 'All Courses'),
-    BottomNavigationBarItem(
-        icon: Icon(Icons.star_border_sharp), label: 'Statistics'),
   ];
 
   Widget get _currentTab {
@@ -26,8 +24,6 @@ class _CourseMainState extends State<CourseMain> {
         return AddedCoursesScreen();
       case 1:
         return AllCoursesScreen();
-      case 2:
-        return StatisticsScreen();
       default:
         return AddedCoursesScreen();
     }

@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:concept_maps/models/courses/branch.dart';
 import 'package:concept_maps/models/courses/course.dart';
 import 'package:concept_maps/models/graph_entities/node.dart';
@@ -110,17 +112,38 @@ class UserProvider with ChangeNotifier {
     saveViewedConceptIds();
   }
 
-  Map<String, int> getStatistics() {
-    Map<String, int> statictics = {};
+  Map<String, int> getStatistics(List<Vertice> currentMapConcepts) {
+    Map<String, int> statistics = {};
+    List<Vertice> viewedConceptIdsFromCurrentMap = [];
+
+    //save viewed concepts from current map
     viewedConceptIds.forEach((id) {
+      currentMapConcepts.forEach((concept) {
+        if (id == concept.id) {
+          viewedConceptIdsFromCurrentMap.add(concept);
+        }
+      });
+    });
+
+    // calculate time spent on concepts and form statistics
+    viewedConceptIdsFromCurrentMap.forEach((concept) {
       int secondsSpentOnConcept = 0;
-      List<UserLog> logsByConcept = getLogsByConceptId(id);
+      List<UserLog> logsByConcept = getLogsByConceptId(concept.id);
       logsByConcept.forEach((log) {
         secondsSpentOnConcept += int.tryParse(log.seconds);
       });
-      statictics["$id"] = secondsSpentOnConcept;
+      if (secondsSpentOnConcept > 0) {
+        statistics[concept.title] = secondsSpentOnConcept;
+      }
     });
-    return statictics;
+
+    // sort statistics by time (by value)
+    final sortedByTimeStatistic = Map.fromEntries(statistics.entries.toList()
+      ..sort((e1, e2) => e1.value.compareTo(e2.value)));
+    final reversedSortedByTimeStatistic = LinkedHashMap.fromEntries(
+        sortedByTimeStatistic.entries.toList().reversed);
+
+    return reversedSortedByTimeStatistic;
   }
 
   Course getCourseByName(String name) => myCourses

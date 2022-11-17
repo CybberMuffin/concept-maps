@@ -1,15 +1,15 @@
 import 'package:intl/intl.dart';
 
 class DateTimeFormatter {
-  static String getFormattedTime(int seconds) {
+  static String getFormattedTime(int seconds, [bool isShortForm = false]) {
     int minutes = (seconds / 60).floor();
     int hours = (minutes / 60).floor();
     if (hours > 0) {
-      return "$hours hours";
+      return "$hours ${isShortForm ? 'h.' : 'hours'}";
     } else if (minutes > 0) {
-      return "$minutes minutes";
+      return "$minutes ${isShortForm ? 'min.' : 'minutes'}";
     } else {
-      return "$seconds seconds";
+      return "$seconds ${isShortForm ? 'sec.' : 'seconds'}";
     }
   }
 

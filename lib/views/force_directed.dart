@@ -7,6 +7,7 @@ import 'package:concept_maps/utils/app_colors.dart';
 import 'package:concept_maps/utils/date_time_formatter.dart';
 import 'package:concept_maps/utils/extensions/string_capitalize_extension.dart';
 import 'package:concept_maps/views/painter/paint_graph.dart';
+import 'package:concept_maps/views/statistics/statistics_screen.dart';
 import 'package:concept_maps/views/widgets/buttons/gradient_button.dart';
 import 'package:concept_maps/views/widgets/buttons/rectangle_button.dart';
 import 'package:concept_maps/views/widgets/drawer_menu.dart';
@@ -470,7 +471,15 @@ class _ForceDirectedState extends State<ForceDirected>
                       children: [
                         RectangleButton(
                           color: kBreezeColor,
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.push(
+                              (context),
+                              MaterialPageRoute(
+                                builder: (_) => StatisticsScreen(
+                                    currentMapConcepts: controller.vertices),
+                              ),
+                            );
+                          },
                           child: statsButtonContent(),
                         ),
                         RectangleButton(
