@@ -23,6 +23,7 @@ class UserProvider with ChangeNotifier {
     if (result?.isNotEmpty ?? false) {
       _userId = result;
       Preferences.saveUserId(_userId);
+      Preferences.setMarkViewedConceptsFlag(false);
     }
 
     return _userId != null;

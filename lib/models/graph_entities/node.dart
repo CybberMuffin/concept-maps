@@ -2,7 +2,12 @@ import 'package:flutter/material.dart';
 
 class Node {
   Node(this.id, this.child, this.parent, this.title,
-      [this.mainColor, this.sideColor, this.d, this.isAspect]);
+      [this.mainColor,
+      this.sideColor,
+      this.defaultMainColor,
+      this.defaultSideColor,
+      this.d,
+      this.isAspect]);
 
   String id;
   List<String> child;
@@ -13,6 +18,8 @@ class Node {
 
   Color mainColor;
   Color sideColor;
+  Color defaultMainColor;
+  Color defaultSideColor;
 
   double x, y;
   double r;

@@ -13,88 +13,108 @@ class BalloonTreeController {
   List<Node> three = [];
   String firstId;
 
-
-  void setNode(Concept concept, Node parent, List<Relation> relations, List<Concept> concepts, int depth){
-    if(three.where((a) => a.id == concept.id).length == 0){
-      if(concept.isAspect == "1"){
-        three.add(Node(concept.id, [], parent.id, concept.concept, NodeValueList.color[0][0], NodeValueList.color[0][1], NodeValueList.size.last, "1"));
-      }else{
-        three.add(Node(concept.id, [], parent.id, concept.concept, NodeValueList.color[depth+1][0], NodeValueList.color[depth+1][1], NodeValueList.size[depth], "0"));
+  void setNode(Concept concept, Node parent, List<Relation> relations,
+      List<Concept> concepts, int depth) {
+    if (three.where((a) => a.id == concept.id).length == 0) {
+      if (concept.isAspect == "1") {
+        three.add(Node(
+            concept.id,
+            [],
+            parent.id,
+            concept.concept,
+            NodeValueList.color[0][0],
+            NodeValueList.color[0][1],
+            NodeValueList.color[0][0],
+            NodeValueList.color[0][1],
+            NodeValueList.size.last,
+            "1"));
+      } else {
+        three.add(Node(
+            concept.id,
+            [],
+            parent.id,
+            concept.concept,
+            NodeValueList.color[depth + 1][0],
+            NodeValueList.color[depth + 1][1],
+            NodeValueList.color[depth + 1][0],
+            NodeValueList.color[depth + 1][1],
+            NodeValueList.size[depth],
+            "0"));
       }
-      if(concept.type == "unattached"){
+      if (concept.type == "unattached") {
         three.last.d = 30.0;
         three.last.mainColor = Colors.blueGrey;
         three.last.sideColor = Colors.grey;
       }
 
-      List<String> childs = relations.where((a) => a.toConceptId == concept.id).map((e) => e.conceptId).toList();
+      List<String> childs = relations
+          .where((a) => a.toConceptId == concept.id)
+          .map((e) => e.conceptId)
+          .toList();
       int currentIndex = three.indexWhere((a) => a.id == concept.id);
       childs.forEach((a) {
         three[currentIndex].child.add(a);
         depth++;
-        setNode(concepts.firstWhere((b) => b.id == a),
-            three[currentIndex], relations, concepts, depth);
+        setNode(concepts.firstWhere((b) => b.id == a), three[currentIndex],
+            relations, concepts, depth);
         depth--;
-
       });
     }
   }
 
-  List<Node> relationToNodes(MapModel map){
+  List<Node> relationToNodes(MapModel map) {
     three.clear();
-      map.relations.removeWhere((a) => a.relationClass == "c2c-similar");
+    map.relations.removeWhere((a) => a.relationClass == "c2c-similar");
 
     firstId = map.headerConcepts[0].conceptId;
 
     List<Concept> unattached = [];
     map.concepts.forEach((a) {
       bool isExist = false;
-      if(a.isAspect == "0"){
+      if (a.isAspect == "0") {
         map.relations.forEach((b) {
-          if(a.id == b.conceptId){
+          if (a.id == b.conceptId) {
             isExist = true;
           }
         });
-        if(isExist == false && a.id != firstId){
+        if (isExist == false && a.id != firstId) {
           unattached.add(a);
           print(a.toString());
         }
       }
     });
-    if(unattached.length > 0 && map.age < 2){
-      map.concepts.add(Concept(
-          id: "0",
-          concept: "<usage>",
-          isAspect: "0",
-          aspectOf: null
-      ));
+    if (unattached.length > 0 && map.age < 2) {
+      map.concepts.add(
+          Concept(id: "0", concept: "<usage>", isAspect: "0", aspectOf: null));
       map.concepts.last.type = "unattached";
       unattached.asMap().forEach((key, element) {
         map.relations.add(Relation(
             id: "1$key",
             conceptId: element.id.toString(),
             toConceptId: map.concepts.last.id.toString(),
-            relationClass: "c2c-part-of"
-        ));
+            relationClass: "c2c-part-of"));
       });
 
       map.relations.add(Relation(
           id: "0",
           conceptId: map.concepts.last.id.toString(),
           toConceptId: firstId,
-          relationClass: "imaginary"
-      ));
+          relationClass: "imaginary"));
     }
 
-
-
     map.concepts.forEach((a) {
-      if(a.isAspect == "1" && map.age < 2){
-        map.relations.add(Relation(id:"", conceptId: a.id, toConceptId: a.aspectOf));
+      if (a.isAspect == "1" && map.age < 2) {
+        map.relations
+            .add(Relation(id: "", conceptId: a.id, toConceptId: a.aspectOf));
       }
     });
-    setNode(map.concepts.firstWhere((a) => a.id == firstId),
-        Node("-1", [], "-1", "-1", Colors.deepPurpleAccent, Colors.deepPurpleAccent), map.relations, map.concepts, 0);
+    setNode(
+        map.concepts.firstWhere((a) => a.id == firstId),
+        Node("-1", [], "-1", "-1", Colors.deepPurpleAccent,
+            Colors.deepPurpleAccent),
+        map.relations,
+        map.concepts,
+        0);
     three.forEach((a) {
       //print([a.id, a.title, a.child, a.parent]);
     });
@@ -162,6 +182,4 @@ class BalloonTreeController {
 //       .child
 //       .add(cons_parent.id);
 // }
-
-
 }

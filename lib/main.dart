@@ -41,6 +41,7 @@ class MyApp extends StatelessWidget {
 
   Future<void> navigateAfterSilentAuthorization(BuildContext context) async {
     final result = await context.read<UserProvider>().authorizeSilently();
+    await context.read<AppProvider>().getMarkViewedConceptsFlagFromPrefs();
     await context.read<UserProvider>().fetchUserLogs();
 
     Navigator.pushReplacement(

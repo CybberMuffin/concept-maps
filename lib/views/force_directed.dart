@@ -3,9 +3,12 @@ import 'package:concept_maps/models/graph_entities/map_model.dart';
 import 'package:concept_maps/models/graph_entities/node.dart';
 import 'package:concept_maps/providers/app_provider.dart';
 import 'package:concept_maps/providers/user_provider.dart';
+import 'package:concept_maps/utils/app_colors.dart';
 import 'package:concept_maps/utils/date_time_formatter.dart';
 import 'package:concept_maps/utils/extensions/string_capitalize_extension.dart';
 import 'package:concept_maps/views/painter/paint_graph.dart';
+import 'package:concept_maps/views/widgets/buttons/gradient_button.dart';
+import 'package:concept_maps/views/widgets/buttons/rectangle_button.dart';
 import 'package:concept_maps/views/widgets/drawer_menu.dart';
 import 'package:concept_maps/views/widgets/search_app_bar.dart';
 import 'package:concept_maps/views/widgets/texts/main_text.dart';
@@ -48,6 +51,8 @@ class _ForceDirectedState extends State<ForceDirected>
   TransformationController transformationController =
       TransformationController();
   bool errorDetected = false;
+  List<String> viewedConceptIds = [];
+  bool markConcepts = false;
 
   void runGraphAnimation(Duration d) {
     graphAnimationController.duration =
@@ -82,7 +87,6 @@ class _ForceDirectedState extends State<ForceDirected>
   }
 
   void fillWidg() {
-    var nodeSize = 100.0;
     controller.widgets.clear();
     controller.titles.clear();
 
@@ -271,8 +275,10 @@ class _ForceDirectedState extends State<ForceDirected>
   }
 
   void markConceptAsViewedAndRedraw() {
-    controller.markCurrentConceptAsViewed(_appProvider.focusNode.id);
-    fillWidg();
+    if (markConcepts) {
+      controller.markCurrentConceptAsViewed(_appProvider.focusNode.id);
+      fillWidg();
+    }
   }
 
   @override
@@ -281,6 +287,7 @@ class _ForceDirectedState extends State<ForceDirected>
     _appProvider = Provider.of<AppProvider>(context, listen: false);
     _userProvider = Provider.of<UserProvider>(context, listen: false);
     try {
+      markConcepts = _appProvider.markViewedConcepts;
       Stopwatch s = Stopwatch();
       s.start();
       final map = _appProvider.currentMap;
@@ -314,10 +321,9 @@ class _ForceDirectedState extends State<ForceDirected>
       controller.setVerticesPos(frame);
       controller.forceCalc(frame, 50, 50);
       _appProvider.setTree(controller.balloon.three);
-      List<String> viewedConceptIds =
-          context.read<UserProvider>().viewedConceptIds.toList();
+      viewedConceptIds = context.read<UserProvider>().viewedConceptIds.toList();
       controller.setVerticesEdgesColors(
-          controller.balloon.three, viewedConceptIds);
+          controller.balloon.three, viewedConceptIds, markConcepts);
       fillWidg();
       flag = true;
       force = 50;
@@ -428,33 +434,121 @@ class _ForceDirectedState extends State<ForceDirected>
         barTitle: map.field.capitalizeFirstLetter(),
         isSearchAvailable: !errorDetected,
       ),
-      drawer: errorDetected ? null : DrawerMenu(title: widget.title),
       body: Container(
         child: errorDetected
             ? mapNotAvailableText
-            : InteractiveViewer(
-                constrained: false,
-                boundaryMargin: const EdgeInsets.all(double.infinity),
-                minScale: 0.01,
-                maxScale: 5.6,
-                onInteractionUpdate: (a) {},
-                transformationController: transformationController,
-                child: Container(
-                  width: frame.dx,
-                  height: frame.dy,
-                  child: CustomPaint(
-                    painter:
-                        PaintGraph(controller.edges, controller.vertices, flag),
-                    child: Stack(
+            : Stack(
+                children: [
+                  InteractiveViewer(
+                    constrained: false,
+                    boundaryMargin: const EdgeInsets.all(double.infinity),
+                    minScale: 0.01,
+                    maxScale: 5.6,
+                    onInteractionUpdate: (a) {},
+                    transformationController: transformationController,
+                    child: Container(
+                      width: frame.dx,
+                      height: frame.dy,
+                      child: CustomPaint(
+                        painter: PaintGraph(
+                            controller.edges, controller.vertices, flag),
+                        child: Stack(
+                          children: [
+                            ...controller.widgets,
+                            ...controller.titles,
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    top: 20,
+                    left: 16,
+                    right: 16,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        ...controller.widgets,
-                        ...controller.titles,
+                        RectangleButton(
+                          color: kBreezeColor,
+                          onTap: () {},
+                          child: statsButtonContent(),
+                        ),
+                        RectangleButton(
+                          color: kBreezeColor,
+                          isActive: markConcepts,
+                          onTap: () {
+                            setState(() {
+                              markConcepts = !markConcepts;
+                              _appProvider.setMarkViewedConcepts(markConcepts);
+                              controller.setVerticesEdgesColors(
+                                  controller.balloon.three,
+                                  viewedConceptIds,
+                                  markConcepts);
+                              fillWidg();
+                            });
+                          },
+                          child: markButtonContent(),
+                        ),
                       ],
                     ),
                   ),
-                ),
+                ],
               ),
       ),
+    );
+  }
+
+  Row statsButtonContent() {
+    return Row(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(bottom: 1.0),
+          child: Icon(
+            Icons.star_border_rounded,
+            size: 18,
+            color: kWhite,
+          ),
+        ),
+        const SizedBox(
+          width: 2,
+        ),
+        Text(
+          'Stats',
+          style: GoogleFonts.montserrat(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+            color: kWhite,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Row markButtonContent() {
+    return Row(
+      children: [
+        SizedBox(
+          height: 16,
+          width: 16,
+          child: Checkbox(
+            checkColor: kBreezeColor,
+            fillColor: MaterialStateProperty.all<Color>(kWhite),
+            value: markConcepts,
+            onChanged: (newValue) {},
+          ),
+        ),
+        const SizedBox(
+          width: 8,
+        ),
+        Text(
+          'Mark viewed concepts',
+          style: GoogleFonts.montserrat(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+            color: kWhite,
+          ),
+        ),
+      ],
     );
   }
 }

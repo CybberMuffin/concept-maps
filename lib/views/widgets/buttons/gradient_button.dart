@@ -13,7 +13,7 @@ class GradientButton extends StatelessWidget {
   const GradientButton(
       {Key key,
       this.gradientDecorations,
-      this.text,
+      @required this.text,
       this.onPressed,
       this.child,
       this.height,

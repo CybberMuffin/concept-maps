@@ -545,6 +545,8 @@ class _BottomSheetGraphState extends State<BottomSheetGraph>
         temp.title,
         temp.mainColor,
         temp.sideColor,
+        temp.mainColor,
+        temp.sideColor,
         temp.d,
       ));
       newNodes[0].child.add(node.child[i]);

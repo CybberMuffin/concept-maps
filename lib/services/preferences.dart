@@ -16,4 +16,14 @@ abstract class Preferences {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.remove(kId);
   }
+
+  static Future<bool> getMarkViewedConceptsFlag() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('markViewedConcepts');
+  }
+
+  static Future<void> setMarkViewedConceptsFlag(bool flag) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('markViewedConcepts', flag);
+  }
 }

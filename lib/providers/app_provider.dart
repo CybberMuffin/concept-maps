@@ -8,6 +8,7 @@ import 'package:concept_maps/models/graph_entities/map_model.dart';
 import 'package:concept_maps/models/graph_entities/node.dart';
 import 'package:concept_maps/models/logs/user_log.dart';
 import 'package:concept_maps/services/api_service.dart';
+import 'package:concept_maps/services/preferences.dart';
 import 'package:concept_maps/utils/course_key_list.dart';
 import 'package:flutter/material.dart';
 
@@ -21,6 +22,7 @@ class AppProvider with ChangeNotifier {
   List<ConceptInTheses> _conceptReferences = [];
   // Key - focus node id, value List of didactic concepts after
   Map<int, List<Concept>> didacticConceptsAfter = {};
+  bool markViewedConcepts = false;
 
   MapModel get currentMap => _currentMap;
 
@@ -119,6 +121,16 @@ class AppProvider with ChangeNotifier {
 
   Future<List<Thesis>> fetchTheses1(List<int> thesisIds) async {
     return await ApiService.fetchTheses(thesisIds);
+  }
+
+  void setMarkViewedConcepts(bool flag) {
+    markViewedConcepts = flag;
+    Preferences.setMarkViewedConceptsFlag(flag);
+  }
+
+  Future<void> getMarkViewedConceptsFlagFromPrefs() async {
+    final markFlag = await Preferences.getMarkViewedConceptsFlag();
+    markViewedConcepts = markFlag ?? false;
   }
 
   Node focusNode;

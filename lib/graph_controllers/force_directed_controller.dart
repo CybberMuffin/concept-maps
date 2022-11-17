@@ -110,13 +110,18 @@ class ForceDirectedController {
     return wasViewed;
   }
 
-  void setVerticesEdgesColors(List<Node> tree, List<String> viewedConceptIds) {
+  void setVerticesEdgesColors(
+      List<Node> tree, List<String> viewedConceptIds, bool markViewedConcepts) {
     vertices.forEach((a) {
-      bool wasViewed = wasConceptViewed(viewedConceptIds, a.id);
+      bool wasViewed =
+          markViewedConcepts ? wasConceptViewed(viewedConceptIds, a.id) : false;
       int treeIndex = tree.indexWhere((element) => element.id == a.id);
       if (wasViewed) {
         tree[treeIndex].mainColor = kWasViewedConceptColor;
         tree[treeIndex].sideColor = kWasViewedConceptSideColor;
+      } else {
+        tree[treeIndex].mainColor = tree[treeIndex].defaultMainColor;
+        tree[treeIndex].sideColor = tree[treeIndex].defaultSideColor;
       }
       a.mainColor = tree[treeIndex].mainColor;
       a.sideColor = tree[treeIndex].sideColor;
@@ -124,7 +129,9 @@ class ForceDirectedController {
     });
 
     edges.forEach((a) {
-      bool wasViewed = wasConceptViewed(viewedConceptIds, a.u.id);
+      bool wasViewed = markViewedConcepts
+          ? wasConceptViewed(viewedConceptIds, a.u.id)
+          : false;
       if (a.v.mainColor == NodeValueList.color[0][0] ||
           a.u.mainColor == NodeValueList.color[0][0]) {
         a.edgeColor =
