@@ -2,7 +2,6 @@ import 'package:concept_maps/providers/app_provider.dart';
 import 'package:concept_maps/views/bottom_panel/bottom_pannel.dart';
 import 'package:concept_maps/views/bottom_panel/bottom_sheet_graph.dart';
 import 'package:concept_maps/views/bottom_panel/bottom_sheet_related_concepts.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

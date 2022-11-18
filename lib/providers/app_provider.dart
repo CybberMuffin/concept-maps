@@ -126,6 +126,7 @@ class AppProvider with ChangeNotifier {
   void setMarkViewedConcepts(bool flag) {
     markViewedConcepts = flag;
     Preferences.setMarkViewedConceptsFlag(flag);
+    notifyListeners();
   }
 
   Future<void> getMarkViewedConceptsFlagFromPrefs() async {

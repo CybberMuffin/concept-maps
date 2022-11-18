@@ -17,7 +17,6 @@ class StatisticTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(barWidthPercentage);
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(

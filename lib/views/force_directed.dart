@@ -470,7 +470,7 @@ class _ForceDirectedState extends State<ForceDirected>
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         RectangleButton(
-                          color: kBreezeColor,
+                          color: Color(0xFF00C1C9),
                           onTap: () {
                             Navigator.push(
                               (context),
@@ -512,7 +512,7 @@ class _ForceDirectedState extends State<ForceDirected>
     return Row(
       children: [
         Padding(
-          padding: const EdgeInsets.only(bottom: 1.0),
+          padding: const EdgeInsets.only(bottom: 1.5),
           child: Icon(
             Icons.star_border_rounded,
             size: 18,

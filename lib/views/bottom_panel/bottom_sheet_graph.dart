@@ -606,8 +606,8 @@ class _BottomSheetGraphState extends State<BottomSheetGraph>
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    return Consumer<AppProvider>(
-      builder: (context, value, _) => GestureDetector(
+    return Consumer<AppProvider>(builder: (context, provider, _) {
+      return GestureDetector(
         onPanDown: (details) {},
         onPanUpdate: (details) {
           setState(() {
@@ -625,14 +625,19 @@ class _BottomSheetGraphState extends State<BottomSheetGraph>
           //color: Color(0xffd04fff),
           child: node.id.isNotEmpty
               ? CustomPaint(
-                  painter: PaintBottomGraph(newNodes, value.focusNode),
+                  painter: PaintBottomGraph(newNodes, provider.focusNode),
                   child: Stack(
                     children: widgets,
                   ),
                 )
-              : const SizedBox(),
+              : Center(
+                  child: Text(
+                    'No node was selected',
+                    style: TextStyle(fontSize: 18),
+                  ),
+                ),
         ),
-      ),
-    );
+      );
+    });
   }
 }
