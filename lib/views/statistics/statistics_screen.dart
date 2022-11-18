@@ -1,8 +1,10 @@
+import 'package:concept_maps/models/graph_entities/node.dart';
 import 'package:concept_maps/models/graph_entities/vertice.dart';
 import 'package:concept_maps/providers/app_provider.dart';
 import 'package:concept_maps/providers/user_provider.dart';
 import 'package:concept_maps/utils/app_colors.dart';
 import 'package:concept_maps/utils/date_time_formatter.dart';
+import 'package:concept_maps/views/widgets/cards/statistics_tile.dart';
 import 'package:concept_maps/views/widgets/texts/main_text.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -13,14 +15,14 @@ class StatisticsScreen extends StatefulWidget {
   const StatisticsScreen({Key key, @required this.currentMapConcepts})
       : super(key: key);
 
-  final List<Vertice> currentMapConcepts;
+  final List<Node> currentMapConcepts;
 
   @override
   State<StatisticsScreen> createState() => _StatisticsScreenState();
 }
 
 class _StatisticsScreenState extends State<StatisticsScreen> {
-  Map<String, int> statistics = {};
+  Map<Node, int> statistics = {};
   UserProvider _userProvider;
 
   @override
@@ -35,7 +37,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     return Scaffold(
       appBar: appBar(context),
       body: Builder(builder: (_) {
-        final List<String> conceptNames = statistics.keys.toList();
+        final List<Node> concepts = statistics.keys.toList();
         final List<int> conceptTimes = statistics.values.toList();
         return statistics.isNotEmpty
             ? Scrollbar(
@@ -46,10 +48,13 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                         horizontal: 10, vertical: 20),
                     child: Column(
                       children: List.generate(
-                        conceptNames.length,
-                        (index) => statisticsTile(
-                          conceptNames[index],
-                          conceptTimes[index],
+                        concepts.length,
+                        (index) => StatisticTile(
+                          concept: concepts[index],
+                          time: conceptTimes[index],
+                          barWidthPercentage:
+                              _userProvider.getStatisticBarWidthPercentage(
+                                  conceptTimes[0], conceptTimes[index]),
                         ),
                       ),
                     ),
@@ -73,45 +78,4 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
           },
         ),
       );
-
-  Widget statisticsTile(String title, int time) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-      margin: const EdgeInsets.only(bottom: 10),
-      decoration: BoxDecoration(
-        color: Colors.blue.withOpacity(0.3),
-        borderRadius: BorderRadius.circular(6),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(
-              title,
-              style: GoogleFonts.montserrat(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-          const SizedBox(
-            width: 8,
-          ),
-          Align(
-            alignment: Alignment.centerRight,
-            child: Text(
-              DateTimeFormatter.getFormattedTime(
-                time,
-                true,
-              ),
-              style: GoogleFonts.montserrat(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }

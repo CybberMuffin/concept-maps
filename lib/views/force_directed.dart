@@ -476,7 +476,8 @@ class _ForceDirectedState extends State<ForceDirected>
                               (context),
                               MaterialPageRoute(
                                 builder: (_) => StatisticsScreen(
-                                    currentMapConcepts: controller.vertices),
+                                    currentMapConcepts:
+                                        controller.balloon.three),
                               ),
                             );
                           },

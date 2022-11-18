@@ -112,29 +112,32 @@ class UserProvider with ChangeNotifier {
     saveViewedConceptIds();
   }
 
-  Map<String, int> getStatistics(List<Vertice> currentMapConcepts) {
-    Map<String, int> statistics = {};
-    List<Vertice> viewedConceptIdsFromCurrentMap = [];
+  Map<Node, int> getStatistics(List<Node> currentMapConcepts) {
+    Map<Node, int> statistics = {};
+
+    // TODO: uncomment if you want statistic without unviewed concepts
+    //List<Node> viewedConceptIdsFromCurrentMap = [];
 
     //save viewed concepts from current map
-    viewedConceptIds.forEach((id) {
+    /*viewedConceptIds.forEach((id) {
       currentMapConcepts.forEach((concept) {
         if (id == concept.id) {
           viewedConceptIdsFromCurrentMap.add(concept);
         }
       });
-    });
+    });*/
 
+    // TODO: change 'currentMapConcepts' to 'viewedConceptIdsFromCurrentMap' if you want statistic without unviewed concepts
     // calculate time spent on concepts and form statistics
-    viewedConceptIdsFromCurrentMap.forEach((concept) {
+    currentMapConcepts.forEach((concept) {
       int secondsSpentOnConcept = 0;
       List<UserLog> logsByConcept = getLogsByConceptId(concept.id);
       logsByConcept.forEach((log) {
         secondsSpentOnConcept += int.tryParse(log.seconds);
       });
-      if (secondsSpentOnConcept > 0) {
-        statistics[concept.title] = secondsSpentOnConcept;
-      }
+      // if (secondsSpentOnConcept > 0) {
+      statistics[concept] = secondsSpentOnConcept;
+      // }
     });
 
     // sort statistics by time (by value)
@@ -144,6 +147,13 @@ class UserProvider with ChangeNotifier {
         sortedByTimeStatistic.entries.toList().reversed);
 
     return reversedSortedByTimeStatistic;
+  }
+
+  double getStatisticBarWidthPercentage(
+      int maxTimeInSeconds, int currentTimeInSeconds) {
+    double statisticBarWidthPercentage =
+        (currentTimeInSeconds * 100 / maxTimeInSeconds / 100);
+    return statisticBarWidthPercentage;
   }
 
   Course getCourseByName(String name) => myCourses
