@@ -3,17 +3,47 @@ import 'package:concept_maps/utils/date_time_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class StatisticTile extends StatelessWidget {
+class StatisticTile extends StatefulWidget {
   const StatisticTile({
     Key key,
     @required this.concept,
     @required this.time,
-    @required this.barWidthPercentage,
+    @required this.barWidth,
   }) : super(key: key);
 
   final Node concept;
   final int time;
-  final double barWidthPercentage;
+  final double barWidth;
+
+  @override
+  State<StatisticTile> createState() => _StatisticTileState();
+}
+
+class _StatisticTileState extends State<StatisticTile>
+    with TickerProviderStateMixin {
+  Animation animation;
+  AnimationController animationController;
+
+  @override
+  void initState() {
+    super.initState();
+    animationController =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 500));
+    animation = Tween(begin: 0.0, end: widget.barWidth).animate(
+        CurvedAnimation(curve: Curves.easeOut, parent: animationController));
+    animationController.addListener(() {
+      setState(() {});
+    });
+    if (widget.barWidth != 0) {
+      animationController.forward();
+    }
+  }
+
+  @override
+  void dispose() {
+    animationController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +62,7 @@ class StatisticTile extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    concept.title,
+                    widget.concept.title,
                     style: GoogleFonts.montserrat(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
@@ -47,7 +77,7 @@ class StatisticTile extends StatelessWidget {
                   alignment: Alignment.centerRight,
                   child: Text(
                     DateTimeFormatter.getFormattedTime(
-                      time,
+                      widget.time,
                       true,
                     ),
                     style: GoogleFonts.montserrat(
@@ -60,10 +90,10 @@ class StatisticTile extends StatelessWidget {
             ),
           ),
           Container(
-            width: MediaQuery.of(context).size.width * barWidthPercentage,
+            width: animation.value,
             height: 40,
             decoration: BoxDecoration(
-              color: concept.defaultMainColor.withOpacity(0.3),
+              color: widget.concept.defaultMainColor.withOpacity(0.3),
               borderRadius: BorderRadius.circular(6),
             ),
           ),

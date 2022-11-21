@@ -149,6 +149,20 @@ class UserProvider with ChangeNotifier {
     return reversedSortedByTimeStatistic;
   }
 
+  Map<Node, int> getTopFiveStatistics(Map<Node, int> statistics) {
+    Map<Node, int> topFiveStatistics = {};
+    int count = 0;
+    statistics.forEach((key, value) {
+      if (count < 5) {
+        topFiveStatistics[key] = value;
+        count++;
+      } else {
+        return;
+      }
+    });
+    return topFiveStatistics;
+  }
+
   double getStatisticBarWidthPercentage(
       int maxTimeInSeconds, int currentTimeInSeconds) {
     double statisticBarWidthPercentage =
