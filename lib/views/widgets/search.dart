@@ -56,7 +56,7 @@ class Search extends SearchDelegate {
           leading: query.isEmpty ? Icon(Icons.access_time) : SizedBox(),
           onTap: () {
             selectedResult = suggestionList[index];
-            showResults(context);
+            buildResults(context);
             if (context.read<AppProvider>().recentList.length < 10) {
               context
                   .read<AppProvider>()
