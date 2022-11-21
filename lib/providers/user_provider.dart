@@ -154,8 +154,10 @@ class UserProvider with ChangeNotifier {
     int count = 0;
     statistics.forEach((key, value) {
       if (count < 5) {
-        topFiveStatistics[key] = value;
-        count++;
+        if (value > 0) {
+          topFiveStatistics[key] = value;
+          count++;
+        }
       } else {
         return;
       }
@@ -165,9 +167,12 @@ class UserProvider with ChangeNotifier {
 
   double getStatisticBarWidthPercentage(
       int maxTimeInSeconds, int currentTimeInSeconds) {
-    double statisticBarWidthPercentage =
-        (currentTimeInSeconds * 100 / maxTimeInSeconds / 100);
-    return statisticBarWidthPercentage;
+    if (maxTimeInSeconds > 0) {
+      double statisticBarWidthPercentage =
+          (currentTimeInSeconds * 100 / maxTimeInSeconds / 100);
+      return statisticBarWidthPercentage;
+    } else
+      return 0;
   }
 
   Course getCourseByName(String name) => myCourses

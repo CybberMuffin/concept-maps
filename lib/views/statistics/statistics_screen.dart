@@ -36,9 +36,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
   void initState() {
     _userProvider = Provider.of<UserProvider>(context, listen: false);
     statistics = _userProvider.getStatistics(widget.currentMapConcepts);
-    if (statistics.length > 4) {
-      topFiveStatistics = _userProvider.getTopFiveStatistics(statistics);
-    }
+    topFiveStatistics = _userProvider.getTopFiveStatistics(statistics);
     concepts = statistics.keys.toList();
     conceptTimes = statistics.values.toList();
     conceptTimes.forEach((time) {
@@ -51,7 +49,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: statistics.length > 4
+      floatingActionButton: topFiveStatistics.length > 4
           ? Visibility(
               visible: showFab,
               child: TopFiveButton(
