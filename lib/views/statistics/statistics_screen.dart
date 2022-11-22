@@ -197,7 +197,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     int maxTime = allTimeOnMapInSeconds;
     return List.generate(5, (i) {
       final isTouched = i == touchedIndex;
-      final currentPercentage = (maxTime / conceptTimes[i]).round();
+      final currentPercentage = (conceptTimes[i] * 100 / maxTime).round();
       final fontSize = isTouched ? 25.0 : 16.0;
       final radius = isTouched ? 60.0 : 50.0;
       switch (i) {
