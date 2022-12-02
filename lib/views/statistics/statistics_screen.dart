@@ -308,7 +308,10 @@ class TopFiveButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(right: 10.0, bottom: 10.0),
+      padding: const EdgeInsets.only(
+        right: 10.0,
+        bottom: 10.0,
+      ),
       child: ElevatedButton(
         style: ButtonStyle(
           backgroundColor: MaterialStateProperty.resolveWith<Color>((_) {
