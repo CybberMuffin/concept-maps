@@ -59,7 +59,7 @@ class UserProvider with ChangeNotifier {
   }
 
   Future<void> fetchUserLogs() async {
-    if (_userId.isNotEmpty) {
+    if (_userId != null && _userId.isNotEmpty) {
       userLogs = await ApiService.fetchUserLogsById(_userId);
       saveViewedConceptIds();
     }
